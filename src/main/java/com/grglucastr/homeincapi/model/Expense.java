@@ -52,5 +52,9 @@ public class Expense {
     @JoinColumn(name = "expense_type_id")
     private ExpenseType expenseType;
 
+    @NotNull
+    @Column(columnDefinition = "boolean default true ")
+    private Boolean isActive = true;
+
 
 }
