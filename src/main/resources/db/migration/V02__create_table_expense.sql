@@ -10,6 +10,6 @@ service_period_start DATE,
 service_period_end DATE,
 periodicity VARCHAR(50),
 payment_method VARCHAR(50),
-expense_type_id INTEGER);
-
-ALTER TABLE expense ADD FOREIGN KEY (expense_type_id) REFERENCES expense_type(id);
+expense_type_id INTEGER,
+FOREIGN KEY (expense_type_id) REFERENCES expense_type(id)
+);
