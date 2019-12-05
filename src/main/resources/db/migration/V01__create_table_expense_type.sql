@@ -4,6 +4,10 @@ CREATE TABLE expense_type(
     category varchar(50) not null
 );
 
+CREATE SEQUENCE se_expense_type
+START WITH 17
+INCREMENT BY 1;
+
 INSERT INTO expense_type (id, name,category) VALUES (1, 'Rent', 'HOUSE_EXPENSES');
 INSERT INTO expense_type (id, name,category) VALUES (2, 'Electricity', 'HOUSE_EXPENSES');
 INSERT INTO expense_type (id, name,category) VALUES (3, 'Water', 'HOUSE_EXPENSES');

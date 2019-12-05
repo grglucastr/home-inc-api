@@ -13,3 +13,7 @@ payment_method VARCHAR(50),
 expense_type_id INTEGER,
 FOREIGN KEY (expense_type_id) REFERENCES expense_type(id)
 );
+
+CREATE SEQUENCE se_expense
+START WITH 1
+INCREMENT BY 1;
