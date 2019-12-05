@@ -10,4 +10,6 @@ public class HomeIncApiApplication {
 		SpringApplication.run(HomeIncApiApplication.class, args);
 	}
 
+	//TODO: Add swagger configuration
+
 }

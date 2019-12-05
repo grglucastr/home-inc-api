@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -16,8 +17,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(of = {"id"})
 @Entity(name = "expense")
 @Table(name = "expense")
-@Data
-public class Expense {
+public class Expense implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

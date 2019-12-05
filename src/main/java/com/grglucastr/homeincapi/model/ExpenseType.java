@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Set;
 
 @Getter
@@ -13,8 +14,7 @@ import java.util.Set;
 @EqualsAndHashCode(of = {"id"})
 @Entity(name = "expense_type")
 @Table(name = "expense_type")
-@Data
-public class ExpenseType {
+public class ExpenseType implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
