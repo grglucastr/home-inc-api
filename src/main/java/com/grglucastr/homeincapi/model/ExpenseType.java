@@ -17,7 +17,8 @@ import java.util.Set;
 public class ExpenseType implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_expense_type")
+    @SequenceGenerator(name = "se_expense_type", sequenceName = "se_expense_type", allocationSize = 1)
     private Long id;
 
     @NotNull

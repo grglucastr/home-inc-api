@@ -12,15 +12,14 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 @Entity(name = "expense")
 @Table(name = "expense")
 public class Expense implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_expense")
+    @SequenceGenerator(name = "se_expense", sequenceName = "se_expense", allocationSize = 1)
     private Long id;
 
     @Length(min=3, max = 80)
@@ -36,7 +35,7 @@ public class Expense implements Serializable {
     private LocalDate dueDate;
 
     @NotNull
-    private Boolean paid = false;
+    private Boolean paid;
 
     private LocalDate invoiceDate;
     private LocalDate servicePeriodStart;
@@ -53,8 +52,7 @@ public class Expense implements Serializable {
     private ExpenseType expenseType;
 
     @NotNull
-    @Column(columnDefinition = "boolean default true ")
-    private Boolean isActive = true;
+    private Boolean isActive;
 
 
 }
