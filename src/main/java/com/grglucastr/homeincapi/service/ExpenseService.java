@@ -31,10 +31,10 @@ public class ExpenseService {
 
     public Expense findById(Long id){
         Optional<Expense> exp =  expenseRepository.findById(id);
-        if(exp.isPresent()){
+        if(exp.isPresent() && exp.get().getIsActive()){
             return exp.get();
         }
-        throw new EmptyResultDataAccessException(1);
+        throw new EmptyResultDataAccessException(0);
     }
 
     public Expense create(ExpenseDTO dto){
@@ -45,15 +45,15 @@ public class ExpenseService {
     }
 
     public void delete(Long id){
-
-        Optional<Expense> exp = expenseRepository.findById(id);
-        if(exp.isEmpty()){
-            throw new EmptyResultDataAccessException(1);
-        }
-
-        Expense expense = exp.get();
+        Expense expense = findById(id);
         expense.setIsActive(false);
         expenseRepository.save(expense);
+    }
+
+    public Expense update(Long id, ExpenseDTO expenseDTO){
+        findById(id);
+        Expense exp = mapper.map(expenseDTO, Expense.class);
+        return expenseRepository.save(exp);
     }
 
 
