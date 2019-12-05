@@ -1,5 +1,6 @@
 package com.grglucastr.homeincapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -29,5 +30,6 @@ public class ExpenseType implements Serializable {
     private ExpenseTypeCategory category;
 
     @OneToMany(mappedBy = "expenseType")
+    @JsonIgnore
     private Set<Expense> expenses;
 }
