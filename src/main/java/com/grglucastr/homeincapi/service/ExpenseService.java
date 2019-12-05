@@ -1,7 +1,9 @@
 package com.grglucastr.homeincapi.service;
 
+import com.grglucastr.homeincapi.dto.ExpenseDTO;
 import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.repository.ExpenseRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -15,28 +17,34 @@ import java.util.Optional;
 public class ExpenseService {
 
     private ExpenseRepository expenseRepository;
+    private ModelMapper mapper;
 
     @Autowired
-    public ExpenseService(ExpenseRepository expenseRepository) {
+    public ExpenseService(ExpenseRepository expenseRepository, ModelMapper mapper) {
         this.expenseRepository = expenseRepository;
+        this.mapper = mapper;
     }
 
     public List<Expense> findAll(){
         return expenseRepository.findAll();
     }
 
-    public ResponseEntity<Expense> findById(Long id){
-        return expenseRepository.findById(id)
-                .map(expense -> ResponseEntity.ok(expense))
-                .orElse(ResponseEntity.notFound().build());
+    public Expense findById(Long id){
+        Optional<Expense> exp =  expenseRepository.findById(id);
+        if(exp.isPresent()){
+            return exp.get();
+        }
+        throw new EmptyResultDataAccessException(1);
     }
 
-    public ResponseEntity<Expense> create(Expense expense){
-        Expense expenseCreated = expenseRepository.save(expense);
-        return ResponseEntity.status(HttpStatus.CREATED).body(expenseCreated);
+    public Expense create(ExpenseDTO dto){
+        Expense expObj = mapper.map(dto, Expense.class);
+        expObj.setIsActive(true);
+        expObj.setPaid(false);
+        return expenseRepository.save(expObj);
     }
 
-    public ResponseEntity<Expense> delete(Long id){
+    public void delete(Long id){
 
         Optional<Expense> exp = expenseRepository.findById(id);
         if(exp.isEmpty()){
@@ -46,8 +54,6 @@ public class ExpenseService {
         Expense expense = exp.get();
         expense.setIsActive(false);
         expenseRepository.save(expense);
-
-        return ResponseEntity.noContent().build();
     }
 
 

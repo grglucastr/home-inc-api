@@ -18,7 +18,6 @@ public class ExpenseController {
 
     private ExpenseService expenseService;
 
-
     @Autowired
     public ExpenseController(ExpenseService expenseService) {
         this.expenseService = expenseService;
@@ -33,9 +32,7 @@ public class ExpenseController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Expense> create(@RequestBody ExpenseDTO dto){
-
-
-
-        return ResponseEntity.noContent().build();
+        Expense exp = expenseService.create(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(exp);
     }
 }
