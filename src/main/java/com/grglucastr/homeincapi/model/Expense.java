@@ -3,6 +3,7 @@ package com.grglucastr.homeincapi.model;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -35,7 +36,7 @@ public class Expense implements Serializable {
     private LocalDate dueDate;
 
     @NotNull
-    private Boolean paid;
+    private boolean paid;
 
     private LocalDate invoiceDate;
     private LocalDate servicePeriodStart;
@@ -54,5 +55,21 @@ public class Expense implements Serializable {
     @NotNull
     private Boolean isActive;
 
+    private LocalDate paidDate;
 
+    @CreatedDate
+    private LocalDate insertDate;
+
+    private LocalDate updateDate;
+
+    public void setPaid(Boolean paid) {
+        if(paid){
+            this.setPaidDate(LocalDate.now());
+        }
+        this.paid = paid;
+    }
+
+    public void setPaidDate(LocalDate paidDate) {
+        this.paidDate = paidDate;
+    }
 }

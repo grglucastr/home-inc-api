@@ -20,11 +20,14 @@ public class ExpenseDTO implements Serializable {
     private String title;
     private String description;
     private BigDecimal cost;
-    private Boolean paid;
+    private boolean paid;
     private LocalDate dueDate;
     private LocalDate invoiceDate;
     private String periodicity;
     private String paymentMethod;
+    private LocalDate paidDate;
+    private LocalDate insertDate;
+    private LocalDate updateDate;
     private ExpenseTypeDTO expenseType;
 
 
