@@ -6,12 +6,13 @@ import com.grglucastr.homeincapi.repository.ExpenseRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ExpenseService {
@@ -26,7 +27,11 @@ public class ExpenseService {
     }
 
     public List<Expense> findAll(){
-        return expenseRepository.findAll();
+        return expenseRepository
+                .findAll()
+                .stream()
+                .sorted(Comparator.comparingLong(exp -> exp.getId()))
+                .collect(Collectors.toList());
     }
 
     public Expense findById(Long id){
@@ -40,7 +45,6 @@ public class ExpenseService {
     public Expense create(ExpenseDTO dto){
         Expense expObj = mapper.map(dto, Expense.class);
         expObj.setIsActive(true);
-        expObj.setPaid(false);
         return expenseRepository.save(expObj);
     }
 
@@ -51,8 +55,11 @@ public class ExpenseService {
     }
 
     public Expense update(Long id, ExpenseDTO expenseDTO){
-        findById(id);
+        Expense found = findById(id);
         Expense exp = mapper.map(expenseDTO, Expense.class);
+        if(!found.isPaid() && exp.isPaid()){
+            exp.setPaidDate(LocalDate.now());
+        }
         return expenseRepository.save(exp);
     }
 
