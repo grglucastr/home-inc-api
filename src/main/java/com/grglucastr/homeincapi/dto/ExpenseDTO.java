@@ -26,9 +26,23 @@ public class ExpenseDTO implements Serializable {
     private String periodicity;
     private String paymentMethod;
     private LocalDate paidDate;
+    private LocalDate servicePeriodStart;
+    private LocalDate servicePeriodEnd;
     private LocalDate insertDate;
     private LocalDate updateDate;
     private ExpenseTypeDTO expenseType;
 
+    public String getServicePeriodStart() {
+        if(servicePeriodStart == null){
+            return "";
+        }
+        return servicePeriodStart.toString();
+    }
 
+    public String getServicePeriodEnd() {
+        if(servicePeriodEnd == null){
+            return "";
+        }
+        return servicePeriodEnd.toString();
+    }
 }
