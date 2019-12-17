@@ -35,6 +35,10 @@ public class ExpenseController {
     @GetMapping("/{id}")
     public ResponseEntity<ExpenseDTO> findById(@PathVariable  Long id){
         Expense exp = expenseService.findById(id);
+        if (exp == null) {
+            return ResponseEntity.notFound().build();
+        }
+
         ExpenseDTO dto = mapper.map(exp, ExpenseDTO.class);
         return ResponseEntity.ok(dto);
     }

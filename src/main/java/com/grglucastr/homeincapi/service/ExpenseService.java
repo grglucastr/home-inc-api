@@ -5,7 +5,6 @@ import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.repository.ExpenseRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -28,18 +27,18 @@ public class ExpenseService {
 
     public List<Expense> findAll(){
         return expenseRepository
-                .findAll()
+                .findAllByIsActiveTrue()
                 .stream()
                 .sorted(Comparator.comparingLong(exp -> exp.getId()))
                 .collect(Collectors.toList());
     }
 
     public Expense findById(Long id){
-        Optional<Expense> exp =  expenseRepository.findById(id);
+        Optional<Expense> exp =  expenseRepository.findByIdAndIsActiveTrue(id);
         if(exp.isPresent() && exp.get().getIsActive()){
             return exp.get();
         }
-        throw new EmptyResultDataAccessException(0);
+        return null;
     }
 
     public Expense create(ExpenseDTO dto){
