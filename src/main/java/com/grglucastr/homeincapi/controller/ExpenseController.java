@@ -28,9 +28,13 @@ public class ExpenseController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Expense> findAll(){
+    public List<Expense> findAll(@RequestParam(name = "paid", required = false) boolean paid){
+        if(paid){
+            return expenseService.findAllPaid();
+        }
         return expenseService.findAll();
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<ExpenseDTO> findById(@PathVariable  Long id){

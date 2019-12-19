@@ -27,11 +27,13 @@ public class ExpenseService {
 
     public List<Expense> findAll(){
         return expenseRepository
-                .findAllByIsActiveTrue()
-                .stream()
-                .sorted(Comparator.comparingLong(exp -> exp.getId()))
-                .collect(Collectors.toList());
+                .findAllByIsActiveTrueOrderByIdAsc();
     }
+
+    public List<Expense> findAllPaid(){
+        return expenseRepository.findAllByIsActiveTrueAndPaidTrueOrderByIdAsc();
+    }
+
 
     public Expense findById(Long id){
         Optional<Expense> exp =  expenseRepository.findByIdAndIsActiveTrue(id);

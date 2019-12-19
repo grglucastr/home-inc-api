@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
-    List<Expense> findAllByIsActiveTrue();
+    List<Expense> findAllByIsActiveTrueOrderByIdAsc();
+    List<Expense> findAllByIsActiveTrueAndPaidTrueOrderByIdAsc();
+
     Optional<Expense> findByIdAndIsActiveTrue(Long id);
 }
