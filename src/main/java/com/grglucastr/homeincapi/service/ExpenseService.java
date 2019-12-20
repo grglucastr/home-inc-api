@@ -26,8 +26,7 @@ public class ExpenseService {
     }
 
     public List<Expense> findAll(boolean active, boolean paid, LocalDate start, LocalDate end){
-        return expenseRepository
-                .findAllByIsActiveTrueOrderByIdAsc();
+        return expenseRepository.findAll(active, paid, start, end);
     }
 
     public List<Expense> findAllPaid(){

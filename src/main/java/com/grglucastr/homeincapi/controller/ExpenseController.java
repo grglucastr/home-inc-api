@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/expenses")
@@ -32,19 +34,26 @@ public class ExpenseController {
     public List<Expense> findAll(
             @RequestParam(name = "active", required=false) boolean active,
             @RequestParam(name = "paid", required = false) boolean paid,
-            @RequestParam(name = "start", required = false) LocalDate start,
-            @RequestParam(name = "end", required = false)   LocalDate end)
+            @RequestParam(name = "start", required = false) String start,
+            @RequestParam(name = "end", required = false)   String end)
     {
 
-        if(start == null){
-            start = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), 01);
+        LocalDate startDate;
+        LocalDate endDate;
+
+        if(start == null || start.isEmpty() || start.isBlank()){
+            startDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), 1);
+        }else{
+            startDate = parseStringToLocalDate(start);
         }
 
-        if(end == null){
-            end = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), LocalDate.now().lengthOfMonth());
+        if(end == null || end.isEmpty() || end.isBlank()){
+            endDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), LocalDate.now().lengthOfMonth());
+        }else{
+            endDate = parseStringToLocalDate(end);
         }
 
-        return expenseService.findAll(active, paid, start, end);
+        return expenseService.findAll(active, paid, startDate, endDate);
     }
 
 
@@ -81,5 +90,10 @@ public class ExpenseController {
       Expense exp = expenseService.update(id, dto);
       ExpenseDTO expDTO = mapper.map(exp, ExpenseDTO.class);
       return ResponseEntity.ok(expDTO);
+    }
+
+    public LocalDate parseStringToLocalDate(String str){
+        int[] parts = Arrays.stream(str.split("-")).mapToInt(Integer::parseInt).toArray();
+        return LocalDate.of(parts[0], parts[1], parts[2]);
     }
 }
