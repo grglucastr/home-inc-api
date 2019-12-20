@@ -10,8 +10,8 @@ import java.util.Optional;
 
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
-    //@Query("SELECT e FROM Expense e ")
-    //List<Expense> findAllExpeses(LocalDate start, LocalDate end, boolean active, boolean paid);
+    @Query("SELECT e FROM expense e WHERE e.isActive= :active AND e.paid=:paid AND (e.dueDate BETWEEN :start AND :end)")
+    List<Expense> findAll(boolean active, boolean paid, LocalDate start, LocalDate end );
 
     List<Expense> findAllByIsActiveTrueOrderByIdAsc();
     List<Expense> findAllByIsActiveTrueAndPaidTrueOrderByIdAsc();
