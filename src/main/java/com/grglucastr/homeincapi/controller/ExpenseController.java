@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -28,11 +29,22 @@ public class ExpenseController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Expense> findAll(@RequestParam(name = "paid", required = false) boolean paid){
-        if(paid){
-            return expenseService.findAllPaid();
+    public List<Expense> findAll(
+            @RequestParam(name = "active", required=false) boolean active,
+            @RequestParam(name = "paid", required = false) boolean paid,
+            @RequestParam(name = "start", required = false) LocalDate start,
+            @RequestParam(name = "end", required = false)   LocalDate end)
+    {
+
+        if(start == null){
+            start = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), 01);
         }
-        return expenseService.findAll();
+
+        if(end == null){
+            end = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), LocalDate.now().lengthOfMonth());
+        }
+
+        return expenseService.findAll(active, paid, start, end);
     }
 
 
