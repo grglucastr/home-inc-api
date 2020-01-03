@@ -33,27 +33,9 @@ public class ExpenseController {
     @ResponseStatus(HttpStatus.OK)
     public List<Expense> findAll(
             @RequestParam(name = "active", required=false) boolean active,
-            @RequestParam(name = "paid", required = false) boolean paid,
-            @RequestParam(name = "start", required = false) String start,
-            @RequestParam(name = "end", required = false)   String end)
-    {
+            @RequestParam(name = "paid", required = false) boolean paid) {
 
-        LocalDate startDate;
-        LocalDate endDate;
-
-        if(start == null || start.isEmpty() || start.isBlank()){
-            startDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), 1);
-        }else{
-            startDate = parseStringToLocalDate(start);
-        }
-
-        if(end == null || end.isEmpty() || end.isBlank()){
-            endDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), LocalDate.now().lengthOfMonth());
-        }else{
-            endDate = parseStringToLocalDate(end);
-        }
-
-        return expenseService.findAll(active, paid, startDate, endDate);
+        return expenseService.findAll(active, paid);
     }
 
 

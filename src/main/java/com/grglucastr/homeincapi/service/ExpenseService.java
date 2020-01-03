@@ -25,8 +25,8 @@ public class ExpenseService {
         this.mapper = mapper;
     }
 
-    public List<Expense> findAll(boolean active, boolean paid, LocalDate start, LocalDate end){
-        return expenseRepository.findAll(active, paid, start, end);
+    public List<Expense> findAll(boolean active, boolean paid){
+        return expenseRepository.findAll(active, paid);
     }
 
     public List<Expense> findAllPaid(){
