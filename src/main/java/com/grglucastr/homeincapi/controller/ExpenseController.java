@@ -9,11 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/expenses")
@@ -74,8 +70,4 @@ public class ExpenseController {
       return ResponseEntity.ok(expDTO);
     }
 
-    public LocalDate parseStringToLocalDate(String str){
-        int[] parts = Arrays.stream(str.split("-")).mapToInt(Integer::parseInt).toArray();
-        return LocalDate.of(parts[0], parts[1], parts[2]);
-    }
 }
