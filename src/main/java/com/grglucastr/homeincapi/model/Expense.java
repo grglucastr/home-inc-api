@@ -62,6 +62,14 @@ public class Expense implements Serializable {
 
     private LocalDate updateDate;
 
+    public Expense() {
+    }
+
+    public Expense(Long id, @Length(min = 3, max = 80) String title) {
+        this.id = id;
+        this.title = title;
+    }
+
     public void setPaid(Boolean paid) {
         if(paid){
             this.setPaidDate(LocalDate.now());

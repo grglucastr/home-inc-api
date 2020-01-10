@@ -32,6 +32,16 @@ public class ExpenseDTO implements Serializable {
     private LocalDate updateDate;
     private ExpenseTypeDTO expenseType;
 
+    public ExpenseDTO() {
+    }
+
+    public ExpenseDTO(String title, String description, BigDecimal cost, LocalDate dueDate) {
+        this.title = title;
+        this.description = description;
+        this.cost = cost;
+        this.dueDate = dueDate;
+    }
+
     public String getServicePeriodStart() {
         if(servicePeriodStart == null){
             return "";
