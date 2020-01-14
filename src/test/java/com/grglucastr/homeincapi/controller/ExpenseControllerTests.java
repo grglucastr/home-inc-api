@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
@@ -26,13 +27,11 @@ public class ExpenseControllerTests {
 
     private ExpenseService expenseService;
     private ModelMapper mapper;
-    private ExpenseController expenseController;
 
     @Before
     public void init(){
         expenseService = mock(ExpenseService.class);
         mapper = new ModelMapper();
-        expenseController = new ExpenseController(expenseService, mapper);
     }
 
     @Test
@@ -68,8 +67,11 @@ public class ExpenseControllerTests {
 
     @Test
     public void createShouldAddNewExpenseWhenReceiveExpenseDTO(){
-
-        ExpenseDTO dto = new ExpenseDTO("SomeTitle",  "SomeDescription", new BigDecimal(123), LocalDate.now());
+        ExpenseDTO dto = new ExpenseDTO(
+                "SomeTitle",
+                "SomeDescription",
+                new BigDecimal(720.00),
+                LocalDate.now());
 
         Expense exp = mapper.map(dto, Expense.class);
         exp.setId(123L);
@@ -78,6 +80,7 @@ public class ExpenseControllerTests {
 
         Expense obj = expenseService.create(dto);
         assertNotNull(obj.getId());
+        assertEquals(new BigDecimal("720"), obj.getCost());
     }
 
     @Test

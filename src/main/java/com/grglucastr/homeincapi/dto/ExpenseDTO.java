@@ -41,18 +41,4 @@ public class ExpenseDTO implements Serializable {
         this.cost = cost;
         this.dueDate = dueDate;
     }
-
-    public String getServicePeriodStart() {
-        if(servicePeriodStart == null){
-            return "";
-        }
-        return servicePeriodStart.toString();
-    }
-
-    public String getServicePeriodEnd() {
-        if(servicePeriodEnd == null){
-            return "";
-        }
-        return servicePeriodEnd.toString();
-    }
 }

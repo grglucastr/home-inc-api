@@ -2,7 +2,6 @@ package com.grglucastr.homeincapi.model;
 
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
