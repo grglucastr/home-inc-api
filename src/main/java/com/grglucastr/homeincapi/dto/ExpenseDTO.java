@@ -1,5 +1,6 @@
 package com.grglucastr.homeincapi.dto;
 
+import com.grglucastr.homeincapi.model.Periodicity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +24,7 @@ public class ExpenseDTO implements Serializable {
     private boolean paid;
     private LocalDate dueDate;
     private LocalDate invoiceDate;
-    private String periodicity;
+    private Periodicity periodicity;
     private String paymentMethod;
     private LocalDate paidDate;
     private LocalDate servicePeriodStart;
