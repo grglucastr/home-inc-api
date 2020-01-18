@@ -5,13 +5,13 @@ import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.repository.ExpenseRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ExpenseService {
@@ -25,8 +25,10 @@ public class ExpenseService {
         this.mapper = mapper;
     }
 
-    public List<Expense> findAll(boolean active, boolean paid){
-        return expenseRepository.findAll(active, paid);
+    public Page<Expense> findAll(boolean active, boolean paid, int page, int size){
+
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return expenseRepository.findAll(active, paid, pageRequest);
     }
 
     public List<Expense> findAllPaid(){
@@ -62,13 +64,4 @@ public class ExpenseService {
         }
         return expenseRepository.save(exp);
     }
-
-
-
-
-
-
-
-
-
 }

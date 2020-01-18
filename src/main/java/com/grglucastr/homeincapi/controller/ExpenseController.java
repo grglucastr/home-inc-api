@@ -6,10 +6,10 @@ import com.grglucastr.homeincapi.service.ExpenseService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @RequestMapping("/expenses")
@@ -27,11 +27,13 @@ public class ExpenseController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Expense> findAll(
+    public Page<Expense> findAll(
             @RequestParam(name = "active", required=false) boolean active,
-            @RequestParam(name = "paid", required = false) boolean paid) {
+            @RequestParam(name = "paid", required = false) boolean paid,
+            @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
 
-        return expenseService.findAll(active, paid);
+        return expenseService.findAll(active, paid, page, size);
     }
 
 
