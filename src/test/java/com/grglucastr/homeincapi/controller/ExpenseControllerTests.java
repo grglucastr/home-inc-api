@@ -10,9 +10,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,27 +29,31 @@ import static org.mockito.Mockito.*;
 public class ExpenseControllerTests {
 
     private ExpenseService expenseService;
+    private Page<Expense> expensePage;
     private ModelMapper mapper;
 
     @Before
     public void init(){
         expenseService = mock(ExpenseService.class);
+        expensePage = mock(Page.class);
         mapper = new ModelMapper();
     }
 
-    //@Test
-    public void findAllShouldReturnAListOfExpense(){
-        /*List<Expense> returnList = Arrays.asList(new Expense(), new Expense(), new Expense());
+    @Test
+    public void findAllShouldReturnAPageOfExpense(){
+
+        List<Expense> expenses = Arrays.asList(new Expense(), new Expense(), new Expense());
+        Page<Expense> pageResponse = new PageImpl<>(expenses);
 
         boolean active = true;
-        boolean paid=false;
+        boolean paid = false;
+        int page = 0;
+        int size = 10;
 
-        when(expenseService.findAll(active, paid)).thenReturn(returnList);
+        when(expenseService.findAll(active, paid, page, size)).thenReturn(pageResponse);
+        expensePage = expenseService.findAll(active, paid, page, size);
 
-        List<Expense> lst = expenseService.findAll(active, paid);
-        assertThat(lst, hasSize(3));
-        */
-
+        assertEquals(3L, expensePage.getTotalElements());
     }
 
     @Test
