@@ -1,4 +1,4 @@
-package com.grglucastr.homeincapi.controller;
+package com.grglucastr.homeincapi.service;
 
 
 import com.grglucastr.homeincapi.dto.ExpenseDTO;
@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ExpenseControllerTests {
+public class ExpenseServiceTests {
 
     private ExpenseService expenseService;
     private Page<Expense> expensePage;
