@@ -3,7 +3,6 @@ package com.grglucastr.homeincapi.service;
 
 import com.grglucastr.homeincapi.dto.ExpenseDTO;
 import com.grglucastr.homeincapi.model.Expense;
-import com.grglucastr.homeincapi.service.ExpenseService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,14 +14,10 @@ import org.springframework.data.domain.PageImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
-import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
