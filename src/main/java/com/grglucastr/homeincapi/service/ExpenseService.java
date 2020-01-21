@@ -58,6 +58,11 @@ public class ExpenseService {
 
     public Expense update(Long id, ExpenseDTO expenseDTO){
         Expense found = findById(id);
+
+        if(found == null){
+            return null;
+        }
+
         Expense exp = mapper.map(expenseDTO, Expense.class);
         if(!found.isPaid() && exp.isPaid()){
             exp.setPaidDate(LocalDate.now());

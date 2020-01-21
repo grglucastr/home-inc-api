@@ -68,6 +68,11 @@ public class ExpenseController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ExpenseDTO> update(@PathVariable  Long id, @RequestBody ExpenseDTO dto){
       Expense exp = expenseService.update(id, dto);
+
+      if (exp == null) {
+          return ResponseEntity.notFound().build();
+      }
+
       ExpenseDTO expDTO = mapper.map(exp, ExpenseDTO.class);
       return ResponseEntity.ok(expDTO);
     }
