@@ -6,8 +6,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertTrue;
 
-@RunWith(MockitoJUnitRunner.class)
-class HomeIncApiApplicationTests {
+public class HomeIncApiApplicationTests {
 
     @Test
     public void testPass(){
