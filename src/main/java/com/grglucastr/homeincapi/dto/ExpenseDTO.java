@@ -37,9 +37,15 @@ public class ExpenseDTO implements Serializable {
     }
 
     public ExpenseDTO(String title, String description, BigDecimal cost, LocalDate dueDate) {
+        this();
         this.title = title;
         this.description = description;
         this.cost = cost;
         this.dueDate = dueDate;
+    }
+
+    public ExpenseDTO(Long id, String title, String description, BigDecimal cost, LocalDate dueDate) {
+        this(title, description, cost, dueDate);
+        this.id = id;
     }
 }

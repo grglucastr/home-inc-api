@@ -52,7 +52,7 @@ public class Expense implements Serializable {
     private ExpenseType expenseType;
 
     @NotNull
-    private Boolean isActive;
+    private Boolean isActive = Boolean.TRUE;
 
     private LocalDate paidDate;
 
@@ -65,8 +65,16 @@ public class Expense implements Serializable {
     }
 
     public Expense(Long id, @Length(min = 3, max = 80) String title) {
+        this();
         this.id = id;
         this.title = title;
+    }
+
+    public Expense(Long id, @Length(min = 3, max = 80) String title, @Length(min = 0, max = 255) String description, @NotNull BigDecimal cost, @NotNull LocalDate dueDate) {
+        this(id, title);
+        this.description = description;
+        this.cost = cost;
+        this.dueDate = dueDate;
     }
 
     public void setPaid(Boolean paid) {
