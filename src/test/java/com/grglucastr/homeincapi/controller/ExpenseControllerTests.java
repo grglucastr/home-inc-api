@@ -1,23 +1,25 @@
 package com.grglucastr.homeincapi.controller;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.junit.Assert.assertTrue;
 
 import com.google.gson.JsonObject;
 import com.grglucastr.homeincapi.dto.ExpenseDTO;
 import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.service.ExpenseService;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 
@@ -31,7 +33,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -53,6 +54,19 @@ public class ExpenseControllerTests {
         mockMvc = MockMvcBuilders.standaloneSetup(new ExpenseController(expenseService, modelMapper)).build();
     }
 
+    @Test
+    public void shouldDisableExpense() throws Exception{
+
+        //Given
+        long id = 123L;
+
+        //When
+        expenseService.delete(id);
+
+        //Then
+        mockMvc.perform(delete("/expenses/123"))
+                .andExpect(status().isNoContent());
+    }
 
     @Test
     public void shouldListActiveAndUnpaidExpenses() throws Exception {
@@ -117,19 +131,6 @@ public class ExpenseControllerTests {
                 .andExpect(jsonPath("$.id", is(1)));
     }
 
-    @Test
-    public void shouldDisableExpense() throws Exception{
-
-        //Given
-        long id = 123L;
-
-        //When
-        expenseService.delete(id);
-
-        //Then
-        mockMvc.perform(delete("/expenses/123"))
-                .andExpect(status().isNoContent());
-    }
 
     @Test
     public void shouldUpdateAttributesOfSingleExpense() throws Exception {
@@ -145,24 +146,33 @@ public class ExpenseControllerTests {
                 LocalDate.of(2020,06,15));
 
         //When
-        when(expenseService.update(ArgumentMatchers.any(Long.class), ArgumentMatchers.any(ExpenseDTO.class))).thenReturn(expense);
+        when(expenseService.update(any(Long.class), any(ExpenseDTO.class))).thenReturn(expense);
 
         //Then
-        String stuff = mockMvc.perform(put("/expenses/100")
+        mockMvc.perform(put("/expenses/100")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")
                 .param("id","100")
                 .content(expJson.toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andReturn()
-                .getResponse().getContentAsString(StandardCharsets.UTF_8);
-
+                .andExpect(jsonPath("$.cost", is(4520.36)))
+                .andExpect(jsonPath("$.dueDate[0]", is(2020)))
+                .andExpect(jsonPath("$.dueDate[1]", is(06)))
+                .andExpect(jsonPath("$.dueDate[2]", is(15)));
     }
 
     @Test
     public void shouldThrowsNotFoundExceptionWhenTryToUpdateExpense() throws Exception {
-        assertTrue(false);
+
+
+        mockMvc.perform(put("expenses/10000")
+                .param("id", "10000")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .content(""))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
 
