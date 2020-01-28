@@ -15,7 +15,7 @@
 	<description>API for Home.inc project. Home.inc is a simple domestic management app where you can have an overview of your home expenses.</description>
 
 	<properties>
-		<java.version>11</java.version>
+		<java.version>8</java.version>
 	</properties>
 
 	<dependencies>
