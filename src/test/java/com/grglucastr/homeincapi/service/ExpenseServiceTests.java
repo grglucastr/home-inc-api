@@ -1,11 +1,9 @@
 package com.grglucastr.homeincapi.service;
 
-
 import com.grglucastr.homeincapi.dto.ExpenseDTO;
 import com.grglucastr.homeincapi.model.Expense;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
