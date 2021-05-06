@@ -1,6 +1,8 @@
 package com.grglucastr.homeincapi.model;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -46,10 +48,6 @@ public class Expense implements Serializable {
 
     @Enumerated(value = EnumType.STRING)
     private PaymentMethod paymentMethod;
-
-    @ManyToOne
-    @JoinColumn(name = "expense_type_id")
-    private ExpenseType expenseType;
 
     @NotNull
     private Boolean isActive = Boolean.TRUE;
