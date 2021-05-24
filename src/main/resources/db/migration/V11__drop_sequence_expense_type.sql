@@ -1,0 +1,1 @@
+DROP SEQUENCE public.se_expense_type;

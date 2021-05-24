@@ -1,0 +1,131 @@
+openapi: 3.0.3
+info:
+  title: Home Inc API
+  version: '1.0'
+paths:
+  /v2/expenses:
+    get:
+      summary: List all expenses
+      operationId: getExpenses
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            $ref: "#/components/schemas/ExpenseFilter"
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: Lists all expenses found according to query filter criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ExpenseResponse"
+
+    post:
+      summary: Add new expense registry
+      operationId: postExpenses
+      tags:
+        - Expenses
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExpenseRequest"
+      responses:
+        '201':
+          description: Lists all expenses found according to query filter criteria
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExpenseResponse"
+
+components:
+  schemas:
+    ExpenseFilter:
+      description: Filter object for expenses
+      type: object
+      properties:
+        paid:
+          type: boolean
+        active:
+          type: boolean
+          default: true
+        dueDateStart:
+          type: string
+          format: date
+        dueDateEnd:
+          type: string
+          format: date
+        periodicty:
+          type: string
+          example: monthly
+        paymentMethod:
+          type: string
+          example: bank transfer
+    ExpenseRequest:
+      description: Request object to add a new expense registry
+      type: object
+      properties:
+        title:
+          type: string
+          example: COPEL - April 2020
+        description:
+          type: string
+          example: Electricity billl reference to the month of April
+        cost:
+          type: number
+          minimum: 0.0
+          maximum: 67.99
+        dueDate:
+          type: string
+          format: "date"
+          example: "2020-04-30"
+        paid:
+          type: boolean
+          default: false
+        invoiceDate:
+          type: string
+          example: "2020-04-25"
+        servicePeriodStart:
+          type: string
+          format: "date"
+          example: "2020-03-25"
+        servicePeriodEnd:
+          type: string
+          format: "date"
+          example: "2020-04-25"
+        periodicity:
+          type: string
+          enum: ["daily", "weekly", "monthly", "yearly"]
+          example: "monthly"
+        paymentMethod:
+          type: string
+          enum: ["cash", "debit card", "credit card", "ticket", "bank transfer"]
+          example: "bank transfer"
+    ExpenseResponse:
+      description: Response object on listing all expenses
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/ExpenseRequest"
+      properties:
+        id:
+          type: integer
+        isActive:
+          type: boolean
+          description: True if the expense is deleted
+        paidDate:
+          type: string
+          format: "date"
+          example: "2020-04-30"
+        insertDateTime:
+          type: string
+          format: "date-time"
+          example: "2020-04-26 08:20:15"
+        updateDateTime:
+          type: string
+          format: "date-time"
+          example: "2020-04-30 12:33:29"

@@ -1,0 +1,1 @@
+ALTER TABLE expense alter COLUMN cost TYPE NUMERIC(10,2);
