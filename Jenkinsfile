@@ -4,6 +4,7 @@ pipeline {
     tools {
         jdk 'openjdk-11'
         maven 'maven3'
+        npm 'nodejs16'
     }
 
     environment {
@@ -39,6 +40,12 @@ pipeline {
         stage('Code test') {
             steps {
                 sh 'mvn test'
+            }
+        }
+
+        stage('Print npm version') {
+            steps {
+                sh 'npm --version'
             }
         }
     }
