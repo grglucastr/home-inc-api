@@ -4,11 +4,13 @@ pipeline {
     tools {
         jdk 'openjdk-11'
         maven 'maven3'
-        npm 'nodejs16'
     }
 
     environment {
         APP_NAME="home-inc-api"
+        NODEJS_HOME = "${tool 'nodejs16'}"
+        PATH="${env.NODEJS_HOME}/bin:${env.PATH}"
+        ZIP_FILE_NAME="publish.zip"
     }
 
     stages {
@@ -20,6 +22,7 @@ pipeline {
                 """
             }
         }
+
 
         stage('Checkout code') {
             steps {
@@ -43,9 +46,22 @@ pipeline {
             }
         }
 
-        stage('Print npm version') {
+        stage('Generate API documentation') {
             steps {
-                sh 'npm --version'
+                sh 'npx redoc-cli bundle -o api.html ./src/main/resources/openapi.yaml'
+            }
+        }
+
+        stage('Compress documentation') {
+            steps {
+                zip zipFile: "${env.ZIP_FILE_NAME}", overwrite:true, archive:false, glob: '*.html'
+            }
+        }
+
+        stage('Publish documentation') {
+            steps {
+                sh 'echo ---- deploy somewhere else ----'
+                archiveArtifacts artifacts: "${env.ZIP_FILE_NAME}"
             }
         }
     }
