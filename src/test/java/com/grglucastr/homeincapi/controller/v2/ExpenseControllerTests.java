@@ -4,6 +4,7 @@ import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.model.PaymentMethod;
 import com.grglucastr.homeincapi.model.Periodicity;
 import com.grglucastr.homeincapi.service.v2.ExpenseService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.io.InputStream;
@@ -19,9 +21,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -87,11 +91,45 @@ public class ExpenseControllerTests {
                 .andExpect(jsonPath("$.cost", is(33.23)));
     }
 
+    @Test
+    public void testPayExpense() throws Exception {
+
+        final Expense expense = createSingleExpenseObject();
+
+        when(expenseService.findById(anyLong())).thenReturn(Optional.of(expense));
+
+        Assert.assertFalse(expense.isPaid());
+        Assert.assertNull(expense.getPaidDate());
+
+        when(expenseService.save(any())).thenReturn(expense);
+
+        mockMvc.perform(post("/v2/expenses/{expenseId}/pay", 1L)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.paid", is(true)))
+                .andExpect(jsonPath("$.paidDate[0]", is(LocalDate.now().getYear())))
+                .andExpect(jsonPath("$.paidDate[1]", is(LocalDate.now().getMonthValue())))
+                .andExpect(jsonPath("$.paidDate[2]", is(LocalDate.now().getDayOfMonth())));
+    }
+
+    @Test
+    public void testPayExepenseButExpenseNotFound() throws Exception {
+
+        when(expenseService.findById(2L)).thenReturn(Optional.empty());
+
+        final MockHttpServletRequestBuilder post = post("/v2/expenses/{expenseId}/pay", 2L)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(post).andExpect(status().isNotFound());
+    }
+
 
     private Expense createSingleExpenseObject() {
         Expense expense = new Expense();
         expense.setId(1L);
-        expense.setPaidDate(LocalDate.of(2020,04,30));
         expense.setTitle("COPEL - April 2020");
         expense.setDescription("Electricity billl reference to the month of April");
         expense.setCost(new BigDecimal("33.23"));

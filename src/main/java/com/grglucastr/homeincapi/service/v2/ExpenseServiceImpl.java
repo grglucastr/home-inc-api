@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -29,6 +30,12 @@ public class ExpenseServiceImpl implements ExpenseService{
     public List<Expense> findAll() {
         log.info("Listing all expenses");
         return expenseRepository.findAll();
+    }
+
+    @Override
+    public Optional<Expense> findById(Long expenseId) {
+        log.info("Finding expense with id: {}", expenseId);
+        return expenseRepository.findById(expenseId);
     }
 }
 

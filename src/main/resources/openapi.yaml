@@ -43,7 +43,65 @@ paths:
               schema:
                 $ref: "#/components/schemas/ExpenseResponse"
 
+  /v2/expenses/{expenseId}:
+    get:
+      summary: Query a single expense by its id.
+      operationId: getExpenseById
+      parameters:
+        - $ref: "#/components/parameters/expenseId"
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: Retuns a JSON object of a single expense.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExpenseResponse"
+        '404':
+          description: Expense not found
+
+  /v2/expenses/{expenseId}/pay:
+    post:
+      summary: Mark expense as paid.
+      operationId: payExpense
+      parameters:
+        - $ref: "#/components/parameters/expenseId"
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: Response of a paid expense.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExpenseResponse"
+
+  /v2/expenses/{expenseId}/invalidate:
+    delete:
+      summary: Logical delete of an expense.
+      operationId: invalidateExpense
+      parameters:
+        - $ref: "#/components/parameters/expenseId"
+      tags:
+        - Expenses
+      responses:
+        '204':
+          description: No content.
+        '404':
+          description: Expense not found.
+
 components:
+  parameters:
+    expenseId:
+      in: path
+      name: expenseId
+      required: true
+      description: The id number of the expense.
+      schema:
+        type: integer
+        minimum: 1
+        format: int64
   schemas:
     ExpenseFilter:
       description: Filter object for expenses
