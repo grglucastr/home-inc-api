@@ -28,8 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -173,6 +172,29 @@ public class ExpenseControllerTests {
                 .contentType(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(get).andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testInvalidateExpenseButNotFound() throws Exception {
+
+        when(expenseService.findById(2L)).thenReturn(Optional.empty());
+
+        final MockHttpServletRequestBuilder get = get("/v2/expenses/{expenseId}", 2L)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(get).andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testInvalidateExpense() throws Exception {
+        final Expense expense = createSingleExpenseObject();
+        when(expenseService.findById(1L)).thenReturn(Optional.of(expense));
+
+        Assert.assertTrue(expense.getIsActive());
+
+        mockMvc.perform(delete("/v2/expenses/{expenseId}/invalidate", 1L))
+                .andExpect(status().isNoContent());
+
     }
 
 

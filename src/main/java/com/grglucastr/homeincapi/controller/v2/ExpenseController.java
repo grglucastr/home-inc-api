@@ -71,6 +71,19 @@ public class ExpenseController implements ExpensesApi {
         return ResponseEntity.ok(response);
     }
 
+    @Override
+    public ResponseEntity<Void> invalidateExpense(Long expenseId) {
+        final Optional<Expense> optExpense = expenseService.findById(expenseId);
+        if (optExpense.isEmpty())
+            return ResponseEntity.notFound().build();
+
+        final Expense expense = optExpense.get();
+        expense.setIsActive(false);
+        expenseService.save(expense);
+
+        return ResponseEntity.noContent().build();
+    }
+
     private ResponseEntity<ExpenseResponse> payExpense(Expense expense){
         expense.setPaid(true);
         expense.setPaidDate(LocalDate.now());
