@@ -126,6 +126,56 @@ public class ExpenseControllerTests {
         mockMvc.perform(post).andExpect(status().isNotFound());
     }
 
+    @Test
+    public void testGetExpenseById() throws Exception {
+        final Expense expense = createSingleExpenseObject();
+        expense.setPaidDate(LocalDate.now());
+        expense.setPaid(true);
+
+        when(expenseService.findById(1L)).thenReturn(Optional.of(expense));
+
+        final MockHttpServletRequestBuilder get = get("/v2/expenses/{expenseId}", 1L)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(get)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.isActive", is(true)))
+                .andExpect(jsonPath("$.paidDate[0]", is(LocalDate.now().getYear())))
+                .andExpect(jsonPath("$.paidDate[1]", is(LocalDate.now().getMonthValue())))
+                .andExpect(jsonPath("$.paidDate[2]", is(LocalDate.now().getDayOfMonth())))
+                .andExpect(jsonPath("$.title", is("COPEL - April 2020")))
+                .andExpect(jsonPath("$.description", is("Electricity billl reference to the month of April")))
+                .andExpect(jsonPath("$.cost", is(33.23)))
+                .andExpect(jsonPath("$.dueDate[0]", is(2020)))
+                .andExpect(jsonPath("$.dueDate[1]", is(4)))
+                .andExpect(jsonPath("$.dueDate[2]", is(30)))
+                .andExpect(jsonPath("$.paid", is(true)))
+                .andExpect(jsonPath("$.invoiceDate[0]", is(2020)))
+                .andExpect(jsonPath("$.invoiceDate[1]", is(4)))
+                .andExpect(jsonPath("$.invoiceDate[2]", is(25)))
+                .andExpect(jsonPath("$.servicePeriodStart[0]", is(2020)))
+                .andExpect(jsonPath("$.servicePeriodStart[1]", is(3)))
+                .andExpect(jsonPath("$.servicePeriodStart[2]", is(25)))
+                .andExpect(jsonPath("$.servicePeriodEnd[0]", is(2020)))
+                .andExpect(jsonPath("$.servicePeriodEnd[1]", is(4)))
+                .andExpect(jsonPath("$.servicePeriodEnd[2]", is(25)))
+                .andExpect(jsonPath("$.periodicity", is(Periodicity.MONTHLY.toString().toLowerCase())))
+                .andExpect(jsonPath("$.paymentMethod", is(PaymentMethod.BANK_TRANSFER.toString().toLowerCase())));
+    }
+
+    @Test
+    public void testGetExpenseByIdButNotFound() throws Exception {
+        when(expenseService.findById(2L)).thenReturn(Optional.empty());
+
+        final MockHttpServletRequestBuilder get = get("/v2/expenses/{expenseId}", 2L)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(get).andExpect(status().isNotFound());
+    }
+
+
 
     private Expense createSingleExpenseObject() {
         Expense expense = new Expense();

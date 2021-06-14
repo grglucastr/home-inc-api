@@ -147,6 +147,7 @@ components:
           default: false
         invoiceDate:
           type: string
+          format: "date"
           example: "2020-04-25"
         servicePeriodStart:
           type: string
