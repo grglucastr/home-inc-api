@@ -45,7 +45,7 @@ public class ExpenseServiceImpl implements ExpenseService{
     }
 
     @Override
-    public List<Expense> findByMonthAndPaidValue(int month, boolean paid) {
+    public List<Expense> findByMonthAndPaid(int month, boolean paid) {
         log.info("Fetching all expenses for the month={} and paid={}", month, paid);
         return expenseRepository.findByMonthNumberAndPaid(month, paid);
     }

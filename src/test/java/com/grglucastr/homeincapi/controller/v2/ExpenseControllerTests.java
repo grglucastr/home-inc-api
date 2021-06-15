@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -114,7 +115,7 @@ public class ExpenseControllerTests {
     }
 
     @Test
-    public void testPayExepenseButExpenseNotFound() throws Exception {
+    public void testPayExpenseButExpenseNotFound() throws Exception {
 
         when(expenseService.findById(2L)).thenReturn(Optional.empty());
 
@@ -232,6 +233,92 @@ public class ExpenseControllerTests {
                 .andExpect(jsonPath("$.totalToPay", is(2000.49)));
     }
 
+    @Test
+    public void testMonthlySummaryOnlyPaidOnes() throws Exception {
+        final Expense exp1 = createSingleExpenseObject();
+        exp1.setPaidDate(LocalDate.of(2020, 4, 30));
+        exp1.setPaid(true);
+
+        final Expense exp2 = createSingleExpenseObject();
+        exp2.setId(2L);
+        exp2.setCost(new BigDecimal("19.78"));
+        exp1.setPaidDate(LocalDate.of(2020, 4, 30));
+        exp2.setPaid(true);
+
+        final Expense exp3 = createSingleExpenseObject();
+        exp3.setId(3L);
+        exp3.setCost(new BigDecimal("999.99"));
+
+        final Expense exp4 = createSingleExpenseObject();
+        exp4.setId(4L);
+        exp4.setCost(new BigDecimal("1000.50"));
+
+        when(expenseService.findByMonthAndPaid(4, true)).thenReturn(Arrays.asList(exp1, exp2));
+
+        mockMvc.perform(get("/v2/expenses/{monthNo}/summary?paid=true", 4)
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.monthlyProgress", is("100%")))
+                .andExpect(jsonPath("$.min.value", is(19.78)))
+                .andExpect(jsonPath("$.min.expense.id", is(2)))
+                .andExpect(jsonPath("$.max.value", is(33.23)))
+                .andExpect(jsonPath("$.max.expense.id", is(1)))
+                .andExpect(jsonPath("$.total", is(53.01)))
+                .andExpect(jsonPath("$.totalPaid", is(53.01)))
+                .andExpect(jsonPath("$.totalToPay", is(0)));
+    }
+
+    @Test
+    public void testMonthlySummaryOnlyToPayOnes() throws Exception {
+        final Expense exp1 = createSingleExpenseObject();
+        exp1.setPaidDate(LocalDate.of(2020, 4, 30));
+        exp1.setPaid(true);
+
+        final Expense exp2 = createSingleExpenseObject();
+        exp2.setId(2L);
+        exp2.setCost(new BigDecimal("19.78"));
+        exp1.setPaidDate(LocalDate.of(2020, 4, 30));
+        exp2.setPaid(true);
+
+        final Expense exp3 = createSingleExpenseObject();
+        exp3.setId(3L);
+        exp3.setCost(new BigDecimal("999.99"));
+
+        final Expense exp4 = createSingleExpenseObject();
+        exp4.setId(4L);
+        exp4.setCost(new BigDecimal("1000.50"));
+
+        when(expenseService.findByMonthAndPaid(4, false)).thenReturn(Arrays.asList(exp3, exp4));
+
+        mockMvc.perform(get("/v2/expenses/{monthNo}/summary?paid=false", 4)
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.monthlyProgress", is("100%")))
+                .andExpect(jsonPath("$.min.value", is(999.99)))
+                .andExpect(jsonPath("$.min.expense.id", is(3)))
+                .andExpect(jsonPath("$.max.value", is(1000.50)))
+                .andExpect(jsonPath("$.max.expense.id", is(4)))
+                .andExpect(jsonPath("$.total", is(2000.49)))
+                .andExpect(jsonPath("$.totalPaid", is(0)))
+                .andExpect(jsonPath("$.totalToPay", is(2000.49)));
+    }
+
+    @Test
+    public void testMonthlySummaryWithNoExpensesAndMonthProgressIsZero() throws Exception {
+        int nextMonth = LocalDate.now().plusMonths(4).getMonthValue();
+        when(expenseService.findByMonth(nextMonth)).thenReturn(new ArrayList<>());
+
+        mockMvc.perform(get("/v2/expenses/{monthNo}/summary", nextMonth)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.monthlyProgress", is("0%")))
+                .andExpect(jsonPath("$.total", is(0)))
+                .andExpect(jsonPath("$.totalPaid", is(0)))
+                .andExpect(jsonPath("$.totalToPay", is(0)))
+                .andExpect(jsonPath("$.min").doesNotExist())
+                .andExpect(jsonPath("$.max").doesNotExist());
+    }
 
 
     private Expense createSingleExpenseObject() {

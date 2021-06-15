@@ -15,5 +15,5 @@ public interface ExpenseService {
 
     List<Expense> findByMonth(int month);
 
-    List<Expense> findByMonthAndPaidValue(int month, boolean paid);
+    List<Expense> findByMonthAndPaid(int month, boolean paid);
 }

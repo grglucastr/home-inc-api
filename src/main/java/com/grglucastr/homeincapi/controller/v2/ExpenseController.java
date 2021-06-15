@@ -95,7 +95,7 @@ public class ExpenseController implements ExpensesApi {
 
         List<Expense> expenses;
         if(Optional.ofNullable(paid).isPresent()){
-            expenses = expenseService.findByMonthAndPaidValue(monthNo, paid);
+            expenses = expenseService.findByMonthAndPaid(monthNo, paid);
             final ExpenseMonthlySummaryResponse summaryResponse = generateSummaryReport(expenses, monthNo);
             return ResponseEntity.ok(summaryResponse);
         }
@@ -106,6 +106,17 @@ public class ExpenseController implements ExpensesApi {
     }
 
     private ExpenseMonthlySummaryResponse generateSummaryReport(List<Expense> expenses, int monthNo) {
+
+        final String monthlyProgress = getMonthlyProgress(monthNo);
+        final ExpenseMonthlySummaryResponse summaryResponse = new ExpenseMonthlySummaryResponse();
+        summaryResponse.setMonthlyProgress(monthlyProgress);
+        summaryResponse.setTotal(BigDecimal.ZERO);
+        summaryResponse.setTotalPaid(BigDecimal.ZERO);
+        summaryResponse.setTotalToPay(BigDecimal.ZERO);
+
+        if(expenses.isEmpty())
+            return summaryResponse;
+
 
         final Comparator<Expense> byCostComparing = Comparator.comparing(Expense::getCost);
         final Predicate<Expense> isPaid = Expense::isPaid;
@@ -127,8 +138,6 @@ public class ExpenseController implements ExpensesApi {
                 .map(Expense::getCost)
                 .reduce(BigDecimal::add);
 
-        final String monthlyProgress = getMonthlyProgress(monthNo);
-
         final ExpenseMonthlySummaryResponseMax resMax = new ExpenseMonthlySummaryResponseMax();
         resMax.setValue(BigDecimal.ZERO);
         resMax.setExpense(null);
@@ -149,7 +158,6 @@ public class ExpenseController implements ExpensesApi {
             resMin.setValue(expRes.getCost());
         }
 
-        final ExpenseMonthlySummaryResponse summaryResponse = new ExpenseMonthlySummaryResponse();
         summaryResponse.setMax(resMax);
         summaryResponse.setMin(resMin);
         summaryResponse.setMonthlyProgress(monthlyProgress);
