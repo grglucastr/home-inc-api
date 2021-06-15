@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -109,14 +110,16 @@ public class ExpenseController implements ExpensesApi {
 
         final String monthlyProgress = getMonthlyProgress(monthNo);
         final ExpenseMonthlySummaryResponse summaryResponse = new ExpenseMonthlySummaryResponse();
-        summaryResponse.setMonthlyProgress(monthlyProgress);
+
+        summaryResponse.setCount(0);
         summaryResponse.setTotal(BigDecimal.ZERO);
+        summaryResponse.setAverage(BigDecimal.ZERO);
         summaryResponse.setTotalPaid(BigDecimal.ZERO);
         summaryResponse.setTotalToPay(BigDecimal.ZERO);
+        summaryResponse.setMonthlyProgress(monthlyProgress);
 
         if(expenses.isEmpty())
             return summaryResponse;
-
 
         final Comparator<Expense> byCostComparing = Comparator.comparing(Expense::getCost);
         final Predicate<Expense> isPaid = Expense::isPaid;
@@ -158,6 +161,10 @@ public class ExpenseController implements ExpensesApi {
             resMin.setValue(expRes.getCost());
         }
 
+        summaryResponse.setCount(expenses.size());
+        summaryResponse.setAverage(total
+                .map(t -> t.divide(new BigDecimal(expenses.size()), RoundingMode.HALF_UP))
+                .orElse(BigDecimal.ZERO));
         summaryResponse.setMax(resMax);
         summaryResponse.setMin(resMin);
         summaryResponse.setMonthlyProgress(monthlyProgress);

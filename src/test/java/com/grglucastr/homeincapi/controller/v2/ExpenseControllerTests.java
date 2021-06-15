@@ -228,6 +228,8 @@ public class ExpenseControllerTests {
                 .andExpect(jsonPath("$.min.expense.id", is(2)))
                 .andExpect(jsonPath("$.max.value", is(1000.50)))
                 .andExpect(jsonPath("$.max.expense.id", is(4)))
+                .andExpect(jsonPath("$.count", is(4)))
+                .andExpect(jsonPath("$.average", is(513.38)))
                 .andExpect(jsonPath("$.total", is(2053.50)))
                 .andExpect(jsonPath("$.totalPaid", is(53.01)))
                 .andExpect(jsonPath("$.totalToPay", is(2000.49)));
@@ -263,6 +265,8 @@ public class ExpenseControllerTests {
                 .andExpect(jsonPath("$.min.expense.id", is(2)))
                 .andExpect(jsonPath("$.max.value", is(33.23)))
                 .andExpect(jsonPath("$.max.expense.id", is(1)))
+                .andExpect(jsonPath("$.count", is(2)))
+                .andExpect(jsonPath("$.average", is(26.51)))
                 .andExpect(jsonPath("$.total", is(53.01)))
                 .andExpect(jsonPath("$.totalPaid", is(53.01)))
                 .andExpect(jsonPath("$.totalToPay", is(0)));
@@ -298,6 +302,8 @@ public class ExpenseControllerTests {
                 .andExpect(jsonPath("$.min.expense.id", is(3)))
                 .andExpect(jsonPath("$.max.value", is(1000.50)))
                 .andExpect(jsonPath("$.max.expense.id", is(4)))
+                .andExpect(jsonPath("$.count", is(2)))
+                .andExpect(jsonPath("$.average", is(1000.25)))
                 .andExpect(jsonPath("$.total", is(2000.49)))
                 .andExpect(jsonPath("$.totalPaid", is(0)))
                 .andExpect(jsonPath("$.totalToPay", is(2000.49)));
@@ -313,6 +319,8 @@ public class ExpenseControllerTests {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.monthlyProgress", is("0%")))
+                .andExpect(jsonPath("$.count", is(0)))
+                .andExpect(jsonPath("$.average", is(0)))
                 .andExpect(jsonPath("$.total", is(0)))
                 .andExpect(jsonPath("$.totalPaid", is(0)))
                 .andExpect(jsonPath("$.totalToPay", is(0)))

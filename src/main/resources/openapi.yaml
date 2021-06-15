@@ -75,7 +75,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ExpenseMonthlySummaryResponse"
 
-
   /v2/expenses/{expenseId}/pay:
     post:
       summary: Mark expense as paid.
@@ -133,7 +132,6 @@ components:
       name: paid
       schema:
         type: boolean
-
     expenseFilter:
       in: query
       name: expenseFilter
@@ -252,6 +250,13 @@ components:
               example: 100.00
             expense:
               $ref: "#/components/schemas/ExpenseResponse"
+        count:
+          type: integer
+          format: int32
+          description: Holds the quantity of exepenses found according to the filter criteria.
+        average:
+          type: number
+          description: Holds the average spended in the month.
         total:
           type: number
           description: Hold the sum of all bills of the month.
