@@ -12,4 +12,8 @@ public interface ExpenseService {
     List<Expense> findAll();
 
     Optional<Expense> findById(Long expenseId);
+
+    List<Expense> findByMonth(int month);
+
+    List<Expense> findByMonthAndPaidValue(int month, boolean paid);
 }

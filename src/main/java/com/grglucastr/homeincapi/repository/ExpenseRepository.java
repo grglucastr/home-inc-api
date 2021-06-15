@@ -14,6 +14,12 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     @Query("SELECT e FROM expense e WHERE e.isActive= :active AND e.paid=:paid")
     Page<Expense> findAll(boolean active, boolean paid, Pageable pageable);
 
+    @Query("SELECT e FROM expense e WHERE EXTRACT(MONTH FROM e.dueDate) = :month")
+    List<Expense> findByMonthNumber(int month);
+
+    @Query("SELECT e FROM expense e WHERE EXTRACT(MONTH FROM e.dueDate) = :month AND e.paid = :paid")
+    List<Expense> findByMonthNumberAndPaid(int month, boolean paid);
+
     List<Expense> findAllByIsActiveTrueAndPaidTrueOrderByIdAsc();
 
     Optional<Expense> findByIdAndIsActiveTrue(Long id);

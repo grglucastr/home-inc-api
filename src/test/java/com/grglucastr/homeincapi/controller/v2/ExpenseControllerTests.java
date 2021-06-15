@@ -197,6 +197,41 @@ public class ExpenseControllerTests {
 
     }
 
+    @Test
+    public void testMonthlySummary() throws Exception {
+        final Expense exp1 = createSingleExpenseObject();
+        exp1.setPaidDate(LocalDate.of(2020, 4, 30));
+        exp1.setPaid(true);
+
+        final Expense exp2 = createSingleExpenseObject();
+        exp2.setId(2L);
+        exp2.setCost(new BigDecimal("19.78"));
+        exp1.setPaidDate(LocalDate.of(2020, 4, 30));
+        exp2.setPaid(true);
+
+        final Expense exp3 = createSingleExpenseObject();
+        exp3.setId(3L);
+        exp3.setCost(new BigDecimal("999.99"));
+
+        final Expense exp4 = createSingleExpenseObject();
+        exp4.setId(4L);
+        exp4.setCost(new BigDecimal("1000.50"));
+
+        when(expenseService.findByMonth(4)).thenReturn(Arrays.asList(exp1, exp2, exp3, exp4));
+
+        mockMvc.perform(get("/v2/expenses/{monthNo}/summary", 4)
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.monthlyProgress", is("100%")))
+                .andExpect(jsonPath("$.min.value", is(19.78)))
+                .andExpect(jsonPath("$.min.expense.id", is(2)))
+                .andExpect(jsonPath("$.max.value", is(1000.50)))
+                .andExpect(jsonPath("$.max.expense.id", is(4)))
+                .andExpect(jsonPath("$.total", is(2053.50)))
+                .andExpect(jsonPath("$.totalPaid", is(53.01)))
+                .andExpect(jsonPath("$.totalToPay", is(2000.49)));
+    }
+
 
 
     private Expense createSingleExpenseObject() {
@@ -205,10 +240,10 @@ public class ExpenseControllerTests {
         expense.setTitle("COPEL - April 2020");
         expense.setDescription("Electricity billl reference to the month of April");
         expense.setCost(new BigDecimal("33.23"));
-        expense.setDueDate(LocalDate.of(2020,04,30));
-        expense.setInvoiceDate(LocalDate.of(2020,04,25));
-        expense.setServicePeriodStart(LocalDate.of(2020,03,25));
-        expense.setServicePeriodEnd(LocalDate.of(2020,04,25));
+        expense.setDueDate(LocalDate.of(2020, 4,30));
+        expense.setInvoiceDate(LocalDate.of(2020, 4,25));
+        expense.setServicePeriodStart(LocalDate.of(2020, 3,25));
+        expense.setServicePeriodEnd(LocalDate.of(2020, 4,25));
         expense.setPeriodicity(Periodicity.MONTHLY);
         expense.setPaymentMethod(PaymentMethod.BANK_TRANSFER);
         return expense;

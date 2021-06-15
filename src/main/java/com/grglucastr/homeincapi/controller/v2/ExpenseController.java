@@ -4,6 +4,9 @@ import com.grglucastr.api.ExpensesApi;
 import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.service.v2.ExpenseService;
 import com.grglucastr.model.ExpenseFilter;
+import com.grglucastr.model.ExpenseMonthlySummaryResponse;
+import com.grglucastr.model.ExpenseMonthlySummaryResponseMax;
+import com.grglucastr.model.ExpenseMonthlySummaryResponseMin;
 import com.grglucastr.model.ExpenseRequest;
 import com.grglucastr.model.ExpenseResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @RestController("ExpenseV2Controller")
@@ -82,6 +88,95 @@ public class ExpenseController implements ExpensesApi {
         expenseService.save(expense);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<ExpenseMonthlySummaryResponse> monthlySummary(Integer monthNo, Boolean paid) {
+
+        List<Expense> expenses;
+        if(Optional.ofNullable(paid).isPresent()){
+            expenses = expenseService.findByMonthAndPaidValue(monthNo, paid);
+            final ExpenseMonthlySummaryResponse summaryResponse = generateSummaryReport(expenses, monthNo);
+            return ResponseEntity.ok(summaryResponse);
+        }
+
+        expenses = expenseService.findByMonth(monthNo);
+        final ExpenseMonthlySummaryResponse summaryResponse = generateSummaryReport(expenses, monthNo);
+        return ResponseEntity.ok(summaryResponse);
+    }
+
+    private ExpenseMonthlySummaryResponse generateSummaryReport(List<Expense> expenses, int monthNo) {
+
+        final Comparator<Expense> byCostComparing = Comparator.comparing(Expense::getCost);
+        final Predicate<Expense> isPaid = Expense::isPaid;
+
+        final Optional<Expense> max = expenses.stream().max(byCostComparing);
+        final Optional<Expense> min = expenses.stream().min(byCostComparing);
+
+        final Optional<BigDecimal> total = expenses.stream()
+                .map(Expense::getCost)
+                .reduce(BigDecimal::add);
+
+        final Optional<BigDecimal> totalPaid = expenses.stream()
+                .filter(isPaid)
+                .map(Expense::getCost)
+                .reduce(BigDecimal::add);
+
+        final Optional<BigDecimal> totalToPay = expenses.stream()
+                .filter(isPaid.negate())
+                .map(Expense::getCost)
+                .reduce(BigDecimal::add);
+
+        final String monthlyProgress = getMonthlyProgress(monthNo);
+
+        final ExpenseMonthlySummaryResponseMax resMax = new ExpenseMonthlySummaryResponseMax();
+        resMax.setValue(BigDecimal.ZERO);
+        resMax.setExpense(null);
+
+        if(max.isPresent()){
+            final ExpenseResponse expRes = mapper.map(max.get(), ExpenseResponse.class);
+            resMax.setExpense(expRes);
+            resMax.setValue(expRes.getCost());
+        }
+
+        final ExpenseMonthlySummaryResponseMin resMin = new ExpenseMonthlySummaryResponseMin();
+        resMin.setValue(BigDecimal.ZERO);
+        resMin.setExpense(null);
+
+        if(min.isPresent()){
+            final ExpenseResponse expRes = mapper.map(min.get(), ExpenseResponse.class);
+            resMin.setExpense(expRes);
+            resMin.setValue(expRes.getCost());
+        }
+
+        final ExpenseMonthlySummaryResponse summaryResponse = new ExpenseMonthlySummaryResponse();
+        summaryResponse.setMax(resMax);
+        summaryResponse.setMin(resMin);
+        summaryResponse.setMonthlyProgress(monthlyProgress);
+        summaryResponse.setTotal(total.orElse(BigDecimal.ZERO));
+        summaryResponse.setTotalPaid(totalPaid.orElse(BigDecimal.ZERO));
+        summaryResponse.setTotalToPay(totalToPay.orElse(BigDecimal.ZERO));
+
+        return summaryResponse;
+    }
+
+    private String getMonthlyProgress(int monthNo){
+
+        LocalDate now = LocalDate.now();
+        if (now.getMonthValue() > monthNo) {
+            return "100%";
+        }
+
+        if (now.getMonthValue() < monthNo) {
+            return "0%";
+        }
+
+        int year = LocalDate.now().getYear();
+        LocalDate start = LocalDate.of(year, monthNo, 1);
+        final int lengthOfMonth = start.lengthOfMonth();
+
+        double total = (now.getDayOfMonth() * 100.0) / lengthOfMonth;
+        return Math.round(total * 100.0) / 100.0 + "%";
     }
 
     private ResponseEntity<ExpenseResponse> payExpense(Expense expense){

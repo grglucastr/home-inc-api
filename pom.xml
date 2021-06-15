@@ -174,10 +174,12 @@
 							<apiPackage>com.grglucastr.api</apiPackage>
 							<modelPackage>com.grglucastr.model</modelPackage>
 							<generateApiDocumentation>true</generateApiDocumentation>
+							<removeOperationIdPrefix>true</removeOperationIdPrefix>
 							<configOptions>
 								<useTags>true</useTags>
 								<delegatePattern>true</delegatePattern>
 								<interfaceOnly>true</interfaceOnly>
+								<removeOperationIdPrefix>true</removeOperationIdPrefix>
 							</configOptions>
 						</configuration>
 					</execution>

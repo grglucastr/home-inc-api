@@ -8,10 +8,7 @@ paths:
       summary: List all expenses
       operationId: getExpenses
       parameters:
-        - in: query
-          name: filter
-          schema:
-            $ref: "#/components/schemas/ExpenseFilter"
+        - $ref: "#/components/parameters/expenseFilter"
       tags:
         - Expenses
       responses:
@@ -61,6 +58,24 @@ paths:
         '404':
           description: Expense not found
 
+  /v2/expenses/{monthNo}/summary:
+    get:
+      summary: Get a monthly summary of the min, max and sum of all expenses of a given month.
+      operationId: Monthly summary
+      parameters:
+        - $ref: "#/components/parameters/monthNo"
+        - $ref: "#/components/parameters/paid"
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: Shows the summary according filter criteria or an empty object if does not find anything.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExpenseMonthlySummaryResponse"
+
+
   /v2/expenses/{expenseId}/pay:
     post:
       summary: Mark expense as paid.
@@ -102,6 +117,30 @@ components:
         type: integer
         minimum: 1
         format: int64
+    monthNo:
+      in: path
+      name: monthNo
+      required: true
+      description: The number of the month (1=jan, 2=feb).
+      schema:
+        type: integer
+        minimum: 1
+        format: int32
+    paid:
+      in: query
+      description: When true, filter only the paid ones. When false, filter those expenses not paid. On its absence, brings paid and unpaid ones.
+      required: false
+      name: paid
+      schema:
+        type: boolean
+
+    expenseFilter:
+      in: query
+      name: expenseFilter
+      description: Filter of expenses
+      schema:
+        $ref: "#/components/schemas/ExpenseFilter"
+
   schemas:
     ExpenseFilter:
       description: Filter object for expenses
@@ -188,3 +227,37 @@ components:
           type: string
           format: "date-time"
           example: "2020-04-30 12:33:29"
+    ExpenseMonthlySummaryResponse:
+      description: Response summary containing the max, min and sum of values of all expenses according to criteria.
+      type: object
+      properties:
+        monthlyProgress:
+          type: string
+          description: Shows monthly progress percentage.
+        min:
+          type: object
+          description: Holds the cheapest bill according to the filter criteria
+          properties:
+            value:
+              type: number
+              example: 100.00
+            expense:
+              $ref: "#/components/schemas/ExpenseResponse"
+        max:
+          type: object
+          description: Holds the most exepensive bill according to the filter criteria
+          properties:
+            value:
+              type: number
+              example: 100.00
+            expense:
+              $ref: "#/components/schemas/ExpenseResponse"
+        total:
+          type: number
+          description: Hold the sum of all bills of the month.
+        totalPaid:
+          type: number
+          description: Hold the sum of all paid bills of the month.
+        totalToPay:
+          type: number
+          description: Hold the sum of all bills pending to pay of the month.
