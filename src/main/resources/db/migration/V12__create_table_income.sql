@@ -1,9 +1,9 @@
-CREATE TABLE incomes(
+CREATE TABLE income(
 id INTEGER NOT NULL PRIMARY KEY,
 amount DECIMAL NOT NULL,
 description VARCHAR(100) NOT NULL
 );
 
-CREATE SEQUENCE se_incomes
+CREATE SEQUENCE se_income
 START WITH 1
 increment BY 1;
