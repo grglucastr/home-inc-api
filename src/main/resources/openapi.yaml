@@ -105,6 +105,54 @@ paths:
         '404':
           description: Expense not found.
 
+  /v2/incomes:
+    get:
+      summary: List all incomes registered.
+      operationId: getNewIncome
+      tags:
+        - Incomes
+      responses:
+        '200':
+          description: List all incomes found.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/IncomeResponse"
+    post:
+      summary: Register new income.
+      operationId: postNewIncome
+      tags:
+        - Incomes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IncomeRequest"
+      responses:
+        '201':
+          description: Income sucessfully registered.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncomeResponse"
+
+  /v2/incomes/sum:
+    get:
+      summary: Retrieves the sum of all incomes
+      operationId: getSumOfIncomes
+      tags:
+        - Incomes
+      responses:
+        '200':
+          description: Sum of all incomes.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncomeSumResponse"
+
 components:
   parameters:
     expenseId:
@@ -266,3 +314,34 @@ components:
         totalToPay:
           type: number
           description: Hold the sum of all bills pending to pay of the month.
+    IncomeRequest:
+      description: Request object to handle income
+      type: object
+      properties:
+        amount:
+          description: Field to hold the amount of the income
+          type: number
+        description:
+          type: string
+          description: Add a description to specify the origin of this income amount
+      required: [
+          'amount',
+          'description'
+      ]
+    IncomeResponse:
+      description: Response object to amount
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Holds the id number of the income
+        amount:
+          description: Field to hold the amount of the income
+          type: number
+        description:
+          type: string
+          description: Add a description to specify the origin of this income amount
+    IncomeSumResponse:
+      type: number
+      description: Contains the sum of all incomes.
