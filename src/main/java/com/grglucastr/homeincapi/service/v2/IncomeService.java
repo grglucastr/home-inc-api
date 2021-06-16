@@ -8,5 +8,5 @@ public interface IncomeService {
 
     Income save(Income income);
 
-    List<Income> findALl();
+    List<Income> findAll();
 }

@@ -108,7 +108,7 @@ paths:
   /v2/incomes:
     get:
       summary: List all incomes registered.
-      operationId: getNewIncome
+      operationId: getIncomes
       tags:
         - Incomes
       responses:
@@ -344,5 +344,8 @@ components:
           type: string
           description: Add a description to specify the origin of this income amount
     IncomeSumResponse:
-      type: number
+      type: object
       description: Contains the sum of all incomes.
+      properties:
+        total:
+          type: number

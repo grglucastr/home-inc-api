@@ -22,7 +22,7 @@ public class IncomeServiceImpl implements IncomeService {
     }
 
     @Override
-    public List<Income> findALl() {
+    public List<Income> findAll() {
         log.info("Listing all incomes");
         return repository.findAll();
     }
