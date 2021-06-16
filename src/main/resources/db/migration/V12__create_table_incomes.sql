@@ -1,0 +1,9 @@
+CREATE TABLE incomes(
+id INTEGER NOT NULL PRIMARY KEY,
+amount DECIMAL NOT NULL,
+description VARCHAR(100) NOT NULL
+);
+
+CREATE SEQUENCE se_incomes
+START WITH 1
+increment BY 1;

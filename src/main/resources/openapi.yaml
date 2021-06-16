@@ -323,6 +323,7 @@ components:
           type: number
         description:
           type: string
+          maximum: 100
           description: Add a description to specify the origin of this income amount
       required: [
           'amount',
