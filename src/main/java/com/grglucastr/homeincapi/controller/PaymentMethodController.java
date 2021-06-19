@@ -1,7 +1,7 @@
 package com.grglucastr.homeincapi.controller;
 
 import com.grglucastr.homeincapi.dto.PaymentMethodDTO;
-import com.grglucastr.homeincapi.model.PaymentMethod;
+import com.grglucastr.homeincapi.enums.PaymentMethod;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

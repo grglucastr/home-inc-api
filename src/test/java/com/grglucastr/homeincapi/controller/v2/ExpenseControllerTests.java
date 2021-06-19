@@ -1,8 +1,8 @@
 package com.grglucastr.homeincapi.controller.v2;
 
 import com.grglucastr.homeincapi.model.Expense;
-import com.grglucastr.homeincapi.model.PaymentMethod;
-import com.grglucastr.homeincapi.model.Periodicity;
+import com.grglucastr.homeincapi.enums.PaymentMethod;
+import com.grglucastr.homeincapi.enums.Periodicity;
 import com.grglucastr.homeincapi.service.v2.ExpenseService;
 import org.junit.Assert;
 import org.junit.Before;

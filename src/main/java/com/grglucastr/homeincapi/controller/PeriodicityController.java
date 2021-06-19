@@ -1,11 +1,10 @@
 package com.grglucastr.homeincapi.controller;
 
 import com.grglucastr.homeincapi.dto.PeriodicityDTO;
-import com.grglucastr.homeincapi.model.Periodicity;
+import com.grglucastr.homeincapi.enums.Periodicity;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

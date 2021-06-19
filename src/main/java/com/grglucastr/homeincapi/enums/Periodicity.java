@@ -1,4 +1,4 @@
-package com.grglucastr.homeincapi.model;
+package com.grglucastr.homeincapi.enums;
 
 public enum Periodicity {
 

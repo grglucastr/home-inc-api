@@ -1,4 +1,4 @@
-package com.grglucastr.homeincapi.model;
+package com.grglucastr.homeincapi.enums;
 
 import lombok.Getter;
 

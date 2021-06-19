@@ -1,6 +1,6 @@
 package com.grglucastr.homeincapi.dto;
 
-import com.grglucastr.homeincapi.model.PaymentMethod;
+import com.grglucastr.homeincapi.enums.PaymentMethod;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

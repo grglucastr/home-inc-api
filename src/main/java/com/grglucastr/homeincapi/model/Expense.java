@@ -1,5 +1,7 @@
 package com.grglucastr.homeincapi.model;
 
+import com.grglucastr.homeincapi.enums.PaymentMethod;
+import com.grglucastr.homeincapi.enums.Periodicity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

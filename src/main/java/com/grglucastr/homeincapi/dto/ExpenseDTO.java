@@ -1,6 +1,6 @@
 package com.grglucastr.homeincapi.dto;
 
-import com.grglucastr.homeincapi.model.Periodicity;
+import com.grglucastr.homeincapi.enums.Periodicity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
