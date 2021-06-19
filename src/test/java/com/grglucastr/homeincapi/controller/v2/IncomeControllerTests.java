@@ -1,5 +1,6 @@
 package com.grglucastr.homeincapi.controller.v2;
 
+import com.grglucastr.homeincapi.enums.Periodicity;
 import com.grglucastr.homeincapi.model.Income;
 import com.grglucastr.homeincapi.service.v2.IncomeService;
 import com.grglucastr.homeincapi.util.StringUtils;
@@ -15,15 +16,17 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,6 +51,8 @@ public class IncomeControllerTests {
     public void testGetIncomes() throws Exception {
 
         final List<Income> incomes = buildListOfIncomes();
+        incomes.get(0).setType(Periodicity.WEEKLY);
+
         when(incomeService.findAll()).thenReturn(incomes);
         
         mockMvc.perform(get("/v2/incomes")
@@ -57,9 +62,17 @@ public class IncomeControllerTests {
                 .andExpect(jsonPath("$.[0].id", is(1)))
                 .andExpect(jsonPath("$.[0].amount", is(1500.00)))
                 .andExpect(jsonPath("$.[0].description", is("Salário mensal")))
+                .andExpect(jsonPath("$.[0].active", is(true)))
+                .andExpect(jsonPath("$.[0].type", is("WEEKLY")))
+                .andExpect(jsonPath("$.[0].insertDate").isNotEmpty())
+                .andExpect(jsonPath("$.[0].updateDate").isNotEmpty())
                 .andExpect(jsonPath("$.[1].id", is(2)))
                 .andExpect(jsonPath("$.[1].amount", is(2500.00)))
-                .andExpect(jsonPath("$.[1].description", is("Consultoria")));
+                .andExpect(jsonPath("$.[1].description", is("Consultoria")))
+                .andExpect(jsonPath("$.[1].active", is(true)))
+                .andExpect(jsonPath("$.[1].type", is("MONTHLY")))
+                .andExpect(jsonPath("$.[1].insertDate").isNotEmpty())
+                .andExpect(jsonPath("$.[1].updateDate").isNotEmpty());
     }
     
     @Test
@@ -79,7 +92,11 @@ public class IncomeControllerTests {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.amount", is(123.45)))
-                .andExpect(jsonPath("$.description", is("Tralala")));
+                .andExpect(jsonPath("$.description", is("Tralala")))
+                .andExpect(jsonPath("$.active", is(true)))
+                .andExpect(jsonPath("$.type", is("MONTHLY")))
+                .andExpect(jsonPath("$.insertDate").isNotEmpty())
+                .andExpect(jsonPath("$.updateDate").isNotEmpty());
     }
 
     @Test
@@ -96,8 +113,109 @@ public class IncomeControllerTests {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.total", is(4000.00)));
+    }
+
+    @Test
+    public void testGetIncomeById() throws Exception {
+        final Income income = buildIncomeObject(1L, "123.45", "Salary");
+
+        when(incomeService.findById(1L)).thenReturn(Optional.of(income));
+
+        final MockHttpServletRequestBuilder get = get("/v2/incomes/{incomeId}", 1L)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(get)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.amount", is(123.45)))
+                .andExpect(jsonPath("$.description", is("Salary")))
+                .andExpect(jsonPath("$.active", is(true)))
+                .andExpect(jsonPath("$.type", is("MONTHLY")))
+                .andExpect(jsonPath("$.insertDate").isNotEmpty())
+                .andExpect(jsonPath("$.updateDate").isNotEmpty());
+    }
+
+    @Test
+    public void testGetIncomeByIdNotFound()  throws Exception {
+
+        when(incomeService.findById(1L)).thenReturn(Optional.empty());
+
+        final MockHttpServletRequestBuilder get = get("/v2/incomes/{incomeId}", 1L)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(get)
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
 
 
+    @Test
+    public void testUpdateIncomeByIdNotFound()  throws Exception {
+
+        final Income income = buildIncomeObject(1L, "123.34", "Salary");
+
+        when(incomeService.findById(1L)).thenReturn(Optional.empty());
+
+        final MockHttpServletRequestBuilder put = put("/v2/incomes/{incomeId}", 1L)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(StringUtils.asJsonString(income));
+
+        mockMvc.perform(put)
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testUpdateIncomeById() throws Exception {
+
+        final Income income = buildIncomeObject(1L, "1234.45", "Salary");
+        when(incomeService.findById(1L)).thenReturn(Optional.of(income));
+
+        income.setDescription("Independent service");
+        income.setAmount(new BigDecimal("2500.50"));
+        income.setType(Periodicity.WEEKLY);
+        when(incomeService.save(any())).thenReturn(income);
+
+        final MockHttpServletRequestBuilder put = put("/v2/incomes/{incomeId}", 1L)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(StringUtils.asJsonString(income));
+
+        mockMvc.perform(put)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.amount", is(2500.50)))
+                .andExpect(jsonPath("$.description", is("Independent service")))
+                .andExpect(jsonPath("$.active", is(true)))
+                .andExpect(jsonPath("$.type", is("WEEKLY")))
+                .andExpect(jsonPath("$.insertDate").isNotEmpty())
+                .andExpect(jsonPath("$.updateDate").isNotEmpty());
+    }
+
+    @Test
+    public void testDeleteIncomeById() throws Exception {
+
+        final Income income = buildIncomeObject(1L, "123.89", "Payment");
+        when(incomeService.findById(anyLong())).thenReturn(Optional.of(income));
+
+        income.setActive(false);
+        when(incomeService.save(any())).thenReturn(income);
+
+        final MockHttpServletRequestBuilder delete = delete("/v2/incomes/{incomeId}", 1L)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(delete).andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testDeleteIncomeByIdNotFound() throws Exception {
+        when(incomeService.findById(anyLong())).thenReturn(Optional.empty());
+        final MockHttpServletRequestBuilder delete = delete("/v2/incomes/{incomeId}", 1L)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(delete).andExpect(status().isNotFound());
     }
 
     private Income buildIncomeObject(long id, String amount, String description) {
@@ -105,6 +223,10 @@ public class IncomeControllerTests {
         income.setId(id);
         income.setAmount(new BigDecimal(amount));
         income.setDescription(description);
+        income.setActive(true);
+        income.setType(Periodicity.MONTHLY);
+        income.setInsertDate(LocalDate.now());
+        income.setUpdateDate(LocalDate.now());
         return income;
     }
 

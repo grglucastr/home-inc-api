@@ -139,6 +139,61 @@ paths:
               schema:
                 $ref: "#/components/schemas/IncomeResponse"
 
+  /v2/incomes/{incomeId}:
+    get:
+      summary: Fetch a single income by its id.
+      operationId: getIncomeById
+      tags:
+        - Incomes
+      parameters:
+        - $ref: "#/components/parameters/incomeId"
+      responses:
+        '200':
+          description: Returns a single object containing details about the income.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncomeResponse"
+        '404':
+          description: Income with the given id not found.
+
+    put:
+      summary: Update data of an income.
+      operationId: updateIncome
+      tags:
+        - Incomes
+      parameters:
+        - $ref: "#/components/parameters/incomeId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IncomeRequest"
+      responses:
+        '200':
+          description: Returns an updated version of the income.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncomeResponse"
+        '404':
+          description: Income with given id not found.
+
+    delete:
+      summary: Logical delete of an income
+      operationId: deleteIncome
+      parameters:
+        - $ref: "#/components/parameters/incomeId"
+      tags:
+        - Incomes
+      responses:
+        '204':
+          description: Income deleted.
+        '404':
+          description: Income not found for the given id.
+
+
   /v2/incomes/sum:
     get:
       summary: Retrieves the sum of all incomes
@@ -164,6 +219,15 @@ components:
         type: integer
         minimum: 1
         format: int64
+    incomeId:
+      in: path
+      name: incomeId
+      required: true
+      description: Income id number.
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
     monthNo:
       in: path
       name: monthNo
@@ -280,6 +344,7 @@ components:
         monthlyProgress:
           type: string
           description: Shows monthly progress percentage.
+          example: "45%"
         min:
           type: object
           description: Holds the cheapest bill according to the filter criteria
@@ -302,18 +367,23 @@ components:
           type: integer
           format: int32
           description: Holds the quantity of exepenses found according to the filter criteria.
+          example: 22
         average:
           type: number
           description: Holds the average spended in the month.
+          example: 123.45
         total:
           type: number
           description: Hold the sum of all bills of the month.
+          example: 3900.44
         totalPaid:
           type: number
           description: Hold the sum of all paid bills of the month.
+          example: 1234.45
         totalToPay:
           type: number
           description: Hold the sum of all bills pending to pay of the month.
+          example: 1234.43
     IncomeRequest:
       description: Request object to handle income
       type: object
@@ -321,13 +391,25 @@ components:
         amount:
           description: Field to hold the amount of the income
           type: number
+          example: 1234.89
         description:
           type: string
           maximum: 100
           description: Add a description to specify the origin of this income amount
+          example: "Painting service"
+        type:
+          type: string
+          example: MONTHLY
+          enum: ["JUST_ONCE", "DAILY", "WEEKLY", "MONTHLY", "YEARLY"]
+          description: Inform the frequency of this income amount.
+        active:
+          type: boolean
+          description: Inform whether this income stills valid or not
+          default: true
       required: [
           'amount',
-          'description'
+          'description',
+          'type'
       ]
     IncomeResponse:
       description: Response object to amount
@@ -337,15 +419,34 @@ components:
           type: integer
           format: int32
           description: Holds the id number of the income
+          example: 31232
         amount:
           description: Field to hold the amount of the income
           type: number
+          example: 1234.87
         description:
           type: string
           description: Add a description to specify the origin of this income amount
+          example: "Monthly salary"
+        type:
+          type: string
+          example: "MONTHLY"
+          enum: ["JUST_ONCE", "DAILY", "WEEKLY", "MONTHLY", "YEARLY"]
+          description: Inform the frequency of this income amount.
+        active:
+          type: boolean
+          description: True if this income stills being used for calculations. False if this income is not considered anymore.
+        insertDate:
+          type: string
+          format: date
+          description: Holds the date it was inserted. This field is also used in calculations of month summary.
+        updateDate:
+          type: string
+          format: date
+          description: Holds the date it was updated. This field is also used in calculations of month summary.
     IncomeSumResponse:
       type: object
-      description: Contains the sum of all incomes.
+      description: Contains the sum of all incomes by considering all active incomes.
       properties:
         total:
           type: number
