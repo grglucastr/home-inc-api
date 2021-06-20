@@ -286,7 +286,8 @@ components:
         cost:
           type: number
           minimum: 0.0
-          maximum: 67.99
+          maximum: 999999999.99
+          example: 53.23
         dueDate:
           type: string
           format: "date"
@@ -392,6 +393,8 @@ components:
           description: Field to hold the amount of the income
           type: number
           example: 1234.89
+          minimum: 0
+          maximum: 999999999.99
         description:
           type: string
           maximum: 100
