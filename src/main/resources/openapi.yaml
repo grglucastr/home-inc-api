@@ -264,10 +264,12 @@ components:
         dueDateStart:
           type: string
           format: date
+          example: "2020-03-02"
         dueDateEnd:
           type: string
           format: date
-        periodicty:
+          example: "2020-03-02"
+        periodicity:
           type: string
           example: monthly
         paymentMethod:
