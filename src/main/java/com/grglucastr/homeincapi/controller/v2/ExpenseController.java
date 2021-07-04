@@ -21,6 +21,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -40,11 +41,66 @@ public class ExpenseController implements ExpensesApi {
 
     @Override
     public ResponseEntity<List<ExpenseResponse>> getExpenses(ExpenseFilter filter) {
-        final List<Expense> expenses = expenseService.findAll();
+        List<Expense> expenses = expenseService.findAll();
+
+        if(filter.getActive() != null){
+            expenses = expenses
+                    .stream()
+                    .filter(isActive(filter))
+                    .collect(Collectors.toList());
+        }
+
+        if(filter.getPaid() != null){
+            expenses = expenses
+                    .stream()
+                    .filter(isPaid(filter))
+                    .collect(Collectors.toList());
+        }
+
+        if(filter.getPeriodicity() != null){
+            expenses = expenses
+                    .stream()
+                    .filter(e -> e.getPeriodicity().toString().equalsIgnoreCase(filter.getPeriodicity()))
+                    .collect(Collectors.toList());
+        }
+
+        if(filter.getPaymentMethod() != null){
+            expenses = expenses
+                    .stream()
+                    .filter(e -> e.getPaymentMethod().toString().equalsIgnoreCase(filter.getPaymentMethod()))
+                    .collect(Collectors.toList());
+        }
+
+        if(filter.getDueDateStart() != null){
+            expenses = expenses
+                    .stream()
+                    .filter(e -> e.getDueDate().isAfter(filter.getDueDateStart().minusDays(1)))
+                    .collect(Collectors.toList());
+        }
+
+        if(filter.getDueDateEnd() != null){
+            expenses = expenses
+                    .stream()
+                    .filter(e -> e.getDueDate().isBefore(filter.getDueDateEnd().plusDays(1)))
+                    .collect(Collectors.toList());
+        }
+
+
+
+
         final List<ExpenseResponse> expenseResponses = expenses.stream()
+                .filter(isActive(filter).or(isPaid(filter)))
                 .map(expense -> mapper.map(expense, ExpenseResponse.class))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(expenseResponses);
+    }
+
+    private Predicate<Expense> isPaid(ExpenseFilter filter) {
+        return e -> filter.getPaid() != null && e.isPaid() == filter.getPaid();
+    }
+
+    private Predicate<Expense> isActive(ExpenseFilter filter) {
+        return e -> filter.getActive() != null && e.getIsActive() == filter.getActive();
     }
 
     @Override
