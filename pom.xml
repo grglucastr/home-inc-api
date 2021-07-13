@@ -173,6 +173,8 @@
 							<generatorName>spring</generatorName>
 							<apiPackage>com.grglucastr.api</apiPackage>
 							<modelPackage>com.grglucastr.model</modelPackage>
+							<skipValidateSpec>false</skipValidateSpec>
+							<strictSpec>true</strictSpec>
 							<generateApiDocumentation>true</generateApiDocumentation>
 							<removeOperationIdPrefix>true</removeOperationIdPrefix>
 							<configOptions>
