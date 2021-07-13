@@ -1,9 +1,14 @@
 package com.grglucastr.homeincapi.controller.v2;
 
-import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.enums.PaymentMethod;
 import com.grglucastr.homeincapi.enums.Periodicity;
+import com.grglucastr.homeincapi.model.Expense;
+import com.grglucastr.homeincapi.service.v2.ExpenseReportService;
 import com.grglucastr.homeincapi.service.v2.ExpenseService;
+import com.grglucastr.model.ExpenseMonthlySummaryResponse;
+import com.grglucastr.model.ExpenseMonthlySummaryResponseMax;
+import com.grglucastr.model.ExpenseMonthlySummaryResponseMin;
+import com.grglucastr.model.ExpenseResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,8 +30,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -34,13 +38,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @RunWith(MockitoJUnitRunner.class)
 @WebMvcTest(controllers = ExpenseController.class)
 public class ExpenseControllerTests {
 
-    public static final String NEW_EXPENSE_PAYLOAD_JSON = "new-expense-payload.json";
-    public static final String URL_V2_EXPENSES = "/v2/expenses";
+    private static final String NEW_EXPENSE_PAYLOAD_JSON = "new-expense-payload.json";
+    private static final String URL_V2_EXPENSES = "/v2/expenses";
+
+    private ExpenseReportService expenseReportService;
     private ExpenseService expenseService;
     private ModelMapper modelMapper;
     private MockMvc mockMvc;
@@ -48,8 +53,9 @@ public class ExpenseControllerTests {
     @Before
     public void setUp() {
         expenseService = mock(ExpenseService.class);
+        expenseReportService = mock(ExpenseReportService.class);
         modelMapper = new ModelMapper();
-        mockMvc = MockMvcBuilders.standaloneSetup(new ExpenseController(expenseService, modelMapper)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new ExpenseController(expenseService, expenseReportService, modelMapper)).build();
     }
 
     @Test
@@ -316,7 +322,10 @@ public class ExpenseControllerTests {
         exp4.setId(4L);
         exp4.setCost(new BigDecimal("1000.50"));
 
-        when(expenseService.findByMonth(4)).thenReturn(Arrays.asList(exp1, exp2, exp3, exp4));
+        when(expenseReportService.generateSummaryReport(anyList(), anyInt()))
+                .thenReturn(buildMonthlyResponse());
+
+        when(expenseService.findByMonth(anyInt())).thenReturn(Arrays.asList(exp1, exp2, exp3, exp4));
 
         mockMvc.perform(get("/v2/expenses/{monthNo}/summary", 4)
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
@@ -353,7 +362,23 @@ public class ExpenseControllerTests {
         exp4.setId(4L);
         exp4.setCost(new BigDecimal("1000.50"));
 
-        when(expenseService.findByMonthAndPaid(4, true)).thenReturn(Arrays.asList(exp1, exp2));
+        final ExpenseMonthlySummaryResponse monthlyResponse = buildMonthlyResponse();
+        monthlyResponse.setMonthlyProgress("100%");
+        monthlyResponse.getMin().setValue(new BigDecimal("19.78"));
+        monthlyResponse.getMin().getExpense().setId(2);
+        monthlyResponse.getMax().setValue(new BigDecimal("33.23"));
+        monthlyResponse.getMax().getExpense().setId(1);
+        monthlyResponse.setCount(2);
+        monthlyResponse.setAverage(new BigDecimal("26.51"));
+        monthlyResponse.setTotal(new BigDecimal("53.01"));
+        monthlyResponse.setTotalPaid(new BigDecimal("53.01"));
+        monthlyResponse.setTotalToPay(BigDecimal.ZERO);
+
+        when(expenseReportService.generateSummaryReport(anyList(), anyInt()))
+                .thenReturn(monthlyResponse);
+
+        when(expenseService.findByMonthAndPaid(4, true))
+                .thenReturn(Arrays.asList(exp1, exp2));
 
         mockMvc.perform(get("/v2/expenses/{monthNo}/summary?paid=true", 4)
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
@@ -390,7 +415,23 @@ public class ExpenseControllerTests {
         exp4.setId(4L);
         exp4.setCost(new BigDecimal("1000.50"));
 
-        when(expenseService.findByMonthAndPaid(4, false)).thenReturn(Arrays.asList(exp3, exp4));
+        final List<Expense> expenses = Arrays.asList(exp3, exp4);
+        final ExpenseMonthlySummaryResponse monthlyResponse = buildMonthlyResponse();
+        monthlyResponse.getMin().setValue(new BigDecimal("999.99"));
+        monthlyResponse.getMin().getExpense().setId(3);
+        monthlyResponse.getMax().setValue(new BigDecimal("1000.50"));
+        monthlyResponse.getMax().getExpense().setId(4);
+        monthlyResponse.setCount(2);
+        monthlyResponse.setAverage(new BigDecimal("1000.25"));
+        monthlyResponse.setTotal(new BigDecimal("2000.49"));
+        monthlyResponse.setTotalPaid(new BigDecimal("0"));
+        monthlyResponse.setTotalToPay(new BigDecimal("2000.49"));
+
+        when(expenseReportService.generateSummaryReport(expenses, 4))
+                .thenReturn(monthlyResponse);
+
+        when(expenseService.findByMonthAndPaid(4, false))
+                .thenReturn(expenses);
 
         mockMvc.perform(get("/v2/expenses/{monthNo}/summary?paid=false", 4)
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
@@ -410,6 +451,12 @@ public class ExpenseControllerTests {
     @Test
     public void testMonthlySummaryWithNoExpensesAndMonthProgressIsZero() throws Exception {
         int nextMonth = LocalDate.now().plusMonths(4).getMonthValue();
+
+        final ExpenseMonthlySummaryResponse monthlyResponse = buildMonthlyResponseWithZero();
+
+        when(expenseReportService.generateSummaryReport(anyList(), anyInt()))
+                .thenReturn(monthlyResponse);
+
         when(expenseService.findByMonth(nextMonth)).thenReturn(new ArrayList<>());
 
         mockMvc.perform(get("/v2/expenses/{monthNo}/summary", nextMonth)
@@ -425,7 +472,6 @@ public class ExpenseControllerTests {
                 .andExpect(jsonPath("$.min").doesNotExist())
                 .andExpect(jsonPath("$.max").doesNotExist());
     }
-
 
     private Expense createSingleExpenseObject() {
         Expense expense = new Expense();
@@ -446,6 +492,49 @@ public class ExpenseControllerTests {
         final Expense singleExpenseObject = createSingleExpenseObject();
         singleExpenseObject.setId(id);
         return singleExpenseObject;
+    }
+
+    private ExpenseMonthlySummaryResponse buildMonthlyResponse(){
+        final ExpenseMonthlySummaryResponseMax max = new ExpenseMonthlySummaryResponseMax();
+        max.setValue(new BigDecimal("1000.50"));
+
+        final ExpenseResponse maxExp = new ExpenseResponse();
+        maxExp.setId(4);
+        max.setExpense(maxExp);
+
+        final ExpenseMonthlySummaryResponseMin min = new ExpenseMonthlySummaryResponseMin();
+        min.setValue(new BigDecimal("19.78"));
+
+        final ExpenseResponse minExp = new ExpenseResponse();
+        minExp.setId(2);
+        min.setExpense(minExp);
+
+        final ExpenseMonthlySummaryResponse monthlySummary = new ExpenseMonthlySummaryResponse();
+        monthlySummary.setMax(max);
+        monthlySummary.setMin(min);
+        monthlySummary.setCount(4);
+        monthlySummary.setAverage(new BigDecimal("513.38"));
+        monthlySummary.setTotal(new BigDecimal("2053.50"));
+        monthlySummary.setTotalPaid(new BigDecimal("53.01"));
+        monthlySummary.setTotalToPay(new BigDecimal("2000.49"));
+        monthlySummary.setMonthlyProgress("100%");
+
+        return monthlySummary;
+    }
+
+    private ExpenseMonthlySummaryResponse buildMonthlyResponseWithZero(){
+        final ExpenseMonthlySummaryResponse monthlyResponse = buildMonthlyResponse();
+
+        monthlyResponse.setAverage(BigDecimal.ZERO);
+        monthlyResponse.setTotalToPay(BigDecimal.ZERO);
+        monthlyResponse.setTotal(BigDecimal.ZERO);
+        monthlyResponse.setTotalPaid(BigDecimal.ZERO);
+        monthlyResponse.setCount(0);
+        monthlyResponse.setMonthlyProgress("0%");
+        monthlyResponse.setMin(null);
+        monthlyResponse.setMax(null);
+
+        return monthlyResponse;
     }
 
 }
