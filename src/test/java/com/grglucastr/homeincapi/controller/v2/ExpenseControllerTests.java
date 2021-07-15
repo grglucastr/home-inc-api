@@ -5,10 +5,8 @@ import com.grglucastr.homeincapi.enums.Periodicity;
 import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.service.v2.ExpenseReportService;
 import com.grglucastr.homeincapi.service.v2.ExpenseService;
+import com.grglucastr.homeincapi.utils.TestObjects;
 import com.grglucastr.model.ExpenseMonthlySummaryResponse;
-import com.grglucastr.model.ExpenseMonthlySummaryResponseMax;
-import com.grglucastr.model.ExpenseMonthlySummaryResponseMin;
-import com.grglucastr.model.ExpenseResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(MockitoJUnitRunner.class)
 @WebMvcTest(controllers = ExpenseController.class)
-public class ExpenseControllerTests {
+public class ExpenseControllerTests extends TestObjects {
 
     private static final String NEW_EXPENSE_PAYLOAD_JSON = "new-expense-payload.json";
     private static final String URL_V2_EXPENSES = "/v2/expenses";
@@ -323,7 +321,7 @@ public class ExpenseControllerTests {
         exp4.setCost(new BigDecimal("1000.50"));
 
         when(expenseReportService.generateSummaryReport(anyList(), anyInt()))
-                .thenReturn(buildMonthlyResponse());
+                .thenReturn(createMonthlyResponse());
 
         when(expenseService.findByMonth(anyInt())).thenReturn(Arrays.asList(exp1, exp2, exp3, exp4));
 
@@ -362,7 +360,7 @@ public class ExpenseControllerTests {
         exp4.setId(4L);
         exp4.setCost(new BigDecimal("1000.50"));
 
-        final ExpenseMonthlySummaryResponse monthlyResponse = buildMonthlyResponse();
+        final ExpenseMonthlySummaryResponse monthlyResponse = createMonthlyResponse();
         monthlyResponse.setMonthlyProgress("100%");
         monthlyResponse.getMin().setValue(new BigDecimal("19.78"));
         monthlyResponse.getMin().getExpense().setId(2);
@@ -416,7 +414,7 @@ public class ExpenseControllerTests {
         exp4.setCost(new BigDecimal("1000.50"));
 
         final List<Expense> expenses = Arrays.asList(exp3, exp4);
-        final ExpenseMonthlySummaryResponse monthlyResponse = buildMonthlyResponse();
+        final ExpenseMonthlySummaryResponse monthlyResponse = createMonthlyResponse();
         monthlyResponse.getMin().setValue(new BigDecimal("999.99"));
         monthlyResponse.getMin().getExpense().setId(3);
         monthlyResponse.getMax().setValue(new BigDecimal("1000.50"));
@@ -452,7 +450,7 @@ public class ExpenseControllerTests {
     public void testMonthlySummaryWithNoExpensesAndMonthProgressIsZero() throws Exception {
         int nextMonth = LocalDate.now().plusMonths(4).getMonthValue();
 
-        final ExpenseMonthlySummaryResponse monthlyResponse = buildMonthlyResponseWithZero();
+        final ExpenseMonthlySummaryResponse monthlyResponse = createMonthlyResponseWithZero();
 
         when(expenseReportService.generateSummaryReport(anyList(), anyInt()))
                 .thenReturn(monthlyResponse);
@@ -471,70 +469,6 @@ public class ExpenseControllerTests {
                 .andExpect(jsonPath("$.totalToPay", is(0)))
                 .andExpect(jsonPath("$.min").doesNotExist())
                 .andExpect(jsonPath("$.max").doesNotExist());
-    }
-
-    private Expense createSingleExpenseObject() {
-        Expense expense = new Expense();
-        expense.setId(1L);
-        expense.setTitle("COPEL - April 2020");
-        expense.setDescription("Electricity billl reference to the month of April");
-        expense.setCost(new BigDecimal("33.23"));
-        expense.setDueDate(LocalDate.of(2020, 4,30));
-        expense.setInvoiceDate(LocalDate.of(2020, 4,25));
-        expense.setServicePeriodStart(LocalDate.of(2020, 3,25));
-        expense.setServicePeriodEnd(LocalDate.of(2020, 4,25));
-        expense.setPeriodicity(Periodicity.MONTHLY);
-        expense.setPaymentMethod(PaymentMethod.BANK_TRANSFER);
-        return expense;
-    }
-
-    private Expense createSingleExpenseObject(Long id) {
-        final Expense singleExpenseObject = createSingleExpenseObject();
-        singleExpenseObject.setId(id);
-        return singleExpenseObject;
-    }
-
-    private ExpenseMonthlySummaryResponse buildMonthlyResponse(){
-        final ExpenseMonthlySummaryResponseMax max = new ExpenseMonthlySummaryResponseMax();
-        max.setValue(new BigDecimal("1000.50"));
-
-        final ExpenseResponse maxExp = new ExpenseResponse();
-        maxExp.setId(4);
-        max.setExpense(maxExp);
-
-        final ExpenseMonthlySummaryResponseMin min = new ExpenseMonthlySummaryResponseMin();
-        min.setValue(new BigDecimal("19.78"));
-
-        final ExpenseResponse minExp = new ExpenseResponse();
-        minExp.setId(2);
-        min.setExpense(minExp);
-
-        final ExpenseMonthlySummaryResponse monthlySummary = new ExpenseMonthlySummaryResponse();
-        monthlySummary.setMax(max);
-        monthlySummary.setMin(min);
-        monthlySummary.setCount(4);
-        monthlySummary.setAverage(new BigDecimal("513.38"));
-        monthlySummary.setTotal(new BigDecimal("2053.50"));
-        monthlySummary.setTotalPaid(new BigDecimal("53.01"));
-        monthlySummary.setTotalToPay(new BigDecimal("2000.49"));
-        monthlySummary.setMonthlyProgress("100%");
-
-        return monthlySummary;
-    }
-
-    private ExpenseMonthlySummaryResponse buildMonthlyResponseWithZero(){
-        final ExpenseMonthlySummaryResponse monthlyResponse = buildMonthlyResponse();
-
-        monthlyResponse.setAverage(BigDecimal.ZERO);
-        monthlyResponse.setTotalToPay(BigDecimal.ZERO);
-        monthlyResponse.setTotal(BigDecimal.ZERO);
-        monthlyResponse.setTotalPaid(BigDecimal.ZERO);
-        monthlyResponse.setCount(0);
-        monthlyResponse.setMonthlyProgress("0%");
-        monthlyResponse.setMin(null);
-        monthlyResponse.setMax(null);
-
-        return monthlyResponse;
     }
 
 }
