@@ -1,0 +1,8 @@
+{
+  "id": 1,
+  "amount": 1234.56,
+  "description": "Painting service",
+  "type": "MONTHLY",
+  "accountingPeriodStart": "2021-07-15",
+  "active": false
+}

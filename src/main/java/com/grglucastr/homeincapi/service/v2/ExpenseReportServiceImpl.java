@@ -1,6 +1,7 @@
 package com.grglucastr.homeincapi.service.v2;
 
 import com.grglucastr.homeincapi.model.Expense;
+import com.grglucastr.homeincapi.model.Income;
 import com.grglucastr.homeincapi.util.DateUtils;
 import com.grglucastr.model.ExpenseMonthlySummaryResponse;
 import com.grglucastr.model.ExpenseMonthlySummaryResponseMax;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +24,9 @@ public class ExpenseReportServiceImpl implements ExpenseReportService {
 
     @Autowired
     private ModelMapper mapper;
+
+    @Autowired
+    private IncomeService incomeService;
 
     @Override
     public ExpenseMonthlySummaryResponse generateSummaryReport(List<Expense> expenses, int monthNo) {
@@ -88,6 +93,11 @@ public class ExpenseReportServiceImpl implements ExpenseReportService {
         summaryResponse.setTotal(total.orElse(BigDecimal.ZERO));
         summaryResponse.setTotalPaid(totalPaid.orElse(BigDecimal.ZERO));
         summaryResponse.setTotalToPay(totalToPay.orElse(BigDecimal.ZERO));
+
+        final int year = LocalDate.now().getYear();
+        final Optional<Income> income = incomeService.findByDateRange(year, monthNo);
+
+        income.ifPresent(i -> summaryResponse.setMonthlyIncome(i.getAmount()));
 
         return summaryResponse;
     }

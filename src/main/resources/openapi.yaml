@@ -387,6 +387,10 @@ components:
           type: number
           description: Hold the sum of all bills pending to pay of the month.
           example: 1234.43
+        monthlyIncome:
+          type: number
+          description: Hold the sum of all incomes to the given month
+          example: 15123.90
     IncomeRequest:
       description: Request object to handle income
       type: object
@@ -407,14 +411,23 @@ components:
           example: MONTHLY
           enum: ["JUST_ONCE", "DAILY", "WEEKLY", "MONTHLY", "YEARLY"]
           description: Inform the frequency of this income amount.
+        accountingPeriodStart:
+          type: string
+          format: date
+          description: The date that this income started to be useful.
+        accountingPeriodEnd:
+          type: string
+          format: date
+          description: The date that this income started to be desconsidered. When filled, it changes the property of active to false automatically.
         active:
           type: boolean
-          description: Inform whether this income stills valid or not
+          description: Inform whether this income stills valid or not.
           default: true
       required: [
           'amount',
           'description',
-          'type'
+          'type',
+          'accountingPeriodStart'
       ]
     IncomeResponse:
       description: Response object to amount
@@ -438,6 +451,14 @@ components:
           example: "MONTHLY"
           enum: ["JUST_ONCE", "DAILY", "WEEKLY", "MONTHLY", "YEARLY"]
           description: Inform the frequency of this income amount.
+        accountingPeriodStart:
+          type: string
+          format: date
+          description: The date that this income started to be useful.
+        accountingPeriodEnd:
+          type: string
+          format: date
+          description: The date that this income started to be desconsidered.
         active:
           type: boolean
           description: True if this income stills being used for calculations. False if this income is not considered anymore.

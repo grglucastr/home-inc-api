@@ -12,4 +12,6 @@ public interface IncomeService {
     List<Income> findAll();
 
     Optional<Income> findById(Long incomeId);
+
+    Optional<Income> findByDateRange(int year, int month);
 }

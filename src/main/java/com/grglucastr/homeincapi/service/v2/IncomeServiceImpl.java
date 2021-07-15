@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,5 +33,17 @@ public class IncomeServiceImpl implements IncomeService {
     public Optional<Income> findById(Long incomeId) {
         log.info("Finding income by id: {}", incomeId);
         return repository.findById(incomeId);
+    }
+
+    @Override
+    public Optional<Income> findByDateRange(int year, int month) {
+        log.info("Finding income by year: {} and month: {}", year, month);
+        final LocalDate startDate = LocalDate.of(year, month, 1);
+        final LocalDate endDate = startDate.plusMonths(1L).minusDays(1L);
+
+        log.info("Start date: {}", startDate);
+        log.info("End date: {}", endDate);
+
+        return repository.findByDateRange(startDate, endDate);
     }
 }

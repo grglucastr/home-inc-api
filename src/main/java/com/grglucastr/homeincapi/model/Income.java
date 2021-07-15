@@ -49,6 +49,12 @@ public class Income {
     @Column(name = "active")
     private boolean active = Boolean.TRUE;
 
+    @Column(name = "accounting_period_start")
+    private LocalDate accountingPeriodStart;
+
+    @Column(name = "accounting_period_end")
+    private LocalDate accountingPeriodEnd;
+
     @CreatedDate
     private LocalDate insertDate;
 

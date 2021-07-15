@@ -3,7 +3,6 @@ package com.grglucastr.homeincapi.controller.v2;
 import com.grglucastr.homeincapi.enums.Periodicity;
 import com.grglucastr.homeincapi.model.Income;
 import com.grglucastr.homeincapi.service.v2.IncomeService;
-import com.grglucastr.homeincapi.util.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -35,6 +35,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(MockitoJUnitRunner.class)
 @WebMvcTest(controllers = IncomeController.class)
 public class IncomeControllerTests {
+
+    private static final String NEW_INCOME_PAYLOAD_JSON = "new-income-payload.json";
+    private static final String UPDATE_INCOME_PAYLOAD_JSON = "update-income-payload.json";
 
     private IncomeService incomeService;
     private ModelMapper mapper;
@@ -79,13 +82,17 @@ public class IncomeControllerTests {
     public void testPostIncomes() throws Exception {
 
         final Income income = buildIncomeObject(1L, "123.45", "Tralala");
+        income.setActive(false);
+
+        final InputStream is = IncomeControllerTests.class.getResourceAsStream("/" + NEW_INCOME_PAYLOAD_JSON);
+        assert is != null : NEW_INCOME_PAYLOAD_JSON + " not found ";
 
         when(incomeService.save(any())).thenReturn(income);
 
         final MockHttpServletRequestBuilder post = post("/v2/incomes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(StringUtils.asJsonString(income));
+                .content(is.readAllBytes());
         
         mockMvc.perform(post)
                 .andDo(print())
@@ -93,8 +100,10 @@ public class IncomeControllerTests {
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.amount", is(123.45)))
                 .andExpect(jsonPath("$.description", is("Tralala")))
-                .andExpect(jsonPath("$.active", is(true)))
+                .andExpect(jsonPath("$.active", is(false)))
                 .andExpect(jsonPath("$.type", is("MONTHLY")))
+                .andExpect(jsonPath("$.accountingPeriodStart").exists())
+                .andExpect(jsonPath("$.accountingPeriodStart").isNotEmpty())
                 .andExpect(jsonPath("$.insertDate").isNotEmpty())
                 .andExpect(jsonPath("$.updateDate").isNotEmpty());
     }
@@ -153,14 +162,17 @@ public class IncomeControllerTests {
     @Test
     public void testUpdateIncomeByIdNotFound()  throws Exception {
 
-        final Income income = buildIncomeObject(1L, "123.34", "Salary");
+        final InputStream json = IncomeControllerTests.class
+                .getResourceAsStream("/" + UPDATE_INCOME_PAYLOAD_JSON);
+
+        assert json != null : UPDATE_INCOME_PAYLOAD_JSON + " not found.";
 
         when(incomeService.findById(1L)).thenReturn(Optional.empty());
 
         final MockHttpServletRequestBuilder put = put("/v2/incomes/{incomeId}", 1L)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(StringUtils.asJsonString(income));
+                .content(json.readAllBytes());
 
         mockMvc.perform(put)
                 .andDo(print())
@@ -171,6 +183,8 @@ public class IncomeControllerTests {
     public void testUpdateIncomeById() throws Exception {
 
         final Income income = buildIncomeObject(1L, "1234.45", "Salary");
+        income.setActive(false);
+
         when(incomeService.findById(1L)).thenReturn(Optional.of(income));
 
         income.setDescription("Independent service");
@@ -178,17 +192,21 @@ public class IncomeControllerTests {
         income.setType(Periodicity.WEEKLY);
         when(incomeService.save(any())).thenReturn(income);
 
+        final InputStream json = IncomeControllerTests.class.getResourceAsStream("/" + UPDATE_INCOME_PAYLOAD_JSON);
+        assert json != null : UPDATE_INCOME_PAYLOAD_JSON + " not found. ";
+
         final MockHttpServletRequestBuilder put = put("/v2/incomes/{incomeId}", 1L)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(StringUtils.asJsonString(income));
+                .content(json.readAllBytes());
 
         mockMvc.perform(put)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.amount", is(2500.50)))
                 .andExpect(jsonPath("$.description", is("Independent service")))
-                .andExpect(jsonPath("$.active", is(true)))
+                .andExpect(jsonPath("$.active", is(false)))
+                .andExpect(jsonPath("$.accountingPeriodStart").isNotEmpty())
                 .andExpect(jsonPath("$.type", is("WEEKLY")))
                 .andExpect(jsonPath("$.insertDate").isNotEmpty())
                 .andExpect(jsonPath("$.updateDate").isNotEmpty());
@@ -225,6 +243,7 @@ public class IncomeControllerTests {
         income.setDescription(description);
         income.setActive(true);
         income.setType(Periodicity.MONTHLY);
+        income.setAccountingPeriodStart(LocalDate.now());
         income.setInsertDate(LocalDate.now());
         income.setUpdateDate(LocalDate.now());
         return income;
