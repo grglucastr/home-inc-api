@@ -102,17 +102,16 @@ public class ExpenseController implements ExpensesApi {
     }
 
     @Override
-    public ResponseEntity<ExpenseMonthlySummaryResponse> monthlySummary(Integer monthNo, Boolean paid) {
-
+    public ResponseEntity<ExpenseMonthlySummaryResponse> getReportSummaryByYearAndMonth(Integer year, Integer month, Boolean paid) {
         List<Expense> expenses;
         if(Optional.ofNullable(paid).isPresent()){
-            expenses = expenseService.findByMonthAndPaid(monthNo, paid);
-            final ExpenseMonthlySummaryResponse summaryResponse = expenseReportService.generateSummaryReport(expenses, monthNo);
+            expenses = expenseService.findByMonthAndYearAndPaid(year, month, paid);
+            final ExpenseMonthlySummaryResponse summaryResponse = expenseReportService.generateSummaryReport(expenses, year, month);
             return ResponseEntity.ok(summaryResponse);
         }
 
-        expenses = expenseService.findByMonth(monthNo);
-        final ExpenseMonthlySummaryResponse summaryResponse = expenseReportService.generateSummaryReport(expenses, monthNo);
+        expenses = expenseService.findByMonthAndYear(year, month);
+        final ExpenseMonthlySummaryResponse summaryResponse = expenseReportService.generateSummaryReport(expenses, year, month);
         return ResponseEntity.ok(summaryResponse);
     }
 

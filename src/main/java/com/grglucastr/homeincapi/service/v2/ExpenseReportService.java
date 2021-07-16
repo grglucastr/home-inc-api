@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface ExpenseReportService {
 
-    ExpenseMonthlySummaryResponse generateSummaryReport(List<Expense> expenses, int monthNo);
+    ExpenseMonthlySummaryResponse generateSummaryReport(List<Expense> expenses, int year, int monthNo);
 
 }

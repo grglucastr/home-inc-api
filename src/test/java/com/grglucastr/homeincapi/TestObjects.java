@@ -4,8 +4,7 @@ import com.grglucastr.homeincapi.enums.PaymentMethod;
 import com.grglucastr.homeincapi.enums.Periodicity;
 import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.model.ExpenseMonthlySummaryResponse;
-import com.grglucastr.model.ExpenseMonthlySummaryResponseMax;
-import com.grglucastr.model.ExpenseMonthlySummaryResponseMin;
+import com.grglucastr.model.ExpenseSummary;
 import com.grglucastr.model.ExpenseResponse;
 
 import java.math.BigDecimal;
@@ -16,18 +15,18 @@ import java.util.List;
 public abstract class TestObjects {
 
     protected ExpenseMonthlySummaryResponse createMonthlyResponse(){
-        final ExpenseMonthlySummaryResponseMax max = new ExpenseMonthlySummaryResponseMax();
+        final ExpenseSummary max = new ExpenseSummary();
         max.setValue(new BigDecimal("1000.50"));
 
         final ExpenseResponse maxExp = new ExpenseResponse();
-        maxExp.setId(4);
+        maxExp.setId(4L);
         max.setExpense(maxExp);
 
-        final ExpenseMonthlySummaryResponseMin min = new ExpenseMonthlySummaryResponseMin();
+        final ExpenseSummary min = new ExpenseSummary();
         min.setValue(new BigDecimal("19.78"));
 
         final ExpenseResponse minExp = new ExpenseResponse();
-        minExp.setId(2);
+        minExp.setId(2L);
         min.setExpense(minExp);
 
         final ExpenseMonthlySummaryResponse monthlySummary = new ExpenseMonthlySummaryResponse();
@@ -99,7 +98,7 @@ public abstract class TestObjects {
         return Arrays.asList(ex1, ex2, ex3, ex4);
     }
 
-    protected ExpenseResponse createSingleExpenseResponse(Integer id){
+    protected ExpenseResponse createSingleExpenseResponse(Long id){
         final ExpenseResponse expenseResponse = new ExpenseResponse();
         expenseResponse.setId(id);
         return expenseResponse;

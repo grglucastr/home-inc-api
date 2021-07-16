@@ -4,22 +4,23 @@ import java.time.LocalDate;
 
 public final class DateUtils {
 
-    public static String getMonthlyProgress(int monthNo){
+    public static String getMonthlyProgress(int year, int month){
 
-        LocalDate now = LocalDate.now();
-        if (now.getMonthValue() > monthNo) {
+        final LocalDate now = LocalDate.now();
+        if(now.getYear() > year)
             return "100%";
-        }
 
-        if (now.getMonthValue() < monthNo) {
+        if(year > now.getYear())
             return "0%";
-        }
 
-        int year = LocalDate.now().getYear();
-        LocalDate start = LocalDate.of(year, monthNo, 1);
-        final int lengthOfMonth = start.lengthOfMonth();
+        if(now.getMonthValue() > month)
+            return "100%";
 
-        double total = (now.getDayOfMonth() * 100.0) / lengthOfMonth;
+        if(month > now.getMonthValue())
+            return "0%";
+
+        final LocalDate paramDate = LocalDate.of(year, month, 1);
+        double total = (now.getDayOfMonth() * 100.0) / paramDate.lengthOfMonth();
         return Math.round(total * 100.0) / 100.0 + "%";
     }
 }

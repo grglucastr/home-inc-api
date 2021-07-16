@@ -37,67 +37,73 @@ public class ExpenseReportServiceTests extends IncomeTestObjects {
     @Autowired
     private ExpenseReportServiceImpl expenseReportService;
 
-
     @Test
-    public void testMonthlyReportWithIncomes(){
+    public void testGenerateReportByYearAndMonth() {
 
-        final int month = 4;
         final List<Expense> listOfExpenses = createListOfExpenses();
-        final Expense minExpense = listOfExpenses.get(1);
-        final Expense maxExpense = listOfExpenses.get(3);
+        final Expense expensive = listOfExpenses.get(3);
+        final Expense cheaper = listOfExpenses.get(1);
 
-        final ExpenseResponse minExpenseResponse = createSingleExpenseResponse(2);
-        minExpenseResponse.setCost(minExpense.getCost());
+        final int year = 2021;
+        final int month = 4;
 
-        final ExpenseResponse maxExpenseResponse = createSingleExpenseResponse(4);
-        maxExpenseResponse.setCost(maxExpense.getCost());
+        final ExpenseResponse cheapExpense = createSingleExpenseResponse(2L);
+        cheapExpense.setCost(cheaper.getCost());
 
-        when(mapper.map(minExpense, ExpenseResponse.class))
-                .thenReturn(minExpenseResponse);
+        final ExpenseResponse expensiveExpense = createSingleExpenseResponse(4L);
+        expensiveExpense.setCost(expensive.getCost());
 
-        when(mapper.map(maxExpense, ExpenseResponse.class))
-                .thenReturn(maxExpenseResponse);
+        when(mapper.map(cheaper, ExpenseResponse.class))
+                .thenReturn(cheapExpense);
+
+        when(mapper.map(expensive, ExpenseResponse.class))
+                .thenReturn(expensiveExpense);
 
         final Income income = createIncomeList().get(1);
         when(incomeService.findByDateRange(anyInt(), anyInt())).thenReturn(Optional.of(income));
 
         final ExpenseMonthlySummaryResponse report = expenseReportService
-                .generateSummaryReport(listOfExpenses, month);
+                .generateSummaryReport(listOfExpenses, year, month);
 
-        Assert.assertThat(report.getMin(), Matchers.notNullValue());
-        Assert.assertThat(report.getMin().getValue(), Matchers.is(new BigDecimal("19.78")));
-        Assert.assertThat(report.getMin().getExpense(), Matchers.notNullValue());
-        Assert.assertThat(report.getMin().getExpense().getId(), Matchers.is(2));
 
-        Assert.assertThat(report.getMax(), Matchers.notNullValue());
-        Assert.assertThat(report.getMax().getValue(), Matchers.is(new BigDecimal("1000.50")));
-        Assert.assertThat(report.getMax().getExpense(), Matchers.notNullValue());
-        Assert.assertThat(report.getMax().getExpense().getId(), Matchers.is(4));
+        assertReportAttributes(listOfExpenses, expensive, cheaper, report);
+    }
 
-        Assert.assertThat(report.getCount(), Matchers.is(4));
+    @Test
+    public void testGenerateReportByYearAndMonthButExpenseNotFound(){
+
+        final ExpenseMonthlySummaryResponse report = expenseReportService
+                .generateSummaryReport(Collections.emptyList(), 2020, 3);
+
+        Assert.assertThat(report.getMax(), Matchers.is(Matchers.nullValue()));
+        Assert.assertThat(report.getMin(), Matchers.is(Matchers.nullValue()));
+
+        Assert.assertThat(report.getMonthlyProgress(), Matchers.is("100%"));
+        Assert.assertThat(report.getCount(), Matchers.is(0));
+        Assert.assertThat(report.getAverage(), Matchers.is(new BigDecimal("0")));
+        Assert.assertThat(report.getTotal(), Matchers.is(new BigDecimal("0")));
+        Assert.assertThat(report.getTotalPaid(), Matchers.is(new BigDecimal("0")));
+        Assert.assertThat(report.getTotalToPay(), Matchers.is(new BigDecimal("0")));
+        Assert.assertThat(report.getMonthlyProgress(), Matchers.is("100%"));
+        Assert.assertThat(report.getMonthlyIncome(), Matchers.is(new BigDecimal("0")));
+    }
+
+    private void assertReportAttributes(List<Expense> listOfExpenses, Expense expensive, Expense cheaper, ExpenseMonthlySummaryResponse report) {
+        Assert.assertThat(report.getMax(), Matchers.is(Matchers.notNullValue()));
+        Assert.assertThat(report.getMax().getValue(), Matchers.is(expensive.getCost()));
+        Assert.assertThat(report.getMax().getExpense().getId(), Matchers.is(expensive.getId()));
+
+        Assert.assertThat(report.getMin(), Matchers.is(Matchers.notNullValue()));
+        Assert.assertThat(report.getMin().getValue(), Matchers.is(cheaper.getCost()));
+        Assert.assertThat(report.getMin().getExpense().getId(), Matchers.is(cheaper.getId()));
+
+        Assert.assertThat(report.getMonthlyProgress(), Matchers.is("100%"));
+        Assert.assertThat(report.getCount(), Matchers.is(listOfExpenses.size()));
         Assert.assertThat(report.getAverage(), Matchers.is(new BigDecimal("486.13")));
         Assert.assertThat(report.getTotal(), Matchers.is(new BigDecimal("1944.50")));
         Assert.assertThat(report.getTotalPaid(), Matchers.is(new BigDecimal("53.01")));
         Assert.assertThat(report.getTotalToPay(), Matchers.is(new BigDecimal("1891.49")));
         Assert.assertThat(report.getMonthlyProgress(), Matchers.is("100%"));
-
         Assert.assertThat(report.getMonthlyIncome(), Matchers.is(new BigDecimal("4022")));
-    }
-
-    @Test
-    public void testGenerateReportButMonthHasNoExpensesRecorded(){
-
-        final int month = 4;
-        final ExpenseMonthlySummaryResponse report = expenseReportService
-                .generateSummaryReport(Collections.emptyList(), month);
-
-        Assert.assertThat(report.getMonthlyProgress(), Matchers.is("100%"));
-        Assert.assertThat(report.getCount(), Matchers.is(0));
-        Assert.assertThat(report.getTotal(), Matchers.is(BigDecimal.ZERO));
-        Assert.assertThat(report.getTotalPaid(), Matchers.is(BigDecimal.ZERO));
-        Assert.assertThat(report.getTotalToPay(), Matchers.is(BigDecimal.ZERO));
-        Assert.assertThat(report.getMonthlyIncome(), Matchers.is(BigDecimal.ZERO));
-        Assert.assertThat(report.getMin(), Matchers.is(Matchers.nullValue()));
-        Assert.assertThat(report.getMax(), Matchers.is(Matchers.nullValue()));
     }
 }

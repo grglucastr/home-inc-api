@@ -39,8 +39,6 @@ public class IncomeServiceTests extends IncomeTestObjects {
         assertAllIncomeAttributes(income, incomeSaved);
     }
 
-
-
     @Test
     public void testFindAllIncomes(){
         final List<Income> incomeList = createIncomeList();

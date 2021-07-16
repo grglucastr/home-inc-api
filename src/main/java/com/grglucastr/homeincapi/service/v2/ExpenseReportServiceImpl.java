@@ -4,8 +4,7 @@ import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.model.Income;
 import com.grglucastr.homeincapi.util.DateUtils;
 import com.grglucastr.model.ExpenseMonthlySummaryResponse;
-import com.grglucastr.model.ExpenseMonthlySummaryResponseMax;
-import com.grglucastr.model.ExpenseMonthlySummaryResponseMin;
+import com.grglucastr.model.ExpenseSummary;
 import com.grglucastr.model.ExpenseResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +27,8 @@ public class ExpenseReportServiceImpl implements ExpenseReportService {
     private IncomeService incomeService;
 
     @Override
-    public ExpenseMonthlySummaryResponse generateSummaryReport(List<Expense> expenses, int monthNo) {
-        final String monthlyProgress = DateUtils.getMonthlyProgress(monthNo);
+    public ExpenseMonthlySummaryResponse generateSummaryReport(List<Expense> expenses, int year, int monthNo) {
+        final String monthlyProgress = DateUtils.getMonthlyProgress(year, monthNo);
         final ExpenseMonthlySummaryResponse summaryResponse = new ExpenseMonthlySummaryResponse();
 
         summaryResponse.setCount(0);
@@ -64,7 +62,7 @@ public class ExpenseReportServiceImpl implements ExpenseReportService {
                 .map(Expense::getCost)
                 .reduce(BigDecimal::add);
 
-        final ExpenseMonthlySummaryResponseMax resMax = new ExpenseMonthlySummaryResponseMax();
+        final ExpenseSummary resMax = new ExpenseSummary();
         resMax.setValue(BigDecimal.ZERO);
         resMax.setExpense(null);
 
@@ -74,7 +72,7 @@ public class ExpenseReportServiceImpl implements ExpenseReportService {
             resMax.setValue(expRes.getCost());
         }
 
-        final ExpenseMonthlySummaryResponseMin resMin = new ExpenseMonthlySummaryResponseMin();
+        final ExpenseSummary resMin = new ExpenseSummary();
         resMin.setValue(BigDecimal.ZERO);
         resMin.setExpense(null);
 
@@ -95,9 +93,7 @@ public class ExpenseReportServiceImpl implements ExpenseReportService {
         summaryResponse.setTotalPaid(totalPaid.orElse(BigDecimal.ZERO));
         summaryResponse.setTotalToPay(totalToPay.orElse(BigDecimal.ZERO));
 
-        final int year = LocalDate.now().getYear();
         final Optional<Income> income = incomeService.findByDateRange(year, monthNo);
-
         income.ifPresent(i -> summaryResponse.setMonthlyIncome(i.getAmount()));
 
         return summaryResponse;

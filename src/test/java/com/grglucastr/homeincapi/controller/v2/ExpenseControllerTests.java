@@ -42,6 +42,7 @@ public class ExpenseControllerTests extends TestObjects {
 
     private static final String NEW_EXPENSE_PAYLOAD_JSON = "new-expense-payload.json";
     private static final String URL_V2_EXPENSES = "/v2/expenses";
+    private static final String URL_V2_SUMMARY_YEAR_MONTH = "/v2/expenses/year/{year}/month/{month}/summary";
 
     private ExpenseReportService expenseReportService;
     private ExpenseService expenseService;
@@ -320,12 +321,13 @@ public class ExpenseControllerTests extends TestObjects {
         exp4.setId(4L);
         exp4.setCost(new BigDecimal("1000.50"));
 
-        when(expenseReportService.generateSummaryReport(anyList(), anyInt()))
+        when(expenseReportService.generateSummaryReport(anyList(), anyInt(), anyInt()))
                 .thenReturn(createMonthlyResponse());
 
-        when(expenseService.findByMonth(anyInt())).thenReturn(Arrays.asList(exp1, exp2, exp3, exp4));
+        when(expenseService.findByMonthAndYear(anyInt(), anyInt()))
+                .thenReturn(Arrays.asList(exp1, exp2, exp3, exp4));
 
-        mockMvc.perform(get("/v2/expenses/{monthNo}/summary", 4)
+        mockMvc.perform(get(URL_V2_SUMMARY_YEAR_MONTH, 2020, 4)
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.monthlyProgress", is("100%")))
@@ -363,22 +365,22 @@ public class ExpenseControllerTests extends TestObjects {
         final ExpenseMonthlySummaryResponse monthlyResponse = createMonthlyResponse();
         monthlyResponse.setMonthlyProgress("100%");
         monthlyResponse.getMin().setValue(new BigDecimal("19.78"));
-        monthlyResponse.getMin().getExpense().setId(2);
+        monthlyResponse.getMin().getExpense().setId(2L);
         monthlyResponse.getMax().setValue(new BigDecimal("33.23"));
-        monthlyResponse.getMax().getExpense().setId(1);
+        monthlyResponse.getMax().getExpense().setId(1L);
         monthlyResponse.setCount(2);
         monthlyResponse.setAverage(new BigDecimal("26.51"));
         monthlyResponse.setTotal(new BigDecimal("53.01"));
         monthlyResponse.setTotalPaid(new BigDecimal("53.01"));
         monthlyResponse.setTotalToPay(BigDecimal.ZERO);
 
-        when(expenseReportService.generateSummaryReport(anyList(), anyInt()))
+        when(expenseReportService.generateSummaryReport(anyList(), anyInt(), anyInt()))
                 .thenReturn(monthlyResponse);
 
-        when(expenseService.findByMonthAndPaid(4, true))
+        when(expenseService.findByMonthAndYearAndPaid(2020, 4, true))
                 .thenReturn(Arrays.asList(exp1, exp2));
 
-        mockMvc.perform(get("/v2/expenses/{monthNo}/summary?paid=true", 4)
+        mockMvc.perform(get( URL_V2_SUMMARY_YEAR_MONTH + "?paid=true", 2020, 4)
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.monthlyProgress", is("100%")))
@@ -416,22 +418,22 @@ public class ExpenseControllerTests extends TestObjects {
         final List<Expense> expenses = Arrays.asList(exp3, exp4);
         final ExpenseMonthlySummaryResponse monthlyResponse = createMonthlyResponse();
         monthlyResponse.getMin().setValue(new BigDecimal("999.99"));
-        monthlyResponse.getMin().getExpense().setId(3);
+        monthlyResponse.getMin().getExpense().setId(3L);
         monthlyResponse.getMax().setValue(new BigDecimal("1000.50"));
-        monthlyResponse.getMax().getExpense().setId(4);
+        monthlyResponse.getMax().getExpense().setId(4L);
         monthlyResponse.setCount(2);
         monthlyResponse.setAverage(new BigDecimal("1000.25"));
         monthlyResponse.setTotal(new BigDecimal("2000.49"));
         monthlyResponse.setTotalPaid(new BigDecimal("0"));
         monthlyResponse.setTotalToPay(new BigDecimal("2000.49"));
 
-        when(expenseReportService.generateSummaryReport(expenses, 4))
+        when(expenseReportService.generateSummaryReport(expenses, 2020,4))
                 .thenReturn(monthlyResponse);
 
-        when(expenseService.findByMonthAndPaid(4, false))
+        when(expenseService.findByMonthAndYearAndPaid(2020, 4, false))
                 .thenReturn(expenses);
 
-        mockMvc.perform(get("/v2/expenses/{monthNo}/summary?paid=false", 4)
+        mockMvc.perform(get(URL_V2_SUMMARY_YEAR_MONTH + "?paid=false", 2020, 4)
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.monthlyProgress", is("100%")))
@@ -448,16 +450,17 @@ public class ExpenseControllerTests extends TestObjects {
 
     @Test
     public void testMonthlySummaryWithNoExpensesAndMonthProgressIsZero() throws Exception {
-        int nextMonth = LocalDate.now().plusMonths(4).getMonthValue();
+        final int year = LocalDate.now().getYear();
+        final int nextMonth = LocalDate.now().plusMonths(4).getMonthValue();
 
         final ExpenseMonthlySummaryResponse monthlyResponse = createMonthlyResponseWithZero();
 
-        when(expenseReportService.generateSummaryReport(anyList(), anyInt()))
+        when(expenseReportService.generateSummaryReport(anyList(), anyInt(), anyInt()))
                 .thenReturn(monthlyResponse);
 
-        when(expenseService.findByMonth(nextMonth)).thenReturn(new ArrayList<>());
+        when(expenseService.findByMonthAndYear(year, nextMonth)).thenReturn(new ArrayList<>());
 
-        mockMvc.perform(get("/v2/expenses/{monthNo}/summary", nextMonth)
+        mockMvc.perform(get(URL_V2_SUMMARY_YEAR_MONTH, year, nextMonth)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
