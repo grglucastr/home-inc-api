@@ -5,7 +5,7 @@ import com.grglucastr.homeincapi.enums.Periodicity;
 import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.service.v2.ExpenseReportService;
 import com.grglucastr.homeincapi.service.v2.ExpenseService;
-import com.grglucastr.homeincapi.utils.TestObjects;
+import com.grglucastr.homeincapi.TestObjects;
 import com.grglucastr.model.ExpenseMonthlySummaryResponse;
 import org.junit.Assert;
 import org.junit.Before;

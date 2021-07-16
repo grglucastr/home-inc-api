@@ -1,4 +1,4 @@
-package com.grglucastr.homeincapi.utils;
+package com.grglucastr.homeincapi;
 
 import com.grglucastr.homeincapi.enums.PaymentMethod;
 import com.grglucastr.homeincapi.enums.Periodicity;

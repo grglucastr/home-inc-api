@@ -2,7 +2,7 @@ package com.grglucastr.homeincapi.service.v2;
 
 import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.model.Income;
-import com.grglucastr.homeincapi.utils.IncomeTestObjects;
+import com.grglucastr.homeincapi.IncomeTestObjects;
 import com.grglucastr.model.ExpenseMonthlySummaryResponse;
 import com.grglucastr.model.ExpenseResponse;
 import org.hamcrest.Matchers;

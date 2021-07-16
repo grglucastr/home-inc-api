@@ -2,7 +2,7 @@ package com.grglucastr.homeincapi.service.v2;
 
 import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.repository.ExpenseRepository;
-import com.grglucastr.homeincapi.utils.TestObjects;
+import com.grglucastr.homeincapi.TestObjects;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
