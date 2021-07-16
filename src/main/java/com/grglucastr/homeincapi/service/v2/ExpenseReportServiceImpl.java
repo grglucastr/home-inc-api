@@ -38,6 +38,7 @@ public class ExpenseReportServiceImpl implements ExpenseReportService {
         summaryResponse.setAverage(BigDecimal.ZERO);
         summaryResponse.setTotalPaid(BigDecimal.ZERO);
         summaryResponse.setTotalToPay(BigDecimal.ZERO);
+        summaryResponse.setMonthlyIncome(BigDecimal.ZERO);
         summaryResponse.setMonthlyProgress(monthlyProgress);
 
         if(expenses.isEmpty())

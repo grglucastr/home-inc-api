@@ -16,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,5 +82,22 @@ public class ExpenseReportServiceTests extends IncomeTestObjects {
         Assert.assertThat(report.getMonthlyProgress(), Matchers.is("100%"));
 
         Assert.assertThat(report.getMonthlyIncome(), Matchers.is(new BigDecimal("4022")));
+    }
+
+    @Test
+    public void testGenerateReportButMonthHasNoExpensesRecorded(){
+
+        final int month = 4;
+        final ExpenseMonthlySummaryResponse report = expenseReportService
+                .generateSummaryReport(Collections.emptyList(), month);
+
+        Assert.assertThat(report.getMonthlyProgress(), Matchers.is("100%"));
+        Assert.assertThat(report.getCount(), Matchers.is(0));
+        Assert.assertThat(report.getTotal(), Matchers.is(BigDecimal.ZERO));
+        Assert.assertThat(report.getTotalPaid(), Matchers.is(BigDecimal.ZERO));
+        Assert.assertThat(report.getTotalToPay(), Matchers.is(BigDecimal.ZERO));
+        Assert.assertThat(report.getMonthlyIncome(), Matchers.is(BigDecimal.ZERO));
+        Assert.assertThat(report.getMin(), Matchers.is(Matchers.nullValue()));
+        Assert.assertThat(report.getMax(), Matchers.is(Matchers.nullValue()));
     }
 }
