@@ -49,14 +49,6 @@ public class ExpenseController implements ExpensesApi {
         return ResponseEntity.ok(expenseResponses);
     }
 
-    private Predicate<Expense> isPaid(ExpenseFilter filter) {
-        return e -> filter.getPaid() != null && e.isPaid() == filter.getPaid();
-    }
-
-    private Predicate<Expense> isActive(ExpenseFilter filter) {
-        return e -> filter.getActive() != null && e.getIsActive() == filter.getActive();
-    }
-
     @Override
     public ResponseEntity<ExpenseResponse> postExpenses(ExpenseRequest expenseRequest) {
         final Expense expense = mapper.map(expenseRequest, Expense.class);
@@ -167,5 +159,13 @@ public class ExpenseController implements ExpensesApi {
                     .collect(Collectors.toList());
         }
         return expenses;
+    }
+
+    private Predicate<Expense> isPaid(ExpenseFilter filter) {
+        return e -> filter.getPaid() != null && e.isPaid() == filter.getPaid();
+    }
+
+    private Predicate<Expense> isActive(ExpenseFilter filter) {
+        return e -> filter.getActive() != null && e.getIsActive() == filter.getActive();
     }
 }
