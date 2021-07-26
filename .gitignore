@@ -32,3 +32,4 @@ build/
 
 ### home-inc-api ###
 src/main/resources/application-dev.properties
+src/main/resources/static/api.html
