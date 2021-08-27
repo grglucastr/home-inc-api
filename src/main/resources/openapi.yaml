@@ -194,7 +194,6 @@ paths:
         '404':
           description: Income not found for the given id.
 
-
   /v2/incomes/sum:
     get:
       summary: Retrieves the sum of all incomes
@@ -208,6 +207,36 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/IncomeSumResponse"
+
+  /v2/summary:
+    get:
+      summary: List the links to get the summary of current month, previous and next month.
+      operationId: getSummary
+      tags:
+        - Summary
+      responses:
+        '200':
+          description: Summary links
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SummaryResponse"
+  
+  /v2/summary/year/{year}/month/{month}:
+    get:
+      operationId: getSingleSummary
+      tags:
+        - Summary
+      parameters:
+        - $ref: "#/components/parameters/year"
+        - $ref: "#/components/parameters/month"
+      responses:
+        '200':
+          description: Response of a single summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SingleSummaryResponse"
 
 components:
   parameters:
@@ -351,6 +380,13 @@ components:
           type: string
           format: "date-time"
           example: "2020-04-30 12:33:29"
+        _links:
+          type: object
+          properties:
+            pay:
+              type: string
+              example: "https://domain.com/v2/expenses/222/pay"
+
     ExpenseMonthlySummaryResponse:
       description: Response summary containing the max, min and sum of values of all expenses according to criteria.
       type: object
@@ -481,3 +517,64 @@ components:
       properties:
         total:
           type: number
+    SummaryResponse:
+      type: object
+      description: Contains the links to show the summary for the current, previous and next month
+      properties:
+          previousMonth:
+            type: string
+            description: Request for the detailed summary of previous month.
+            example: "https://domain.com/v2/summary/year/2019/month/12"
+          currentMonth:
+            type: string
+            description: Request for the detailed summary of current month.
+            example: "https://domain.com/v2/summary/year/2020/month/1"
+          nextMonth:
+            type: string
+            description: Request for the detailed summary of next month.
+            example: "https://domain.com/v2/summary/year/2020/month/2"
+    SingleSummaryResponse:
+      type: object
+      description: Response summary containing the max, min and sum of values of all expenses according to criteria.
+      properties:
+        monthlyProgress:
+          type: string
+          description: Shows monthly progress percentage.
+          example: "45%"
+        min:
+          $ref: "#/components/schemas/ExpenseSummary"
+        max:
+          $ref: "#/components/schemas/ExpenseSummary"
+        count:
+          type: integer
+          format: int32
+          description: Holds the quantity of exepenses found according to the filter criteria.
+          example: 22
+        average:
+          type: number
+          description: Holds the average spended in the month.
+          example: 123.45
+        total:
+          type: number
+          description: Hold the sum of all bills of the month.
+          example: 3900.44
+        totalPaid:
+          type: number
+          description: Hold the sum of all paid bills of the month.
+          example: 1234.45
+        totalToPay:
+          type: number
+          description: Hold the sum of all bills pending to pay of the month.
+          example: 1234.43
+        monthlyIncome:
+          type: number
+          description: Hold the sum of all incomes to the given month
+          example: 15123.90
+        previousMonth:
+            type: string
+            description: Request for the detailed summary of previous month.
+            example: "https://domain.com/v2/summary/year/2019/month/12"
+        nextMonth:
+            type: string
+            description: Request for the detailed summary of next month.
+            example: "https://domain.com/v2/summary/year/2020/month/2"

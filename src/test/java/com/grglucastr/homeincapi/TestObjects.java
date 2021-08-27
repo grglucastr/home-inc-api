@@ -6,6 +6,7 @@ import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.model.ExpenseMonthlySummaryResponse;
 import com.grglucastr.model.ExpenseSummary;
 import com.grglucastr.model.ExpenseResponse;
+import com.grglucastr.model.SingleSummaryResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import java.util.List;
 
 public abstract class TestObjects {
 
+    @Deprecated
     protected ExpenseMonthlySummaryResponse createMonthlyResponse(){
         final ExpenseSummary max = new ExpenseSummary();
         max.setValue(new BigDecimal("1000.50"));
@@ -30,6 +32,38 @@ public abstract class TestObjects {
         min.setExpense(minExp);
 
         final ExpenseMonthlySummaryResponse monthlySummary = new ExpenseMonthlySummaryResponse();
+        monthlySummary.setMax(max);
+        monthlySummary.setMin(min);
+        monthlySummary.setCount(4);
+        monthlySummary.setAverage(new BigDecimal("513.38"));
+        monthlySummary.setTotal(new BigDecimal("2053.50"));
+        monthlySummary.setTotalPaid(new BigDecimal("53.01"));
+        monthlySummary.setTotalToPay(new BigDecimal("2000.49"));
+        monthlySummary.setMonthlyIncome(new BigDecimal("15234.90"));
+        monthlySummary.setMonthlyProgress("100%");
+
+
+        return monthlySummary;
+    }
+
+    protected SingleSummaryResponse createSingleSummaryResponse(){
+        final ExpenseSummary max = new ExpenseSummary();
+        max.setValue(new BigDecimal("1000.50"));
+
+        final ExpenseResponse maxExp = new ExpenseResponse();
+        maxExp.setId(4L);
+        maxExp.setCost(new BigDecimal("1000.50"));
+        max.setExpense(maxExp);
+
+        final ExpenseSummary min = new ExpenseSummary();
+        min.setValue(new BigDecimal("19.78"));
+
+        final ExpenseResponse minExp = new ExpenseResponse();
+        minExp.setId(2L);
+        minExp.setCost(new BigDecimal("19.78"));
+        min.setExpense(minExp);
+
+        final SingleSummaryResponse monthlySummary = new SingleSummaryResponse();
         monthlySummary.setMax(max);
         monthlySummary.setMin(min);
         monthlySummary.setCount(4);
