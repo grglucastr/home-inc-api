@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
@@ -71,7 +72,25 @@ public class ExpenseControllerTests extends TestObjects {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].isActive", is(true)))
-                .andExpect(jsonPath("$.[0].paid", is(false)));
+                .andExpect(jsonPath("$.[0].paid", is(false)))
+                .andExpect(jsonPath("$.[0]._links").exists())
+                .andExpect(jsonPath("$.[0]._links").isArray())
+                .andExpect(jsonPath("$.[0]._links", hasSize(1)))
+                .andExpect(jsonPath("$.[0]._links[0].rel", is("self")))
+                .andExpect(jsonPath("$.[0]._links[0].title", is("Mark as Paid")))
+                .andExpect(jsonPath("$.[0]._links[0].href", is("http://localhost/v2/expenses/1/pay")))
+                .andExpect(jsonPath("$.[1]._links").exists())
+                .andExpect(jsonPath("$.[1]._links").isArray())
+                .andExpect(jsonPath("$.[1]._links", hasSize(1)))
+                .andExpect(jsonPath("$.[1]._links[0].rel", is("self")))
+                .andExpect(jsonPath("$.[1]._links[0].title", is("Mark as Paid")))
+                .andExpect(jsonPath("$.[1]._links[0].href", is("http://localhost/v2/expenses/2/pay")))
+                .andExpect(jsonPath("$.[2]._links").exists())
+                .andExpect(jsonPath("$.[2]._links").isArray())
+                .andExpect(jsonPath("$.[2]._links", hasSize(1)))
+                .andExpect(jsonPath("$.[2]._links[0].rel", is("self")))
+                .andExpect(jsonPath("$.[2]._links[0].title", is("Mark as Paid")))
+                .andExpect(jsonPath("$.[2]._links[0].href", is("http://localhost/v2/expenses/3/pay")));
     }
 
     @Test
@@ -191,7 +210,9 @@ public class ExpenseControllerTests extends TestObjects {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(333)))
-                .andExpect(jsonPath("$.cost", is(33.23)));
+                .andExpect(jsonPath("$.cost", is(33.23)))
+                .andExpect(jsonPath("$.typableLine").exists())
+                .andExpect(jsonPath("$.typableLine", is("0341.00000 00000.000000 00000.000000 0 00000000000001")));
     }
 
     @Test
@@ -265,7 +286,17 @@ public class ExpenseControllerTests extends TestObjects {
                 .andExpect(jsonPath("$.servicePeriodEnd[1]", is(4)))
                 .andExpect(jsonPath("$.servicePeriodEnd[2]", is(25)))
                 .andExpect(jsonPath("$.periodicity", is(Periodicity.MONTHLY.toString().toLowerCase())))
-                .andExpect(jsonPath("$.paymentMethod", is(PaymentMethod.BANK_TRANSFER.toString().toLowerCase())));
+                .andExpect(jsonPath("$.paymentMethod", is(PaymentMethod.BANK_TRANSFER.toString().toLowerCase())))
+                .andExpect(jsonPath("$._links").exists())
+                .andExpect(jsonPath("$._links").isArray())
+                .andExpect(jsonPath("$._links[0].rel").exists())
+                .andExpect(jsonPath("$._links[0].rel", is("self")))
+                .andExpect(jsonPath("$._links[0].title").exists())
+                .andExpect(jsonPath("$._links[0].title", is("Mark as Paid")))
+                .andExpect(jsonPath("$._links[0].href").exists())
+                .andExpect(jsonPath("$._links[0].href", is("http://localhost/v2/expenses/1/pay")))
+                .andExpect(jsonPath("$.typableLine").exists())
+                .andExpect(jsonPath("$.typableLine", is("0341.00000 00000.000000 00000.000000 0 00000000000001")));
     }
 
     @Test

@@ -11,6 +11,7 @@ import com.grglucastr.model.ExpenseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,10 +22,15 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController("ExpenseV2Controller")
 @Slf4j
 public class ExpenseController implements ExpensesApi {
 
+    private static final String PAY = "pay";
+    public static final String MARK_AS_PAID = "Mark as Paid";
     private ExpenseReportService expenseReportService;
     private ExpenseService expenseService;
     private ModelMapper mapper;
@@ -44,7 +50,7 @@ public class ExpenseController implements ExpensesApi {
 
         final List<ExpenseResponse> expenseResponses = expenses.stream()
                 .filter(isActive(filter).or(isPaid(filter)))
-                .map(expense -> mapper.map(expense, ExpenseResponse.class))
+                .map(expense -> mapper.map(addPayLinkToExpense(expense), ExpenseResponse.class))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(expenseResponses);
     }
@@ -75,8 +81,10 @@ public class ExpenseController implements ExpensesApi {
             return ResponseEntity.notFound().build();
 
         final Expense expense = optExpense.get();
-        final ExpenseResponse response = mapper.map(expense, ExpenseResponse.class);
 
+        addPayLinkToExpense(expense);
+
+        final ExpenseResponse response = mapper.map(expense, ExpenseResponse.class);
         return ResponseEntity.ok(response);
     }
 
@@ -108,6 +116,11 @@ public class ExpenseController implements ExpensesApi {
     }
 
     private ResponseEntity<ExpenseResponse> payExpense(Expense expense){
+
+        if(expense.isPaid()){
+            return ResponseEntity.ok(mapper.map(expense, ExpenseResponse.class));
+        }
+
         expense.setPaid(true);
         expense.setPaidDate(LocalDate.now());
         expenseService.save(expense);
@@ -167,5 +180,17 @@ public class ExpenseController implements ExpensesApi {
 
     private Predicate<Expense> isActive(ExpenseFilter filter) {
         return e -> filter.getActive() != null && e.getIsActive() == filter.getActive();
+    }
+
+    private Expense addPayLinkToExpense(Expense expense) {
+
+        final Link link = linkTo(methodOn(ExpensesApi.class)
+                ._payExpense(expense.getId()))
+                .withSelfRel()
+                .withTitle("Mark as Paid");
+
+        expense.add(link);
+
+        return expense;
     }
 }
