@@ -105,6 +105,7 @@ public abstract class TestObjects {
         expense.setServicePeriodEnd(LocalDate.of(2020, 4,25));
         expense.setPeriodicity(Periodicity.MONTHLY);
         expense.setPaymentMethod(PaymentMethod.BANK_TRANSFER);
+        expense.setTypableLine("0341.00000 00000.000000 00000.000000 0 00000000000001");
         return expense;
     }
 
