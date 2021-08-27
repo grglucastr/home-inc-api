@@ -210,7 +210,9 @@ public class ExpenseControllerTests extends TestObjects {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(333)))
-                .andExpect(jsonPath("$.cost", is(33.23)));
+                .andExpect(jsonPath("$.cost", is(33.23)))
+                .andExpect(jsonPath("$.typableLine").exists())
+                .andExpect(jsonPath("$.typableLine", is("0341.00000 00000.000000 00000.000000 0 00000000000001")));
     }
 
     @Test
@@ -293,7 +295,8 @@ public class ExpenseControllerTests extends TestObjects {
                 .andExpect(jsonPath("$._links[0].title", is("Mark as Paid")))
                 .andExpect(jsonPath("$._links[0].href").exists())
                 .andExpect(jsonPath("$._links[0].href", is("http://localhost/v2/expenses/1/pay")))
-        ;
+                .andExpect(jsonPath("$.typableLine").exists())
+                .andExpect(jsonPath("$.typableLine", is("0341.00000 00000.000000 00000.000000 0 00000000000001")));
     }
 
     @Test

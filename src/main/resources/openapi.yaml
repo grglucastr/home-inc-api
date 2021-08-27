@@ -356,6 +356,9 @@ components:
           type: string
           enum: ["cash", "debit card", "credit card", "ticket", "bank transfer"]
           example: "bank transfer"
+        typableLine:
+          type: string
+          example: 0000.00000 00000.000000 00000.000000 0 00000000000000
     ExpenseResponse:
       description: Response object on listing all expenses
       type: object
