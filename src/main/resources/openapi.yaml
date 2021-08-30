@@ -57,6 +57,27 @@ paths:
                 $ref: "#/components/schemas/ExpenseResponse"
         '404':
           description: Expense not found
+    
+    patch:
+      summary: Update parts of an expense without send the whole object
+      operationId: patchExpenses
+      parameters:
+        - $ref: "#/components/parameters/expenseId"
+      tags:
+        - Expenses
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExpenseRequest"
+      responses:
+        '200':
+          description: Feedback of the data updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExpenseResponse"
 
   /v2/expenses/year/{year}/month/{month}/summary:
     get:

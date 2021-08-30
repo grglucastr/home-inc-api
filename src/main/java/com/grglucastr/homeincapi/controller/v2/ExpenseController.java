@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -113,6 +114,39 @@ public class ExpenseController implements ExpensesApi {
         expenses = expenseService.findByMonthAndYear(year, month);
         final ExpenseMonthlySummaryResponse summaryResponse = expenseReportService.generateSummaryReport(expenses, year, month);
         return ResponseEntity.ok(summaryResponse);
+    }
+
+    @Override
+    public ResponseEntity<ExpenseResponse> patchExpenses(Long expenseId, ExpenseRequest request) {
+        final Optional<Expense> optExpense = expenseService.findById(expenseId);
+        if (optExpense.isEmpty())
+            return ResponseEntity.notFound().build();
+
+        final Expense expense = optExpense.get();
+        final Field[] reqFields = request.getClass().getDeclaredFields();
+
+        for (Field reqField : reqFields){
+            try {
+                reqField.setAccessible(true);
+                final Object value = reqField.get(request);
+
+                if (value != null) {
+                    final Field field = expense.getClass().getDeclaredField(reqField.getName());
+                    field.setAccessible(true);
+                    if (field.getType().isPrimitive()){
+                        field.set(expense, Boolean.TRUE.equals(value));
+                    } else {
+                        field.set(expense, field.getType().cast(value));
+                    }
+                }
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        final Expense expenseResponse = expenseService.save(expense);
+        final ExpenseResponse response = mapper.map(addPayLinkToExpense(expenseResponse), ExpenseResponse.class);
+        return ResponseEntity.ok(response);
     }
 
     private ResponseEntity<ExpenseResponse> payExpense(Expense expense){
