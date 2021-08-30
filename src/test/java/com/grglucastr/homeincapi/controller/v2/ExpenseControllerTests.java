@@ -511,4 +511,23 @@ public class ExpenseControllerTests extends TestObjects {
                 .andExpect(jsonPath("$.max").doesNotExist());
     }
 
+    @Test
+    public void testPatchExpense() throws Exception {
+
+        final Expense expense = createSingleExpenseObject();
+        when(expenseService.findById(anyLong())).thenReturn(Optional.of(expense));
+        when(expenseService.save(any())).thenReturn(expense);
+
+        final int expenseId = 1;
+        final MockHttpServletRequestBuilder patch =
+                patch(URL_V2_EXPENSES + "/{expenseId}", expenseId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"title\":\"another title here\" }");
+
+        mockMvc.perform(patch)
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
 }
