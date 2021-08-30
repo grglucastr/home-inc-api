@@ -211,6 +211,12 @@ public class ExpenseControllerTests extends TestObjects {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(333)))
                 .andExpect(jsonPath("$.cost", is(33.23)))
+                .andExpect(jsonPath("$._links").exists())
+                .andExpect(jsonPath("$._links").isArray())
+                .andExpect(jsonPath("$._links", hasSize(1)))
+                .andExpect(jsonPath("$._links[0].rel", is("self")))
+                .andExpect(jsonPath("$._links[0].title", is("Mark as Paid")))
+                .andExpect(jsonPath("$._links[0].href", is("http://localhost/v2/expenses/333/pay")))
                 .andExpect(jsonPath("$.typableLine").exists())
                 .andExpect(jsonPath("$.typableLine", is("0341.00000 00000.000000 00000.000000 0 00000000000001")));
     }

@@ -59,7 +59,7 @@ public class ExpenseController implements ExpensesApi {
     public ResponseEntity<ExpenseResponse> postExpenses(ExpenseRequest expenseRequest) {
         final Expense expense = mapper.map(expenseRequest, Expense.class);
         final Expense expenseResponse = expenseService.save(expense);
-        final ExpenseResponse response = mapper.map(expenseResponse, ExpenseResponse.class);
+        final ExpenseResponse response = mapper.map(addPayLinkToExpense(expenseResponse), ExpenseResponse.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -187,7 +187,7 @@ public class ExpenseController implements ExpensesApi {
         final Link link = linkTo(methodOn(ExpensesApi.class)
                 ._payExpense(expense.getId()))
                 .withSelfRel()
-                .withTitle("Mark as Paid");
+                .withTitle(MARK_AS_PAID);
 
         expense.add(link);
 
