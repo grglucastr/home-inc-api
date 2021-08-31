@@ -57,6 +57,27 @@ paths:
                 $ref: "#/components/schemas/ExpenseResponse"
         '404':
           description: Expense not found
+    
+    patch:
+      summary: Update parts of an expense without send the whole object
+      operationId: patchExpenses
+      parameters:
+        - $ref: "#/components/parameters/expenseId"
+      tags:
+        - Expenses
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExpensePatchRequest"
+      responses:
+        '200':
+          description: Feedback of the data updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExpenseResponse"
 
   /v2/expenses/year/{year}/month/{month}/summary:
     get:
@@ -359,6 +380,51 @@ components:
         typableLine:
           type: string
           example: 0000.00000 00000.000000 00000.000000 0 00000000000000
+    ExpensePatchRequest:
+      description: Request object to add a new expense registry
+      type: object
+      properties:
+        title:
+          type: string
+          example: COPEL - April 2020
+        description:
+          type: string
+          example: Electricity billl reference to the month of April
+        cost:
+          type: number
+          minimum: 0.0
+          maximum: 999999999.99
+          example: 53.23
+        dueDate:
+          type: string
+          format: "date"
+          example: "2020-04-30"
+        paid:
+          type: boolean
+          example: false
+        invoiceDate:
+          type: string
+          format: "date"
+          example: "2020-04-25"
+        servicePeriodStart:
+          type: string
+          format: "date"
+          example: "2020-03-25"
+        servicePeriodEnd:
+          type: string
+          format: "date"
+          example: "2020-04-25"
+        periodicity:
+          type: string
+          enum: ["daily", "weekly", "monthly", "yearly"]
+          example: "monthly"
+        paymentMethod:
+          type: string
+          enum: ["cash", "debit card", "credit card", "ticket", "bank transfer"]
+          example: "bank transfer"
+        typableLine:
+          type: string
+          example: 0000.00000 00000.000000 00000.000000 0 00000000000000      
     ExpenseResponse:
       description: Response object on listing all expenses
       type: object

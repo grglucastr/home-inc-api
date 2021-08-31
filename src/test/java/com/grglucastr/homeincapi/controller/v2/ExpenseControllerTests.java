@@ -211,6 +211,12 @@ public class ExpenseControllerTests extends TestObjects {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(333)))
                 .andExpect(jsonPath("$.cost", is(33.23)))
+                .andExpect(jsonPath("$._links").exists())
+                .andExpect(jsonPath("$._links").isArray())
+                .andExpect(jsonPath("$._links", hasSize(1)))
+                .andExpect(jsonPath("$._links[0].rel", is("self")))
+                .andExpect(jsonPath("$._links[0].title", is("Mark as Paid")))
+                .andExpect(jsonPath("$._links[0].href", is("http://localhost/v2/expenses/333/pay")))
                 .andExpect(jsonPath("$.typableLine").exists())
                 .andExpect(jsonPath("$.typableLine", is("0341.00000 00000.000000 00000.000000 0 00000000000001")));
     }
@@ -503,6 +509,27 @@ public class ExpenseControllerTests extends TestObjects {
                 .andExpect(jsonPath("$.totalToPay", is(0)))
                 .andExpect(jsonPath("$.min").doesNotExist())
                 .andExpect(jsonPath("$.max").doesNotExist());
+    }
+
+    @Test
+    public void testPatchExpense() throws Exception {
+
+        final Expense expense = createSingleExpenseObject();
+        when(expenseService.findById(anyLong())).thenReturn(Optional.of(expense));
+        when(expenseService.save(any())).thenReturn(expense);
+
+        final int expenseId = 1;
+        final MockHttpServletRequestBuilder patch =
+                patch(URL_V2_EXPENSES + "/{expenseId}", expenseId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"title\":\"another title here\", \"description\":\"a simple description\"}");
+
+        mockMvc.perform(patch)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title", is("another title here")))
+                .andExpect(jsonPath("$.description", is("a simple description")));
     }
 
 }
