@@ -523,11 +523,13 @@ public class ExpenseControllerTests extends TestObjects {
                 patch(URL_V2_EXPENSES + "/{expenseId}", expenseId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"title\":\"another title here\" }");
+                        .content("{ \"title\":\"another title here\", \"description\":\"a simple description\"}");
 
         mockMvc.perform(patch)
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title", is("another title here")))
+                .andExpect(jsonPath("$.description", is("a simple description")));
     }
 
 }
