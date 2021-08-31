@@ -4,10 +4,7 @@ import com.grglucastr.api.ExpensesApi;
 import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.service.v2.ExpenseReportService;
 import com.grglucastr.homeincapi.service.v2.ExpenseService;
-import com.grglucastr.model.ExpenseFilter;
-import com.grglucastr.model.ExpenseMonthlySummaryResponse;
-import com.grglucastr.model.ExpenseRequest;
-import com.grglucastr.model.ExpenseResponse;
+import com.grglucastr.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,7 +114,7 @@ public class ExpenseController implements ExpensesApi {
     }
 
     @Override
-    public ResponseEntity<ExpenseResponse> patchExpenses(Long expenseId, ExpenseRequest request) {
+    public ResponseEntity<ExpenseResponse> patchExpenses(Long expenseId, ExpensePatchRequest request) {
         final Optional<Expense> optExpense = expenseService.findById(expenseId);
         if (optExpense.isEmpty())
             return ResponseEntity.notFound().build();
