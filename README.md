@@ -1,6 +1,6 @@
 # Home Inc API
 
-[![Build Status](https://www.travis-ci.com/grglucastr/home-inc-api.svg?branch=master)](https://www.travis-ci.com/grglucastr/home-inc-api)
+[![grglucastr](https://circleci.com/gh/grglucastr/home-inc-api/tree/master.svg?style=svg)](https://circleci.com/gh/grglucastr/home-inc-api/tree/circleci-project-setup)
 
 Welcome to the Home Incorporated API. This is an open source project containing some APIs that helps you manage your expenses.
 
