@@ -1,10 +1,10 @@
 package com.grglucastr.homeincapi.service.v2;
 
+import com.grglucastr.homeincapi.IncomeTestObjects;
 import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.model.Income;
-import com.grglucastr.homeincapi.IncomeTestObjects;
-import com.grglucastr.model.ExpenseMonthlySummaryResponse;
 import com.grglucastr.model.ExpenseResponse;
+import com.grglucastr.model.SingleSummaryResponse;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -62,8 +62,8 @@ public class ExpenseReportServiceTests extends IncomeTestObjects {
         final Income income = createIncomeList().get(1);
         when(incomeService.findByDateRange(anyInt(), anyInt())).thenReturn(Optional.of(income));
 
-        final ExpenseMonthlySummaryResponse report = expenseReportService
-                .generateSummaryReport(listOfExpenses, year, month);
+        final SingleSummaryResponse report = expenseReportService
+                .generateSingleSummaryReport(listOfExpenses, year, month);
 
 
         assertReportAttributes(listOfExpenses, expensive, cheaper, report);
@@ -72,8 +72,8 @@ public class ExpenseReportServiceTests extends IncomeTestObjects {
     @Test
     public void testGenerateReportByYearAndMonthButExpenseNotFound(){
 
-        final ExpenseMonthlySummaryResponse report = expenseReportService
-                .generateSummaryReport(Collections.emptyList(), 2020, 3);
+        final SingleSummaryResponse report = expenseReportService
+                .generateSingleSummaryReport(Collections.emptyList(), 2020, 3);
 
         Assert.assertThat(report.getMax(), Matchers.is(Matchers.nullValue()));
         Assert.assertThat(report.getMin(), Matchers.is(Matchers.nullValue()));
@@ -88,7 +88,7 @@ public class ExpenseReportServiceTests extends IncomeTestObjects {
         Assert.assertThat(report.getMonthlyIncome(), Matchers.is(new BigDecimal("0")));
     }
 
-    private void assertReportAttributes(List<Expense> listOfExpenses, Expense expensive, Expense cheaper, ExpenseMonthlySummaryResponse report) {
+    private void assertReportAttributes(List<Expense> listOfExpenses, Expense expensive, Expense cheaper, SingleSummaryResponse report) {
         Assert.assertThat(report.getMax(), Matchers.is(Matchers.notNullValue()));
         Assert.assertThat(report.getMax().getValue(), Matchers.is(expensive.getCost()));
         Assert.assertThat(report.getMax().getExpense().getId(), Matchers.is(expensive.getId()));

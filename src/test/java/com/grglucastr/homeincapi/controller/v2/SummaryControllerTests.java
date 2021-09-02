@@ -4,6 +4,7 @@ package com.grglucastr.homeincapi.controller.v2;
 import com.grglucastr.homeincapi.TestObjects;
 import com.grglucastr.homeincapi.service.v2.ExpenseReportService;
 import com.grglucastr.homeincapi.service.v2.ExpenseService;
+import com.grglucastr.model.SingleSummaryResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,9 +16,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -107,6 +106,30 @@ public class SummaryControllerTests extends TestObjects {
                 .andExpect(jsonPath("$.previousMonth", is(summaryLinks.get("previousMonth"))))
                 .andExpect(jsonPath("$.nextMonth").exists())
                 .andExpect(jsonPath("$.nextMonth", is(summaryLinks.get("nextMonth"))));
+    }
+
+    @Test
+    public void testMonthlySummaryWithNoExpensesAndMonthProgressIsZero() throws Exception {
+        final int year = LocalDate.now().getYear();
+        final int nextMonth = LocalDate.now().plusMonths(4).getMonthValue();
+
+        final SingleSummaryResponse monthlyResponse = createMonthlyResponseWithZero();
+
+        when(expenseReportService.generateSingleSummaryReport(anyList(), anyInt(), anyInt()))
+                .thenReturn(monthlyResponse);
+
+        mockMvc.perform(get(SINGLE_SUMMARY_URL, year, nextMonth)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.monthlyProgress", is("0%")))
+                .andExpect(jsonPath("$.count", is(0)))
+                .andExpect(jsonPath("$.average", is(0)))
+                .andExpect(jsonPath("$.total", is(0)))
+                .andExpect(jsonPath("$.totalPaid", is(0)))
+                .andExpect(jsonPath("$.totalToPay", is(0)))
+                .andExpect(jsonPath("$.min").doesNotExist())
+                .andExpect(jsonPath("$.max").doesNotExist());
     }
 
     private Map<String, String> getSummaryLinks(){
