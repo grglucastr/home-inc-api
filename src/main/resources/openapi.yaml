@@ -402,6 +402,10 @@ components:
         paid:
           type: boolean
           example: false
+        paidDate:
+          type: string
+          format: "date"
+          example: "2020-04-30"
         invoiceDate:
           type: string
           format: "date"
