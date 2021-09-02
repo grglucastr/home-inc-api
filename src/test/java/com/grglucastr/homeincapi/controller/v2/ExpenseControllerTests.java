@@ -1,11 +1,11 @@
 package com.grglucastr.homeincapi.controller.v2;
 
+import com.grglucastr.homeincapi.TestObjects;
 import com.grglucastr.homeincapi.enums.PaymentMethod;
 import com.grglucastr.homeincapi.enums.Periodicity;
 import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.service.v2.ExpenseReportService;
 import com.grglucastr.homeincapi.service.v2.ExpenseService;
-import com.grglucastr.homeincapi.TestObjects;
 import com.grglucastr.model.ExpenseMonthlySummaryResponse;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,6 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ExpenseControllerTests extends TestObjects {
 
     private static final String NEW_EXPENSE_PAYLOAD_JSON = "new-expense-payload.json";
+    private static final String PATCH_EXPENSE_PAYLOAD = "patch-expense-payload.json";
     private static final String URL_V2_EXPENSES = "/v2/expenses";
     private static final String URL_V2_SUMMARY_YEAR_MONTH = "/v2/expenses/year/{year}/month/{month}/summary";
 
@@ -518,18 +519,26 @@ public class ExpenseControllerTests extends TestObjects {
         when(expenseService.findById(anyLong())).thenReturn(Optional.of(expense));
         when(expenseService.save(any())).thenReturn(expense);
 
+
+        final InputStream resourceAsStream = ExpenseControllerTests.class.getResourceAsStream("/" + PATCH_EXPENSE_PAYLOAD);
+
+        assert  resourceAsStream != null : "JSON resource not found";
+
         final int expenseId = 1;
         final MockHttpServletRequestBuilder patch =
                 patch(URL_V2_EXPENSES + "/{expenseId}", expenseId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"title\":\"another title here\", \"description\":\"a simple description\"}");
+                        .content(resourceAsStream.readAllBytes());
 
         mockMvc.perform(patch)
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title", is("another title here")))
-                .andExpect(jsonPath("$.description", is("a simple description")));
+                .andExpect(jsonPath("$.description", is("a simple description")))
+                .andExpect(jsonPath("$.paidDate[0]", is(2020)))
+                .andExpect(jsonPath("$.paidDate[1]", is(12)))
+                .andExpect(jsonPath("$.paidDate[2]", is(12)));
     }
 
 }
