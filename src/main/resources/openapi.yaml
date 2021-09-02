@@ -108,6 +108,16 @@ paths:
         '404':
           description: Expense not found.
 
+  /v2/expenses/mail:
+    get:
+      summary: Send an e-mail listing all the unpaid expenses
+      operationId: sendEmailForUnpaid
+      tags:
+        - Expenses
+      responses:
+        200:
+          description: Email sent.
+
   /v2/incomes:
     get:
       summary: List all incomes registered.
