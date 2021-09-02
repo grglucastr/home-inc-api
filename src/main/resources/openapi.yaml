@@ -78,25 +78,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ExpenseResponse"
-
-  /v2/expenses/year/{year}/month/{month}/summary:
-    get:
-      summary: Get a monthly summary of the min, max and sum of all expenses of a given month.
-      operationId: getReportSummaryByYearAndMonth
-      parameters:
-        - $ref: "#/components/parameters/year"
-        - $ref: "#/components/parameters/month"
-        - $ref: "#/components/parameters/paid"
-      tags:
-        - Expenses
-      responses:
-        '200':
-          description: Shows the summary according filter criteria or an empty object if does not find anything.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ExpenseMonthlySummaryResponse"
-
   /v2/expenses/{expenseId}/pay:
     post:
       summary: Mark expense as paid.
@@ -459,44 +440,6 @@ components:
             pay:
               type: string
               example: "https://domain.com/v2/expenses/222/pay"
-
-    ExpenseMonthlySummaryResponse:
-      description: Response summary containing the max, min and sum of values of all expenses according to criteria.
-      type: object
-      properties:
-        monthlyProgress:
-          type: string
-          description: Shows monthly progress percentage.
-          example: "45%"
-        min:
-          $ref: "#/components/schemas/ExpenseSummary"
-        max:
-          $ref: "#/components/schemas/ExpenseSummary"
-        count:
-          type: integer
-          format: int32
-          description: Holds the quantity of exepenses found according to the filter criteria.
-          example: 22
-        average:
-          type: number
-          description: Holds the average spended in the month.
-          example: 123.45
-        total:
-          type: number
-          description: Hold the sum of all bills of the month.
-          example: 3900.44
-        totalPaid:
-          type: number
-          description: Hold the sum of all paid bills of the month.
-          example: 1234.45
-        totalToPay:
-          type: number
-          description: Hold the sum of all bills pending to pay of the month.
-          example: 1234.43
-        monthlyIncome:
-          type: number
-          description: Hold the sum of all incomes to the given month
-          example: 15123.90
     ExpenseSummary:
       type: object
       description: Schema used in summary report in order to hold the expensive and cheaper bill

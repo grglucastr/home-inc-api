@@ -6,7 +6,6 @@ import com.grglucastr.homeincapi.enums.Periodicity;
 import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.service.v2.ExpenseReportService;
 import com.grglucastr.homeincapi.service.v2.ExpenseService;
-import com.grglucastr.model.ExpenseMonthlySummaryResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,9 +19,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -339,178 +336,7 @@ public class ExpenseControllerTests extends TestObjects {
 
     }
 
-    @Test
-    public void testMonthlySummary() throws Exception {
-        final Expense exp1 = createSingleExpenseObject();
-        exp1.setPaidDate(LocalDate.of(2020, 4, 30));
-        exp1.setPaid(true);
 
-        final Expense exp2 = createSingleExpenseObject();
-        exp2.setId(2L);
-        exp2.setCost(new BigDecimal("19.78"));
-        exp1.setPaidDate(LocalDate.of(2020, 4, 30));
-        exp2.setPaid(true);
-
-        final Expense exp3 = createSingleExpenseObject();
-        exp3.setId(3L);
-        exp3.setCost(new BigDecimal("999.99"));
-
-        final Expense exp4 = createSingleExpenseObject();
-        exp4.setId(4L);
-        exp4.setCost(new BigDecimal("1000.50"));
-
-        when(expenseReportService.generateSummaryReport(anyList(), anyInt(), anyInt()))
-                .thenReturn(createMonthlyResponse());
-
-        when(expenseService.findByMonthAndYear(anyInt(), anyInt()))
-                .thenReturn(Arrays.asList(exp1, exp2, exp3, exp4));
-
-        mockMvc.perform(get(URL_V2_SUMMARY_YEAR_MONTH, 2020, 4)
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.monthlyProgress", is("100%")))
-                .andExpect(jsonPath("$.min.value", is(19.78)))
-                .andExpect(jsonPath("$.min.expense.id", is(2)))
-                .andExpect(jsonPath("$.max.value", is(1000.50)))
-                .andExpect(jsonPath("$.max.expense.id", is(4)))
-                .andExpect(jsonPath("$.count", is(4)))
-                .andExpect(jsonPath("$.average", is(513.38)))
-                .andExpect(jsonPath("$.total", is(2053.50)))
-                .andExpect(jsonPath("$.totalPaid", is(53.01)))
-                .andExpect(jsonPath("$.totalToPay", is(2000.49)));
-    }
-
-    @Test
-    public void testMonthlySummaryOnlyPaidOnes() throws Exception {
-        final Expense exp1 = createSingleExpenseObject();
-        exp1.setPaidDate(LocalDate.of(2020, 4, 30));
-        exp1.setPaid(true);
-
-        final Expense exp2 = createSingleExpenseObject();
-        exp2.setId(2L);
-        exp2.setCost(new BigDecimal("19.78"));
-        exp1.setPaidDate(LocalDate.of(2020, 4, 30));
-        exp2.setPaid(true);
-
-        final Expense exp3 = createSingleExpenseObject();
-        exp3.setId(3L);
-        exp3.setCost(new BigDecimal("999.99"));
-
-        final Expense exp4 = createSingleExpenseObject();
-        exp4.setId(4L);
-        exp4.setCost(new BigDecimal("1000.50"));
-
-        final ExpenseMonthlySummaryResponse monthlyResponse = createMonthlyResponse();
-        monthlyResponse.setMonthlyProgress("100%");
-        monthlyResponse.getMin().setValue(new BigDecimal("19.78"));
-        monthlyResponse.getMin().getExpense().setId(2L);
-        monthlyResponse.getMax().setValue(new BigDecimal("33.23"));
-        monthlyResponse.getMax().getExpense().setId(1L);
-        monthlyResponse.setCount(2);
-        monthlyResponse.setAverage(new BigDecimal("26.51"));
-        monthlyResponse.setTotal(new BigDecimal("53.01"));
-        monthlyResponse.setTotalPaid(new BigDecimal("53.01"));
-        monthlyResponse.setTotalToPay(BigDecimal.ZERO);
-
-        when(expenseReportService.generateSummaryReport(anyList(), anyInt(), anyInt()))
-                .thenReturn(monthlyResponse);
-
-        when(expenseService.findByMonthAndYearAndPaid(2020, 4, true))
-                .thenReturn(Arrays.asList(exp1, exp2));
-
-        mockMvc.perform(get( URL_V2_SUMMARY_YEAR_MONTH + "?paid=true", 2020, 4)
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.monthlyProgress", is("100%")))
-                .andExpect(jsonPath("$.min.value", is(19.78)))
-                .andExpect(jsonPath("$.min.expense.id", is(2)))
-                .andExpect(jsonPath("$.max.value", is(33.23)))
-                .andExpect(jsonPath("$.max.expense.id", is(1)))
-                .andExpect(jsonPath("$.count", is(2)))
-                .andExpect(jsonPath("$.average", is(26.51)))
-                .andExpect(jsonPath("$.total", is(53.01)))
-                .andExpect(jsonPath("$.totalPaid", is(53.01)))
-                .andExpect(jsonPath("$.totalToPay", is(0)));
-    }
-
-    @Test
-    public void testMonthlySummaryOnlyToPayOnes() throws Exception {
-        final Expense exp1 = createSingleExpenseObject();
-        exp1.setPaidDate(LocalDate.of(2020, 4, 30));
-        exp1.setPaid(true);
-
-        final Expense exp2 = createSingleExpenseObject();
-        exp2.setId(2L);
-        exp2.setCost(new BigDecimal("19.78"));
-        exp1.setPaidDate(LocalDate.of(2020, 4, 30));
-        exp2.setPaid(true);
-
-        final Expense exp3 = createSingleExpenseObject();
-        exp3.setId(3L);
-        exp3.setCost(new BigDecimal("999.99"));
-
-        final Expense exp4 = createSingleExpenseObject();
-        exp4.setId(4L);
-        exp4.setCost(new BigDecimal("1000.50"));
-
-        final List<Expense> expenses = Arrays.asList(exp3, exp4);
-        final ExpenseMonthlySummaryResponse monthlyResponse = createMonthlyResponse();
-        monthlyResponse.getMin().setValue(new BigDecimal("999.99"));
-        monthlyResponse.getMin().getExpense().setId(3L);
-        monthlyResponse.getMax().setValue(new BigDecimal("1000.50"));
-        monthlyResponse.getMax().getExpense().setId(4L);
-        monthlyResponse.setCount(2);
-        monthlyResponse.setAverage(new BigDecimal("1000.25"));
-        monthlyResponse.setTotal(new BigDecimal("2000.49"));
-        monthlyResponse.setTotalPaid(new BigDecimal("0"));
-        monthlyResponse.setTotalToPay(new BigDecimal("2000.49"));
-
-        when(expenseReportService.generateSummaryReport(expenses, 2020,4))
-                .thenReturn(monthlyResponse);
-
-        when(expenseService.findByMonthAndYearAndPaid(2020, 4, false))
-                .thenReturn(expenses);
-
-        mockMvc.perform(get(URL_V2_SUMMARY_YEAR_MONTH + "?paid=false", 2020, 4)
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.monthlyProgress", is("100%")))
-                .andExpect(jsonPath("$.min.value", is(999.99)))
-                .andExpect(jsonPath("$.min.expense.id", is(3)))
-                .andExpect(jsonPath("$.max.value", is(1000.50)))
-                .andExpect(jsonPath("$.max.expense.id", is(4)))
-                .andExpect(jsonPath("$.count", is(2)))
-                .andExpect(jsonPath("$.average", is(1000.25)))
-                .andExpect(jsonPath("$.total", is(2000.49)))
-                .andExpect(jsonPath("$.totalPaid", is(0)))
-                .andExpect(jsonPath("$.totalToPay", is(2000.49)));
-    }
-
-    @Test
-    public void testMonthlySummaryWithNoExpensesAndMonthProgressIsZero() throws Exception {
-        final int year = LocalDate.now().getYear();
-        final int nextMonth = LocalDate.now().plusMonths(4).getMonthValue();
-
-        final ExpenseMonthlySummaryResponse monthlyResponse = createMonthlyResponseWithZero();
-
-        when(expenseReportService.generateSummaryReport(anyList(), anyInt(), anyInt()))
-                .thenReturn(monthlyResponse);
-
-        when(expenseService.findByMonthAndYear(year, nextMonth)).thenReturn(new ArrayList<>());
-
-        mockMvc.perform(get(URL_V2_SUMMARY_YEAR_MONTH, year, nextMonth)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.monthlyProgress", is("0%")))
-                .andExpect(jsonPath("$.count", is(0)))
-                .andExpect(jsonPath("$.average", is(0)))
-                .andExpect(jsonPath("$.total", is(0)))
-                .andExpect(jsonPath("$.totalPaid", is(0)))
-                .andExpect(jsonPath("$.totalToPay", is(0)))
-                .andExpect(jsonPath("$.min").doesNotExist())
-                .andExpect(jsonPath("$.max").doesNotExist());
-    }
 
     @Test
     public void testPatchExpense() throws Exception {
