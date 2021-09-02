@@ -2,6 +2,7 @@ package com.grglucastr.homeincapi.controller.v2;
 
 import com.grglucastr.api.ExpensesApi;
 import com.grglucastr.homeincapi.model.Expense;
+import com.grglucastr.homeincapi.service.v2.EmailService;
 import com.grglucastr.homeincapi.service.v2.ExpenseReportService;
 import com.grglucastr.homeincapi.service.v2.ExpenseService;
 import com.grglucastr.model.ExpenseFilter;
@@ -34,6 +35,9 @@ public class ExpenseController implements ExpensesApi {
     private ExpenseReportService expenseReportService;
     private ExpenseService expenseService;
     private ModelMapper mapper;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     public ExpenseController(ExpenseService expenseService, ExpenseReportService expenseReportService, ModelMapper modelMapper) {
@@ -132,6 +136,42 @@ public class ExpenseController implements ExpensesApi {
         final Expense expenseResponse = expenseService.save(expense);
         final ExpenseResponse response = mapper.map(addPayLinkToExpense(expenseResponse), ExpenseResponse.class);
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<Void> sendEmailForUnpaid() {
+
+        final ExpenseFilter expenseFilter = new ExpenseFilter();
+        expenseFilter.setPaid(false);
+
+        final List<Expense> expenses = expenseService.findAll()
+                .stream()
+                .filter(isPaid(expenseFilter))
+                .collect(Collectors.toList());
+
+        final StringBuilder builder = new StringBuilder();
+
+        builder.append("\n\n");
+        expenses.forEach(expense -> {
+            builder.append(expense.getTitle());
+            builder.append("\n");
+            builder.append(expense.getDescription());
+            builder.append("\n");
+            builder.append(expense.getCost());
+            builder.append("\n");
+            builder.append(expense.getDueDate());
+            builder.append("\n");
+            builder.append(expense.getTypableLine());
+            builder.append("\n\n");
+            builder.append("---------------------------");
+            builder.append("\n\n");
+        });
+
+        final String to = "george.bentes@gmail.com";
+        final String subject = "Contas para Pagar";
+        emailService.sendSimpleMessage(to, subject, builder.toString());
+
+        return ResponseEntity.ok().build();
     }
 
     private ResponseEntity<ExpenseResponse> payExpense(Expense expense){
