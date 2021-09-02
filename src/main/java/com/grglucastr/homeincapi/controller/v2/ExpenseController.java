@@ -4,7 +4,10 @@ import com.grglucastr.api.ExpensesApi;
 import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.service.v2.ExpenseReportService;
 import com.grglucastr.homeincapi.service.v2.ExpenseService;
-import com.grglucastr.model.*;
+import com.grglucastr.model.ExpenseFilter;
+import com.grglucastr.model.ExpensePatchRequest;
+import com.grglucastr.model.ExpenseRequest;
+import com.grglucastr.model.ExpenseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +30,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Slf4j
 public class ExpenseController implements ExpensesApi {
 
-    private static final String PAY = "pay";
-    public static final String MARK_AS_PAID = "Mark as Paid";
+    private static final String MARK_AS_PAID = "Mark as Paid";
     private ExpenseReportService expenseReportService;
     private ExpenseService expenseService;
     private ModelMapper mapper;
@@ -97,20 +99,6 @@ public class ExpenseController implements ExpensesApi {
         expenseService.save(expense);
 
         return ResponseEntity.noContent().build();
-    }
-
-    @Override
-    public ResponseEntity<ExpenseMonthlySummaryResponse> getReportSummaryByYearAndMonth(Integer year, Integer month, Boolean paid) {
-        List<Expense> expenses;
-        if(Optional.ofNullable(paid).isPresent()){
-            expenses = expenseService.findByMonthAndYearAndPaid(year, month, paid);
-            final ExpenseMonthlySummaryResponse summaryResponse = expenseReportService.generateSummaryReport(expenses, year, month);
-            return ResponseEntity.ok(summaryResponse);
-        }
-
-        expenses = expenseService.findByMonthAndYear(year, month);
-        final ExpenseMonthlySummaryResponse summaryResponse = expenseReportService.generateSummaryReport(expenses, year, month);
-        return ResponseEntity.ok(summaryResponse);
     }
 
     @Override
