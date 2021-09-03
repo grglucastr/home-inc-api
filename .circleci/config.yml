@@ -20,7 +20,17 @@ jobs:
       - checkout
       - run:
           name: Publishing Open API Specifications
-          command: npx redoc-cli bundle -o ./src/main/resources/static/api.html ./src/main/resources/openapi.yaml
+          command: |
+            echo "Hi George!"
+            echo $CIRCLE_BRANCH
+            if [[ "$CIRCLE_BRANCH" == "master" ]]; then 
+                echo "Master Branch!"
+                npx redoc-cli bundle -o ./src/main/resources/static/api.html ./src/main/resources/openapi.yaml
+                scp ./src/main/resources/static/api.html ubuntu@44.198.99.95:/var/www/html/
+            else
+                echo "Not master branch"
+                echo "No OpenAPI Specification publishing required"
+            fi
       
       - store_artifacts:
           path: ./src/main/resources/static
