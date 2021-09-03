@@ -18,6 +18,9 @@ jobs:
       - image: cimg/node:14.10.1
     steps:
       - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:OF4nvq7zHiuMJJX4Z9smpQ+Es6cMpOQuOXtIML+w9xY"
       - run:
           name: Publishing Open API Specifications
           command: |
