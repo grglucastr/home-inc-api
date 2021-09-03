@@ -26,7 +26,7 @@ jobs:
             if [[ "$CIRCLE_BRANCH" == "master" ]]; then 
                 echo "Master Branch!"
                 npx redoc-cli bundle -o ./src/main/resources/static/api.html ./src/main/resources/openapi.yaml
-                scp ./src/main/resources/static/api.html ubuntu@44.198.99.95:/var/www/html/
+                scp ./src/main/resources/static/api.html ubuntu@44.198.99.95:/var/www/html/ -y
             else
                 echo "Not master branch"
                 echo "No OpenAPI Specification publishing required"
