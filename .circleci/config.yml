@@ -12,6 +12,8 @@ jobs:
       - run:
           name: Test
           command: mvn test
+      - store_artifacts:
+          path: ./target/home-inc-api-0.0.1-SNAPSHOT.jar
   
   publish-oas3-docs:
     docker:
@@ -26,15 +28,8 @@ jobs:
           command: |
             echo "Hi George!"
             echo $CIRCLE_BRANCH
-            if [[ "$CIRCLE_BRANCH" == "master" ]]; then 
-                echo "Master Branch!"
-                npx redoc-cli bundle -o ./src/main/resources/static/api.html ./src/main/resources/openapi.yaml
-                scp -o StrictHostKeyChecking=no ./src/main/resources/static/api.html ubuntu@44.198.99.95:/var/www/html/
-            else
-                echo "Not master branch"
-                echo "No OpenAPI Specification publishing required"
-            fi
-      
+            npx redoc-cli bundle -o ./src/main/resources/static/api.html ./src/main/resources/openapi.yaml
+
       - store_artifacts:
           path: ./src/main/resources/static
 
