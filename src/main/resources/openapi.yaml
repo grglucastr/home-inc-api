@@ -362,7 +362,7 @@ components:
           example: "2020-04-25"
         periodicity:
           type: string
-          enum: ["daily", "weekly", "monthly", "yearly"]
+          enum: ["just_once", "daily", "weekly", "monthly", "yearly"]
           example: "monthly"
         paymentMethod:
           type: string
@@ -411,7 +411,7 @@ components:
           example: "2020-04-25"
         periodicity:
           type: string
-          enum: ["daily", "weekly", "monthly", "yearly"]
+          enum: ["just_once", "daily", "weekly", "monthly", "yearly"]
           example: "monthly"
         paymentMethod:
           type: string
