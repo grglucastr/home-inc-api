@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +43,7 @@ public class ExpenseControllerTests extends TestObjects {
     private static final String PATCH_EXPENSE_PAYLOAD = "patch-expense-payload.json";
     private static final String URL_V2_EXPENSES = "/v2/expenses";
     private static final String URL_V2_SUMMARY_YEAR_MONTH = "/v2/expenses/year/{year}/month/{month}/summary";
+    private static final String NEW_EXPENSE_ONCE_PERIODICITY_PAYLOAD_JSON = "/new-expense-once-periodicity-payload.json";
 
     private ExpenseReportService expenseReportService;
     private ExpenseService expenseService;
@@ -365,6 +367,34 @@ public class ExpenseControllerTests extends TestObjects {
                 .andExpect(jsonPath("$.paidDate[0]", is(2020)))
                 .andExpect(jsonPath("$.paidDate[1]", is(12)))
                 .andExpect(jsonPath("$.paidDate[2]", is(12)));
+    }
+
+    @Test
+    public void testExpenseRequestWithOncePeriodicty() throws Exception {
+
+        final Expense expenseResponse = createSingleExpenseObject();
+        expenseResponse.setTitle("OTHER - Dinner");
+        expenseResponse.setDescription("Super fancy dinner");
+        expenseResponse.setCost(new BigDecimal("15000.66"));
+        expenseResponse.setPeriodicity(Periodicity.JUST_ONCE);
+
+        when(expenseService.save(any(Expense.class))).thenReturn(expenseResponse);
+
+
+        final InputStream resourceAsStream = ExpenseControllerTests
+                .class.getResourceAsStream(NEW_EXPENSE_ONCE_PERIODICITY_PAYLOAD_JSON);
+
+        assert resourceAsStream != null : "Resource not found.";
+
+        final MockHttpServletRequestBuilder post = post(URL_V2_EXPENSES)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(resourceAsStream.readAllBytes());
+
+        mockMvc.perform(post)
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.periodicity", is("just_once")));
     }
 
 }

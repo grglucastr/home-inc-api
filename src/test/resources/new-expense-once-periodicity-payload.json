@@ -1,0 +1,12 @@
+{
+  "title": "OTHER - Dinner",
+  "description": "Super fancy dinner",
+  "cost": 15000.66,
+  "dueDate": "2020-04-30",
+  "paid": false,
+  "invoiceDate": "2020-04-25",
+  "servicePeriodStart": "2020-03-25",
+  "servicePeriodEnd": "2020-04-25",
+  "periodicity": "just_once",
+  "paymentMethod": "bank transfer"
+}
