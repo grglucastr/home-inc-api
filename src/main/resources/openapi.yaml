@@ -366,7 +366,7 @@ components:
           example: "monthly"
         paymentMethod:
           type: string
-          enum: ["cash", "debit card", "credit card", "ticket", "bank transfer"]
+          enum: ["cash", "debit card", "credit card", "ticket", "bank transfer", "pix"]
           example: "bank transfer"
         typableLine:
           type: string
@@ -415,7 +415,7 @@ components:
           example: "monthly"
         paymentMethod:
           type: string
-          enum: ["cash", "debit card", "credit card", "ticket", "bank transfer"]
+          enum: ["cash", "debit card", "credit card", "ticket", "bank transfer", "pix"]
           example: "bank transfer"
         typableLine:
           type: string

@@ -44,6 +44,7 @@ public class ExpenseControllerTests extends TestObjects {
     private static final String URL_V2_EXPENSES = "/v2/expenses";
     private static final String URL_V2_SUMMARY_YEAR_MONTH = "/v2/expenses/year/{year}/month/{month}/summary";
     private static final String NEW_EXPENSE_ONCE_PERIODICITY_PAYLOAD_JSON = "/new-expense-once-periodicity-payload.json";
+    private static final String NEW_EXPENSE_PIX_PAYMENT_METHOD_PAYLOAD_JSON = "/new-expense-pix-payment-method-payload.json";
 
     private ExpenseReportService expenseReportService;
     private ExpenseService expenseService;
@@ -395,6 +396,39 @@ public class ExpenseControllerTests extends TestObjects {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.periodicity", is("just_once")));
+    }
+
+    @Test
+    public void testExpenseRequestWithPixPaymentMethod() throws Exception {
+
+        final Expense expenseResponse = createSingleExpenseObject();
+        expenseResponse.setTitle("OTHER - Dinner");
+        expenseResponse.setDescription("Super fancy dinner");
+        expenseResponse.setCost(new BigDecimal("15000.66"));
+        expenseResponse.setPeriodicity(Periodicity.JUST_ONCE);
+        expenseResponse.setPaymentMethod(PaymentMethod.PIX);
+
+        when(expenseService.save(any(Expense.class))).thenReturn(expenseResponse);
+
+
+        final InputStream resourceAsStream = ExpenseControllerTests
+                .class.getResourceAsStream(NEW_EXPENSE_PIX_PAYMENT_METHOD_PAYLOAD_JSON);
+
+        assert resourceAsStream != null : "Resource not found.";
+
+        final MockHttpServletRequestBuilder post = post(URL_V2_EXPENSES)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(resourceAsStream.readAllBytes());
+
+        mockMvc.perform(post)
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.title", is("OTHER - Dinner")))
+                .andExpect(jsonPath("$.description", is("Super fancy dinner")))
+                .andExpect(jsonPath("$.cost", is(15000.66)))
+                .andExpect(jsonPath("$.periodicity", is("just_once")))
+                .andExpect(jsonPath("$.paymentMethod", is("pix")));
     }
 
 }
