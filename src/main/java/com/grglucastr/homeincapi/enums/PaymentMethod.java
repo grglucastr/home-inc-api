@@ -8,7 +8,8 @@ public enum PaymentMethod {
     BANK_TRANSFER("Bank Transfer"),
     CASH("Cash"),
     CREDIT_CARD("Credit Card"),
-    DEBIT_CARD("Debit");
+    DEBIT_CARD("Debit"),
+    PIX("pix");
 
     private String value;
 
