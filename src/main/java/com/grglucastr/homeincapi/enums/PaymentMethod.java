@@ -5,16 +5,23 @@ import lombok.Getter;
 @Getter
 public enum PaymentMethod {
 
-    BANK_TRANSFER("Bank Transfer"),
-    CASH("Cash"),
-    CREDIT_CARD("Credit Card"),
-    DEBIT_CARD("Debit"),
-    PIX("pix");
+    CASH("Cash", "cash"),
+    DEBIT_CARD("Debit", "debit card"),
+    CREDIT_CARD("Credit Card", "credit card"),
+    TICKET("Ticket", "ticket"),
+    BANK_TRANSFER("Bank Transfer", "bank transfer"),
+    PIX("pix", "pix");
 
     private String value;
+    private String patchValue;
 
-    PaymentMethod(String value) {
+    PaymentMethod(String value, String patchValue) {
         this.value = value;
+        this.patchValue = patchValue;
+    }
+
+    public String getPatchValue() {
+        return patchValue;
     }
 
     @Override
