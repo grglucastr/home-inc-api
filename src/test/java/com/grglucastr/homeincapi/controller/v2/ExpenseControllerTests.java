@@ -348,7 +348,6 @@ public class ExpenseControllerTests extends TestObjects {
         when(expenseService.findById(anyLong())).thenReturn(Optional.of(expense));
         when(expenseService.save(any())).thenReturn(expense);
 
-
         final InputStream resourceAsStream = ExpenseControllerTests.class.getResourceAsStream("/" + PATCH_EXPENSE_PAYLOAD);
 
         assert  resourceAsStream != null : "JSON resource not found";
@@ -363,11 +362,31 @@ public class ExpenseControllerTests extends TestObjects {
         mockMvc.perform(patch)
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title", is("another title here")))
-                .andExpect(jsonPath("$.description", is("a simple description")))
-                .andExpect(jsonPath("$.paidDate[0]", is(2020)))
-                .andExpect(jsonPath("$.paidDate[1]", is(12)))
-                .andExpect(jsonPath("$.paidDate[2]", is(12)));
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.isActive", is(true)))
+                .andExpect(jsonPath("$.paidDate[0]", is(2021)))
+                .andExpect(jsonPath("$.paidDate[1]", is(10)))
+                .andExpect(jsonPath("$.paidDate[2]", is(5)))
+                .andExpect(jsonPath("$.title", is("[UPDATED]Expense Title")))
+                .andExpect(jsonPath("$.description", is("[UPDATED]Simple description here")))
+                .andExpect(jsonPath("$.cost", is(33.11)))
+                .andExpect(jsonPath("$.dueDate[0]", is(2021)))
+                .andExpect(jsonPath("$.dueDate[1]", is(10)))
+                .andExpect(jsonPath("$.dueDate[2]", is(20)))
+                .andExpect(jsonPath("$.paid", is(true)))
+                .andExpect(jsonPath("$.invoiceDate[0]", is(2021)))
+                .andExpect(jsonPath("$.invoiceDate[1]", is(10)))
+                .andExpect(jsonPath("$.invoiceDate[2]", is(1)))
+                .andExpect(jsonPath("$.servicePeriodStart[0]", is(2021)))
+                .andExpect(jsonPath("$.servicePeriodStart[1]", is(9)))
+                .andExpect(jsonPath("$.servicePeriodStart[2]", is(25)))
+                .andExpect(jsonPath("$.servicePeriodEnd[0]", is(2021)))
+                .andExpect(jsonPath("$.servicePeriodEnd[1]", is(10)))
+                .andExpect(jsonPath("$.servicePeriodEnd[2]", is(25)))
+                .andExpect(jsonPath("$.periodicity", is("just_once")))
+                .andExpect(jsonPath("$.paymentMethod", is("ticket")))
+                .andExpect(jsonPath("$.typableLine", is("0000.00000 00000.000000 00000.000000 0 00000000000000")))
+                ;
     }
 
     @Test

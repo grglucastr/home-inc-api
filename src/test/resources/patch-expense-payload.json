@@ -1,5 +1,14 @@
 {
-  "title": "another title here",
-  "description": "a simple description",
-  "paidDate": "2020-12-12"
+  "title": "[UPDATED]Expense Title",
+  "description": "[UPDATED]Simple description here",
+  "cost": 33.11,
+  "dueDate": "2021-10-20",
+  "paid": true,
+  "paidDate": "2021-10-05",
+  "invoiceDate": "2021-10-01",
+  "servicePeriodStart": "2021-09-25",
+  "servicePeriodEnd": "2021-10-25",
+  "periodicity": "just_once",
+  "paymentMethod": "ticket",
+  "typableLine": "0000.00000 00000.000000 00000.000000 0 00000000000000"
 }
