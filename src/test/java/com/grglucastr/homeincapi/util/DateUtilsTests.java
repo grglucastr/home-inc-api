@@ -8,10 +8,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 
-@RunWith(MockitoJUnitRunner.class)
 public class DateUtilsTests {
 
-    @Test
+
     public void testMonthProgressGivenPreviousYear(){
         final int year = LocalDate.now().getYear() - 1;
         final int month = 4;
@@ -20,7 +19,7 @@ public class DateUtilsTests {
         Assert.assertThat(monthlyProgress, Matchers.is("100%"));
     }
 
-    @Test
+
     public void testMonthProgressGivenCurrentYearAndPreviousMonth(){
         final int year = LocalDate.now().getYear();
         final int month = LocalDate.now().minusMonths(1L).getMonthValue();
@@ -29,7 +28,6 @@ public class DateUtilsTests {
         Assert.assertThat(monthlyProgress, Matchers.is("100%"));
     }
 
-    @Test
     public void testMonthProgressGivenNextYear() {
 
         final int year = LocalDate.now().getYear() + 1;
@@ -38,7 +36,6 @@ public class DateUtilsTests {
         Assert.assertThat(monthlyProgress, Matchers.is("0%"));
     }
 
-    @Test
     public void testMonthProgressGivenCurrentYearButNextMonth() {
 
         final int year = LocalDate.now().getYear();
@@ -48,7 +45,7 @@ public class DateUtilsTests {
         Assert.assertThat(monthlyProgress, Matchers.is("0%"));
     }
 
-    @Test
+
     public void testMonthProgressGivenCurrentYearAndCurrentMonth() {
 
         final int year = LocalDate.now().getYear();
