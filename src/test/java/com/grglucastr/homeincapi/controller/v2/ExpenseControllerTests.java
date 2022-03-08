@@ -6,6 +6,7 @@ import com.grglucastr.homeincapi.enums.Periodicity;
 import com.grglucastr.homeincapi.model.Expense;
 import com.grglucastr.homeincapi.service.v2.ExpenseReportService;
 import com.grglucastr.homeincapi.service.v2.ExpenseService;
+import com.grglucastr.model.ExpenseResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,8 +66,11 @@ public class ExpenseControllerTests extends TestObjects {
         final Expense expense1 = createSingleExpenseObject();
         final Expense expense2 = createSingleExpenseObject(2L);
         final Expense expense3 = createSingleExpenseObject(3L);
+        final Expense expense4_Pix_JustOnce = createSingleExpenseObject(4L);
+        expense4_Pix_JustOnce.setPaymentMethod(PaymentMethod.PIX);
+        expense4_Pix_JustOnce.setPeriodicity(Periodicity.JUST_ONCE);
 
-        List<Expense> expenses = Arrays.asList(expense1, expense2, expense3);
+        List<Expense> expenses = Arrays.asList(expense1, expense2, expense3, expense4_Pix_JustOnce);
         when(expenseService.findAll()).thenReturn(expenses);
 
         mockMvc.perform(get(URL_V2_EXPENSES))
@@ -91,7 +95,16 @@ public class ExpenseControllerTests extends TestObjects {
                 .andExpect(jsonPath("$.[2]._links", hasSize(1)))
                 .andExpect(jsonPath("$.[2]._links[0].rel", is("self")))
                 .andExpect(jsonPath("$.[2]._links[0].title", is("Mark as Paid")))
-                .andExpect(jsonPath("$.[2]._links[0].href", is("http://localhost/v2/expenses/3/pay")));
+                .andExpect(jsonPath("$.[2]._links[0].href", is("http://localhost/v2/expenses/3/pay")))
+                .andExpect(jsonPath("$.[3].id", is(4)))
+                .andExpect(jsonPath("$.[3].periodicity", is(ExpenseResponse.PeriodicityEnum.JUST_ONCE.toString())))
+                .andExpect(jsonPath("$.[3].paymentMethod", is(ExpenseResponse.PaymentMethodEnum.PIX.toString())))
+                .andExpect(jsonPath("$.[3]._links").exists())
+                .andExpect(jsonPath("$.[3]._links").isArray())
+                .andExpect(jsonPath("$.[3]._links", hasSize(1)))
+                .andExpect(jsonPath("$.[3]._links[0].rel", is("self")))
+                .andExpect(jsonPath("$.[3]._links[0].title", is("Mark as Paid")))
+                .andExpect(jsonPath("$.[3]._links[0].href", is("http://localhost/v2/expenses/4/pay")));
     }
 
     @Test
@@ -418,7 +431,7 @@ public class ExpenseControllerTests extends TestObjects {
     }
 
     @Test
-    public void testExpenseRequestWithPixPaymentMethod() throws Exception {
+    public void testExpensePostRequestWithPixPaymentMethod() throws Exception {
 
         final Expense expenseResponse = createSingleExpenseObject();
         expenseResponse.setTitle("OTHER - Dinner");
@@ -448,6 +461,57 @@ public class ExpenseControllerTests extends TestObjects {
                 .andExpect(jsonPath("$.cost", is(15000.66)))
                 .andExpect(jsonPath("$.periodicity", is("just_once")))
                 .andExpect(jsonPath("$.paymentMethod", is("pix")));
+    }
+
+    @Test
+    public void testExpenseGetRequestWithPixPaymentMethodAndJustOncePeriodicity() throws Exception {
+        final Expense expense = createSingleExpenseObject();
+        expense.setPaidDate(LocalDate.now());
+        expense.setPaid(true);
+        expense.setPeriodicity(Periodicity.JUST_ONCE);
+        expense.setPaymentMethod(PaymentMethod.PIX);
+
+        when(expenseService.findById(1L)).thenReturn(Optional.of(expense));
+
+        final MockHttpServletRequestBuilder get = get("/v2/expenses/{expenseId}", 1L)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(get)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.isActive", is(true)))
+                .andExpect(jsonPath("$.paidDate[0]", is(LocalDate.now().getYear())))
+                .andExpect(jsonPath("$.paidDate[1]", is(LocalDate.now().getMonthValue())))
+                .andExpect(jsonPath("$.paidDate[2]", is(LocalDate.now().getDayOfMonth())))
+                .andExpect(jsonPath("$.title", is("COPEL - April 2020")))
+                .andExpect(jsonPath("$.description", is("Electricity billl reference to the month of April")))
+                .andExpect(jsonPath("$.cost", is(33.23)))
+                .andExpect(jsonPath("$.dueDate[0]", is(2020)))
+                .andExpect(jsonPath("$.dueDate[1]", is(4)))
+                .andExpect(jsonPath("$.dueDate[2]", is(30)))
+                .andExpect(jsonPath("$.paid", is(true)))
+                .andExpect(jsonPath("$.invoiceDate[0]", is(2020)))
+                .andExpect(jsonPath("$.invoiceDate[1]", is(4)))
+                .andExpect(jsonPath("$.invoiceDate[2]", is(25)))
+                .andExpect(jsonPath("$.servicePeriodStart[0]", is(2020)))
+                .andExpect(jsonPath("$.servicePeriodStart[1]", is(3)))
+                .andExpect(jsonPath("$.servicePeriodStart[2]", is(25)))
+                .andExpect(jsonPath("$.servicePeriodEnd[0]", is(2020)))
+                .andExpect(jsonPath("$.servicePeriodEnd[1]", is(4)))
+                .andExpect(jsonPath("$.servicePeriodEnd[2]", is(25)))
+                .andExpect(jsonPath("$.periodicity", is(ExpenseResponse.PeriodicityEnum.JUST_ONCE.toString())))
+                .andExpect(jsonPath("$.paymentMethod", is(ExpenseResponse.PaymentMethodEnum.PIX.toString())))
+                .andExpect(jsonPath("$._links").exists())
+                .andExpect(jsonPath("$._links").isArray())
+                .andExpect(jsonPath("$._links[0].rel").exists())
+                .andExpect(jsonPath("$._links[0].rel", is("self")))
+                .andExpect(jsonPath("$._links[0].title").exists())
+                .andExpect(jsonPath("$._links[0].title", is("Mark as Paid")))
+                .andExpect(jsonPath("$._links[0].href").exists())
+                .andExpect(jsonPath("$._links[0].href", is("http://localhost/v2/expenses/1/pay")))
+                .andExpect(jsonPath("$.typableLine").exists())
+                .andExpect(jsonPath("$.typableLine", is("0341.00000 00000.000000 00000.000000 0 00000000000001")));
     }
 
 }
