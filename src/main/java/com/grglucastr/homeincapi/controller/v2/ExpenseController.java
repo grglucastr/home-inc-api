@@ -12,6 +12,7 @@ import com.grglucastr.model.ExpensePatchRequest;
 import com.grglucastr.model.ExpenseRequest;
 import com.grglucastr.model.ExpenseResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
@@ -239,6 +240,14 @@ public class ExpenseController implements ExpensesApi {
 					.filter(e -> e.getDueDate().isBefore(filter.getDueDateEnd().plusDays(1)))
 					.collect(Collectors.toList());
 		}
+
+		if(StringUtils.isNotBlank(filter.getTitle())){
+			expenses = expenses
+					.stream()
+					.filter(e -> e.getTitle().toLowerCase().contains(filter.getTitle().toLowerCase()))
+					.collect(Collectors.toList());
+		}
+
 		return expenses;
 	}
 
