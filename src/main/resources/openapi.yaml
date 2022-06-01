@@ -326,6 +326,9 @@ components:
         paymentMethod:
           type: string
           example: bank transfer
+        title:
+          type: string
+          example: car
     ExpenseRequest:
       description: Request object to add a new expense registry
       type: object
