@@ -514,4 +514,26 @@ public class ExpenseControllerTests extends TestObjects {
                 .andExpect(jsonPath("$.typableLine", is("0341.00000 00000.000000 00000.000000 0 00000000000001")));
     }
 
+    @Test
+    public void testGetExpenseByTitle() throws Exception {
+        final Expense exp1 = createSingleExpenseObject(1L);
+        final Expense exp2 = createSingleExpenseObject(2L);
+        final Expense exp3 = createSingleExpenseObject(3L);
+        final Expense exp4 = createSingleExpenseObject(3L);
+
+        exp1.setTitle("Carro");
+        exp4.setTitle("Internet");
+
+        List<Expense> expenses = Arrays.asList(exp1, exp2, exp3, exp4);
+        when(expenseService.findAll()).thenReturn(expenses);
+
+        final MockHttpServletRequestBuilder get = get(URL_V2_EXPENSES)
+                .param("title", "opel");
+
+        mockMvc.perform(get)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(2)));
+    }
+
 }
