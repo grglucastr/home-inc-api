@@ -52,6 +52,9 @@ public class ExpenseController implements ExpensesApi {
 
 	@Override
 	public ResponseEntity<List<ExpenseResponse>> getExpenses(ExpenseFilter filter) {
+
+		log.info("Filter Params {}", filter.toString());
+
 		List<Expense> expenses = expenseService.findAll();
 
 		expenses = filterExpenses(filter, expenses);
