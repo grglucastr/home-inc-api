@@ -118,6 +118,48 @@ paths:
         200:
           description: Email sent.
 
+  /v2/expenses/years:
+    get:
+      summary: Fetches all the years based on expenses storaged in the database.
+      operationId: getExpensesYears
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: List of all the years based on expeses registered.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                example: [2020, 2021, 2022]
+    
+  /v2/expenses/years/{year}/months:
+    get:
+      summary: Fetches all the months available based on the selected year according to the expenses registered on database.
+      operationId: getExpensesMonths
+      parameters:
+        - in: path
+          name: year
+          required: true
+          description: Selected Year
+          schema:
+            type: integer
+            format: int32
+      tags:
+        - Expenses
+      responses:
+        '200':
+          description: List of an array of months in MM format.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
+
   /v2/incomes:
     get:
       summary: List all incomes registered.
