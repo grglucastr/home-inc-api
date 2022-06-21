@@ -119,6 +119,19 @@ public class ExpenseController implements ExpensesApi {
 	}
 
 	@Override
+	public ResponseEntity<List<String>> getExpensesMonths(Integer year) {
+
+		final List<Integer> intMonths = expenseService.fetchExpenseMonths(year);
+		final List<String> months = intMonths.stream().map(intMonth -> {
+			if(intMonth < 10)
+				return "0" + intMonth;
+			return String.valueOf(intMonth);
+		}).collect(Collectors.toList());
+
+		return ResponseEntity.ok(months);
+	}
+
+	@Override
 	public ResponseEntity<ExpenseResponse> patchExpenses(Long expenseId, ExpensePatchRequest request) {
 		final Optional<Expense> optExpense = expenseService.findById(expenseId);
 		if (optExpense.isEmpty())

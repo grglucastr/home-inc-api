@@ -26,4 +26,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     @Query("SELECT DISTINCT EXTRACT(YEAR FROM e.dueDate) AS year FROM expense e ORDER BY year DESC")
     List<Integer> fetchExpenseYears();
+
+    @Query("SELECT DISTINCT EXTRACT(MONTH FROM e.dueDate) AS month FROM expense e WHERE EXTRACT (YEAR FROM e.dueDate) = :year ORDER BY month DESC")
+    List<Integer> fetchExpenseMonths(int year);
 }
