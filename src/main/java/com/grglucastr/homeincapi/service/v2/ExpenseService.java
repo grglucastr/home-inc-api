@@ -18,4 +18,6 @@ public interface ExpenseService {
     List<Expense> findByMonthAndYearAndPaid(int year, int month, boolean paid);
 
     List<Integer> fetchExpenseYears();
+
+    List<Integer> fetchExpenseMonths(int year);
 }
