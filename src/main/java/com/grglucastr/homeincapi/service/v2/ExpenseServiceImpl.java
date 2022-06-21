@@ -49,5 +49,11 @@ public class ExpenseServiceImpl implements ExpenseService{
         log.info("Fetching all expenses for the year={} and month={} and paid={}", year, month, paid);
         return expenseRepository.findByMonthAndYearPaid(year, month, paid);
     }
+
+    @Override
+    public List<Integer> fetchExpenseYears() {
+        log.info("Fetch all years");
+        return expenseRepository.fetchExpenseYears();
+    }
 }
 
