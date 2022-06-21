@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
-    @Query("SELECT e FROM expense e WHERE e.isActive= :active AND e.paid=:paid")
+    @Query("SELECT e FROM expense e WHERE e.isActive= :active AND e.paid=:paid ORDER BY e.id ASC")
     Page<Expense> findAll(boolean active, boolean paid, Pageable pageable);
 
     @Query("SELECT e FROM expense e WHERE EXTRACT(YEAR FROM e.dueDate) = :year AND EXTRACT(MONTH FROM e.dueDate) = :month")
@@ -23,4 +23,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     List<Expense> findAllByIsActiveTrueAndPaidTrueOrderByIdAsc();
 
     Optional<Expense> findByIdAndIsActiveTrue(Long id);
+
+    @Query("SELECT DISTINCT EXTRACT(YEAR FROM e.dueDate) AS year FROM expense e ORDER BY year DESC")
+    List<Integer> fetchExpenseYears();
 }

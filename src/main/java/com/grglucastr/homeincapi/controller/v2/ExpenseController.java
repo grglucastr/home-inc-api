@@ -113,6 +113,12 @@ public class ExpenseController implements ExpensesApi {
 	}
 
 	@Override
+	public ResponseEntity<List<Integer>> getExpensesYears() {
+		final List<Integer> years = expenseService.fetchExpenseYears();
+		return ResponseEntity.ok(years);
+	}
+
+	@Override
 	public ResponseEntity<ExpenseResponse> patchExpenses(Long expenseId, ExpensePatchRequest request) {
 		final Optional<Expense> optExpense = expenseService.findById(expenseId);
 		if (optExpense.isEmpty())
