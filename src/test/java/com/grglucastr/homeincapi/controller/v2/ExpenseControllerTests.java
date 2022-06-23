@@ -28,7 +28,8 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -534,6 +535,22 @@ public class ExpenseControllerTests extends TestObjects {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", is(2)));
+    }
+
+    @Test
+    public void testGetExpensesYears() throws Exception {
+        final List<Integer> expenseYears = Arrays.asList(2020, 2021, 2022);
+        when(expenseService.fetchExpenseYears()).thenReturn(expenseYears);
+
+        final MockHttpServletRequestBuilder get = get(URL_V2_EXPENSES + "/years");
+
+        mockMvc.perform(get)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(expenseYears.size())))
+                .andExpect(jsonPath("$.[0]", is(expenseYears.get(0))))
+                .andExpect(jsonPath("$.[1]", is(expenseYears.get(1))))
+                .andExpect(jsonPath("$.[2]", is(expenseYears.get(2))));
     }
 
 }
