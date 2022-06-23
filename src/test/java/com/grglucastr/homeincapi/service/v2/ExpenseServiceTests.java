@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -110,6 +111,21 @@ public class ExpenseServiceTests extends TestObjects {
         when(expenseRepository.findByMonthAndYearPaid(anyInt(), anyInt(), anyBoolean())).thenReturn(listOfExpenses);
         final List<Expense> paidOnes = expenseService.findByMonthAndYearAndPaid(year, month, paid);
         Assert.assertThat(paidOnes.size(), Matchers.is(2));
+    }
+
+    @Test
+    public void testFetchExpenseYears() {
+
+        List<Integer> expenseYears = Arrays.asList(2020, 2021, 2022);
+        when(expenseRepository.fetchExpenseYears()).thenReturn(expenseYears);
+
+        final List<Integer> years = expenseService.fetchExpenseYears();
+
+        Assert.assertThat(years, Matchers.not(Matchers.empty()));
+        Assert.assertThat(years.size(), Matchers.equalTo(expenseYears.size()));
+        Assert.assertThat(years.get(0), Matchers.equalTo(expenseYears.get(0)));
+        Assert.assertThat(years.get(1), Matchers.equalTo(expenseYears.get(1)));
+        Assert.assertThat(years.get(2), Matchers.equalTo(expenseYears.get(2)));
     }
 
     private void assertExpenseAttributes(Expense expense, Expense saved) {
