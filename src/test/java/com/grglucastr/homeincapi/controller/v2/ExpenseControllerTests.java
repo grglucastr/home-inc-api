@@ -28,8 +28,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -551,6 +550,24 @@ public class ExpenseControllerTests extends TestObjects {
                 .andExpect(jsonPath("$.[0]", is(expenseYears.get(0))))
                 .andExpect(jsonPath("$.[1]", is(expenseYears.get(1))))
                 .andExpect(jsonPath("$.[2]", is(expenseYears.get(2))));
+    }
+
+    @Test
+    public void testGetExpensesMonths() throws Exception {
+        final List<Integer> expenseMonths = Arrays.asList(1, 2, 3, 4, 10, 12);
+        when(expenseService.fetchExpenseMonths(anyInt())).thenReturn(expenseMonths);
+
+        final MockHttpServletRequestBuilder get = get(URL_V2_EXPENSES + "/years/2021/months");
+        mockMvc.perform(get)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(6)))
+                .andExpect(jsonPath("$.[0]", is("01")))
+                .andExpect(jsonPath("$.[1]", is("02")))
+                .andExpect(jsonPath("$.[2]", is("03")))
+                .andExpect(jsonPath("$.[3]", is("04")))
+                .andExpect(jsonPath("$.[4]", is("10")))
+                .andExpect(jsonPath("$.[5]", is("12")));
     }
 
 }
