@@ -128,6 +128,18 @@ public class ExpenseServiceTests extends TestObjects {
         Assert.assertThat(years.get(2), Matchers.equalTo(expenseYears.get(2)));
     }
 
+    @Test
+    public void testFetchExpenseMonths() {
+
+        final List<Integer> expenseMonths = Arrays.asList(1, 2, 3, 4, 5, 6, 10, 12);
+        when(expenseRepository.fetchExpenseMonths(anyInt())).thenReturn(expenseMonths);
+
+        final List<Integer> months = expenseService.fetchExpenseMonths(2021);
+
+        Assert.assertThat(months, Matchers.not(Matchers.empty()));
+        Assert.assertThat(months.size(), Matchers.is(expenseMonths.size()));
+    }
+
     private void assertExpenseAttributes(Expense expense, Expense saved) {
         Assert.assertThat(saved.getId(), Matchers.is(expense.getId()));
         Assert.assertThat(saved.getTitle(), Matchers.is(expense.getTitle()));
