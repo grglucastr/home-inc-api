@@ -116,7 +116,7 @@ public class ExpenseServiceTests extends TestObjects {
     @Test
     public void testFetchExpenseYears() {
 
-        List<Integer> expenseYears = Arrays.asList(2020, 2021, 2022);
+        final List<Integer> expenseYears = Arrays.asList(2020, 2021, 2022);
         when(expenseRepository.fetchExpenseYears()).thenReturn(expenseYears);
 
         final List<Integer> years = expenseService.fetchExpenseYears();
