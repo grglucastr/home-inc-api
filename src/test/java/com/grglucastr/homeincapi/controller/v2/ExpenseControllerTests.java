@@ -4,13 +4,17 @@ import com.grglucastr.homeincapi.TestObjects;
 import com.grglucastr.homeincapi.enums.PaymentMethod;
 import com.grglucastr.homeincapi.enums.Periodicity;
 import com.grglucastr.homeincapi.model.Expense;
+import com.grglucastr.homeincapi.service.v2.EmailService;
 import com.grglucastr.homeincapi.service.v2.ExpenseReportService;
 import com.grglucastr.homeincapi.service.v2.ExpenseService;
 import com.grglucastr.model.ExpenseResponse;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,11 +30,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -46,18 +49,25 @@ public class ExpenseControllerTests extends TestObjects {
     private static final String URL_V2_SUMMARY_YEAR_MONTH = "/v2/expenses/year/{year}/month/{month}/summary";
     private static final String NEW_EXPENSE_ONCE_PERIODICITY_PAYLOAD_JSON = "/new-expense-once-periodicity-payload.json";
     private static final String NEW_EXPENSE_PIX_PAYMENT_METHOD_PAYLOAD_JSON = "/new-expense-pix-payment-method-payload.json";
+    public static final String ALL_EXPENSES_PAID = "All expenses paid.";
 
     private ExpenseReportService expenseReportService;
+    private EmailService emailService;
     private ExpenseService expenseService;
     private ModelMapper modelMapper;
     private MockMvc mockMvc;
 
+    @Captor
+    private ArgumentCaptor<String> emailContent;
+
     @Before
     public void setUp() {
         expenseService = mock(ExpenseService.class);
+        emailService = mock(EmailService.class);
         expenseReportService = mock(ExpenseReportService.class);
         modelMapper = new ModelMapper();
-        mockMvc = MockMvcBuilders.standaloneSetup(new ExpenseController(expenseService, expenseReportService, modelMapper)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new ExpenseController(expenseService,
+                expenseReportService, emailService, modelMapper)).build();
     }
 
     @Test
@@ -568,6 +578,45 @@ public class ExpenseControllerTests extends TestObjects {
                 .andExpect(jsonPath("$.[3]", is("04")))
                 .andExpect(jsonPath("$.[4]", is("10")))
                 .andExpect(jsonPath("$.[5]", is("12")));
+    }
+
+    @Test
+    public void testSendMailAllExpensesPaid() throws Exception {
+
+        final Expense exp1 = createSingleExpenseObject(1L);
+        exp1.setIsActive(false);
+
+        when(expenseService.findAll()).thenReturn(List.of(exp1));
+        final MockHttpServletRequestBuilder get = get(URL_V2_EXPENSES + "/mail");
+
+        mockMvc.perform(get)
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        verify(emailService, times(1))
+                .sendSimpleMessage(anyString(), anyString(), emailContent.capture());
+
+        final String emailBody = emailContent.getValue();
+        Assert.assertThat(emailBody, Matchers.equalTo(ALL_EXPENSES_PAID));
+    }
+
+    @Test
+    public void testSendMailWithExpensesPendingPayment() throws Exception {
+
+        final Expense exp1 = createSingleExpenseObject(1L);
+
+        when(expenseService.findAll()).thenReturn(List.of(exp1));
+        final MockHttpServletRequestBuilder get = get(URL_V2_EXPENSES + "/mail");
+
+        mockMvc.perform(get)
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        verify(emailService, times(1))
+                .sendSimpleMessage(anyString(), anyString(), emailContent.capture());
+
+        final String emailBody = emailContent.getValue();
+        Assert.assertThat(emailBody, Matchers.containsString("COPEL"));
     }
 
 }

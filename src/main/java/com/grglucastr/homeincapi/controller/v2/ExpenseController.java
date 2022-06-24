@@ -36,17 +36,17 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class ExpenseController implements ExpensesApi {
 
 	private static final String MARK_AS_PAID = "Mark as Paid";
+	public static final String ALL_EXPENSES_PAID = "All expenses paid.";
 	private ExpenseReportService expenseReportService;
 	private ExpenseService expenseService;
 	private ModelMapper mapper;
-
-	@Autowired
 	private EmailService emailService;
 
 	@Autowired
-	public ExpenseController(ExpenseService expenseService, ExpenseReportService expenseReportService, ModelMapper modelMapper) {
+	public ExpenseController(ExpenseService expenseService, ExpenseReportService expenseReportService, EmailService emailService, ModelMapper modelMapper) {
 		this.expenseService = expenseService;
 		this.expenseReportService = expenseReportService;
+		this.emailService = emailService;
 		this.mapper = modelMapper;
 	}
 
@@ -175,13 +175,30 @@ public class ExpenseController implements ExpensesApi {
 
 		final ExpenseFilter expenseFilter = new ExpenseFilter();
 		expenseFilter.setPaid(false);
+		expenseFilter.setActive(true);
 
 		final List<Expense> expenses = expenseService.findAll()
 				.stream()
-				.filter(isPaid(expenseFilter))
+				.filter(isPaid(expenseFilter).and(isActive(expenseFilter)))
 				.collect(Collectors.toList());
 
+		final StringBuilder mailBody = buildMailBody(expenses);
+
+		final String to = "george.bentes@gmail.com";
+		final String subject = "Contas para Pagar";
+		emailService.sendSimpleMessage(to, subject, mailBody.toString());
+
+		return ResponseEntity.ok().build();
+	}
+
+	private StringBuilder buildMailBody(List<Expense> expenses) {
+
 		final StringBuilder builder = new StringBuilder();
+
+		if(expenses.size() == 0){
+			builder.append(ALL_EXPENSES_PAID);
+			return builder;
+		}
 
 		builder.append("\n\n");
 		expenses.forEach(expense -> {
@@ -198,12 +215,7 @@ public class ExpenseController implements ExpensesApi {
 			builder.append("---------------------------");
 			builder.append("\n\n");
 		});
-
-		final String to = "george.bentes@gmail.com";
-		final String subject = "Contas para Pagar";
-		emailService.sendSimpleMessage(to, subject, builder.toString());
-
-		return ResponseEntity.ok().build();
+		return builder;
 	}
 
 	private ResponseEntity<ExpenseResponse> payExpense(Expense expense) {
