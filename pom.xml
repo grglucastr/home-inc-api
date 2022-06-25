@@ -134,7 +134,10 @@
 		</dependency>
 	</dependencies>
 
+	<packaging>jar</packaging>
+
 	<build>
+		<finalName>homeincapi</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
