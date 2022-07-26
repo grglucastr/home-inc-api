@@ -14,7 +14,9 @@ public class CorsConfiguration {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
 
-                registry.addMapping("/**").allowedOrigins("http://localhost:3000")
+                String[] allowedOrigins = new String[]{"http://localhost", "http://localhost:3000"};
+
+                registry.addMapping("/**").allowedOrigins(allowedOrigins)
                         .allowedMethods("GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS", "HEAD");
 
             }
