@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.grglucastr</groupId>
 	<artifactId>home-inc-api</artifactId>
-	<version>0.0.3</version>
+	<version>0.0.4-SNAPSHOT</version>
 	<name>home-inc-api</name>
 	<description>API for Home.inc project. Home.inc is a simple domestic management app where you can have an overview of your home expenses.</description>
 
