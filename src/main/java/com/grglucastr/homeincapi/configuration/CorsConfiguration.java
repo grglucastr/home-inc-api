@@ -1,23 +1,19 @@
 package com.grglucastr.homeincapi.configuration;
 
-import com.sun.xml.fastinfoset.util.StringArray;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
+import java.util.Arrays;
 
 @Slf4j
 @Configuration
 public class CorsConfiguration {
+
+    private static final String HOMEINCAPI_ALLOWED_SERVERS = "HOMEINCAPI_ALLOWED_SERVERS";
 
     @Bean
     public WebMvcConfigurer corsConfigurer(){
@@ -37,22 +33,17 @@ public class CorsConfiguration {
     private String[] getAllowedOrigins(){
         String[] allowedOrigins = new String[]{"http://localhost", "http://localhost:3000", "http://44.198.99.95:3000"};
 
-        try {
-            final File file = ResourceUtils.getFile("classpath:static/allowed-servers.txt");
-            final List<String> servers = Files.readAllLines(Path.of(file.getPath()));
-            log.info("Found allowed servers files! (allowed-servers.txt)");
-            log.info("Listing all allowed servers:");
-            servers.forEach(log::info);
-
-            return servers.toArray(String[]::new);
-
-        } catch (FileNotFoundException e) {
-            log.error("Servers file (resources/static/allowed-servers.txt) not found.");
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        final String envVar = System.getenv(HOMEINCAPI_ALLOWED_SERVERS);
+        log.info("Reading CORS servers in env variable " + HOMEINCAPI_ALLOWED_SERVERS);
+        if(StringUtils.isNotBlank(envVar)){
+            log.info("Servers found in env variable");
+            final String[] servers = envVar.split(",");
+            Arrays.stream(servers).forEach(log::info);
+            return servers;
         }
 
+        log.info("Empty env variable: {}", HOMEINCAPI_ALLOWED_SERVERS);
+        log.info("Applying default servers values");
         return allowedOrigins;
     }
 }
