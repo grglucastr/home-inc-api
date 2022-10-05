@@ -15,7 +15,13 @@
 	<description>API for Home.inc project. Home.inc is a simple domestic management app where you can have an overview of your home spendings.</description>
 	<properties>
 		<java.version>11</java.version>
+		<openapi-generator-maven-plugin.version>6.0.1</openapi-generator-maven-plugin.version>
+		<jackson-databind-nullable>0.2.3</jackson-databind-nullable>
+		<swagger-annotations-version>2.2.2</swagger-annotations-version>
 	</properties>
+
+	<packaging>jar</packaging>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -57,9 +63,24 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+			<version>${jackson-databind-nullable}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>${swagger-annotations-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
+		<finalName>homeincapiv3</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -73,6 +94,35 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>${openapi-generator-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/openapi.yaml</inputSpec>
+							<generatorName>spring</generatorName>
+							<apiPackage>com.grglucastr.homeincapi.api</apiPackage>
+							<modelPackage>com.grglucastr.homeincapi.models</modelPackage>
+							<skipValidateSpec>false</skipValidateSpec>
+							<strictSpec>true</strictSpec>
+							<generateApiDocumentation>true</generateApiDocumentation>
+							<removeOperationIdPrefix>true</removeOperationIdPrefix>
+							<configOptions>
+								<useTags>true</useTags>
+								<delegatePattern>true</delegatePattern>
+								<interfaceOnly>true</interfaceOnly>
+								<removeOperationIdPrefix>true</removeOperationIdPrefix>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

@@ -1,0 +1,29 @@
+openapi: 3.0.3
+info:
+  title: Home Inc API
+  version: '3.0'
+paths:
+  /v3/spendings:
+    get:
+      summary: List all spendings
+      operationId: getSpendings
+      tags:
+        - Spendings
+      responses:
+        200:
+          description: A pageable list showing all expenses based on filter criteria
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BasicResponse"
+
+components:
+  schemas:
+    BasicResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+          format: int32
