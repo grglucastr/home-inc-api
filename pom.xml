@@ -18,6 +18,13 @@
 		<openapi-generator-maven-plugin.version>6.0.1</openapi-generator-maven-plugin.version>
 		<jackson-databind-nullable>0.2.3</jackson-databind-nullable>
 		<swagger-annotations-version>2.2.2</swagger-annotations-version>
+		<springboot.starter.versions>2.7.4</springboot.starter.versions>
+		<flyway.version>9.4.0</flyway.version>
+		<postgresql.version>42.5.0</postgresql.version>
+		<lombok.version>1.18.24</lombok.version>
+		<mockito.version>4.8.0</mockito.version>
+		<hamcrest.version>2.2</hamcrest.version>
+		<commonslang3.version>3.12.0</commonslang3.version>
 	</properties>
 
 	<packaging>jar</packaging>
@@ -26,43 +33,53 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
+			<version>${springboot.starter.versions}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<version>${springboot.starter.versions}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-hateoas</artifactId>
+			<version>${springboot.starter.versions}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
+			<version>${springboot.starter.versions}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<version>${springboot.starter.versions}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
+			<version>${flyway.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
+			<version>${postgresql.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+			<version>${lombok.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<version>${springboot.starter.versions}</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- OPEN API SPECIFICATION 3 -->
 		<dependency>
 			<groupId>org.openapitools</groupId>
 			<artifactId>jackson-databind-nullable</artifactId>
@@ -72,6 +89,26 @@
 			<groupId>io.swagger.core.v3</groupId>
 			<artifactId>swagger-annotations</artifactId>
 			<version>${swagger-annotations-version}</version>
+		</dependency>
+
+		<!-- MOCKING and TESTS ASSERTIONS -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest</artifactId>
+			<version>${hamcrest.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commonslang3.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.validation</groupId>
