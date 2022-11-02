@@ -3,27 +3,149 @@ info:
   title: Home Inc API
   version: '3.0'
 paths:
-  /v3/spendings:
+  /v3/user/{userId}/spendings:
     get:
       summary: List all spendings
       operationId: getSpendings
       tags:
         - Spendings
+      parameters:
+        - $ref: "#/components/parameters/userId"
       responses:
         200:
-          description: A pageable list showing all expenses based on filter criteria
+          description: A pageable list showing all spendings
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BasicResponse"
+                $ref: "#/components/schemas/SpendingResponse"
+        
+        404:
+          description: When the user is not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPBaseResponse"
+        
+        500:
+          description: When some problems in the server occurs, such as DB is down.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPBaseResponse"
+
+  
 
 components:
   schemas:
-    BasicResponse:
+
+    Base:
       type: object
+      properties:
+        id: 
+          type: integer
+          format: int64
+          example: 222
+        active:
+          type: boolean
+          default: true
+          description: Field used for logical delete
+        insertDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-10 14:21:34"
+        updateDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-15 21:42:32"
+        
+    User:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/Base"
       properties:
         name:
           type: string
-        age:
+          example: "George Sanches"
+        email:
+          type: string
+          example: "george.sanches@domain.com"
+
+    SpendingResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/Base"
+      properties:
+        name:
+          type: string
+          example: "Copel"
+        monthsQuantity:
           type: integer
           format: int32
+        description:
+          type: string
+          example: "Electric bill"
+        periodicity:
+          type: string
+          example: "MONTHLY"
+        category:
+          type: string
+          example: "Electricity"
+        fixedIncomeFund:
+          type: object
+          $ref: "#/components/schemas/FixedIncomeFund"
+
+    SpendingCategory:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/Base"
+      properties:
+        name:
+          type: string
+          example: "Electricity"
+
+    FixedIncomeFund:
+      type: object
+      properties:
+        dueDate:
+          type: string
+          format: "date"
+          example: "2025-09-30"
+        annualProfitabilityPercentage:
+          type: number
+          example: 12.3
+        productPrice:
+          type: number
+          example: 170.34
+        minAmountAllowed:
+          type: number
+          example: 33.54
+    
+    HTTPBaseResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: ""
+
+  parameters:
+    userId:
+      in: path
+      name: userId
+      required: true
+      description: User id. Integer value.
+      schema:
+        type: integer
+        minimum: 1
+        format: int64
+    spendingId:
+      in: path
+      name: spendingId
+      required: true
+      description: Spending id. Integer value.
+      schema:
+        type: integer
+        minimum: 1
+        format: int64
