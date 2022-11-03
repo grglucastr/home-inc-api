@@ -3,7 +3,7 @@ info:
   title: Home Inc API
   version: '3.0'
 paths:
-  /v3/user/{userId}/spendings:
+  /v3/users/{userId}/spendings:
     get:
       summary: List all spendings
       operationId: getSpendings
@@ -17,14 +17,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SpendingResponse"
+                type: array
+                items:
+                  $ref: "#/components/schemas/SpendingResponse"
         
         404:
           description: When the user is not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPBaseResponse"
+                $ref: "#/components/schemas/HTTPUserNotFoundResponse"
         
         500:
           description: When some problems in the server occurs, such as DB is down.
@@ -32,8 +34,157 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPBaseResponse"
+    post:
+      summary: Add new spending
+      operationId: postSpending
+      tags:
+        - "Spendings"
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SpendingRequest"
+      responses:
+          201:
+            description: Returns a recently added spending with its ID, inserted date time and all the submitted information. 
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/SpendingResponse"
+          404:
+            description: When the user is not found
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/HTTPUserNotFoundResponse"
+          500:
+            description: When some problems in the server occurs, such as DB is down.
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/HTTPBaseResponse"
 
-  
+  /v3/users/{userId}/incomes:
+    get:
+      summary: List all the incomes registered for a specific user
+      operationId: getIncomes
+      tags:
+        - "Incomes"
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        200:
+          description: A pageable list showing all incomes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/IncomeResponse"
+        404:
+          description: When the user is not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPUserNotFoundResponse"
+        500:
+          description: When some problems in the server occurs, such as DB is down.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPBaseResponse"
+    post:
+      summary: Add new income
+      operationId: postIncome
+      tags:
+        - "Incomes"
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IncomeRequest"
+      responses:
+        201:
+          description: Returns the new income added with its ID and inserted date time and all the others information submitted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncomeResponse"
+        404:
+          description: When the user is not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPUserNotFoundResponse"
+        500:
+          description: When some problems in the server occurs, such as DB is down.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPBaseResponse"  
+
+  /v3/users/{userId}/income-categories:
+    get:
+      summary: List all the income categories registered for a specific user
+      operationId: getIncomeCategories
+      tags:
+        - "Income Categories"
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        200:
+          description: A pageable list showing all income categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/IncomeCategoryResponse"
+        404:
+          description: When the user is not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPUserNotFoundResponse"
+        500:
+          description: When some problems in the server occurs, such as DB is down.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPBaseResponse"
+
+    post:
+      summary: Add new income category
+      operationId: postIncomeCategory
+      tags:
+        - "Income Categories"
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        201:
+          description: Brings the Income Category with its ID, inserted date time and all the information submitted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncomeCategoryRequest"
+        404:
+          description: When the user is not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPUserNotFoundResponse"
+        500:
+          description: When some problems in the server occurs, such as DB is down.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPBaseResponse"
 
 components:
   schemas:
@@ -78,9 +229,10 @@ components:
         name:
           type: string
           example: "Copel"
-        monthsQuantity:
+        installments:
           type: integer
           format: int32
+          description: Field used to inform the number of installments of the spending, if applied.
         description:
           type: string
           example: "Electric bill"
@@ -89,11 +241,89 @@ components:
           example: "MONTHLY"
         category:
           type: string
-          example: "Electricity"
+          example: "Investments"
         fixedIncomeFund:
           type: object
           $ref: "#/components/schemas/FixedIncomeFund"
+    
+    SpendingRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Copel"
+        installments:
+          type: integer
+          format: int32
+          description: Field used to inform the number of installments of the spending, if applied.
+        description:
+          type: string
+          example: "Electric bill"
+        periodicity:
+          type: string
+          example: "MONTHLY"
+          enum: ["LOOSE", "DAILY", "WEEKLY", "MONTHLY", "YEARLY", "FIXED_MONTHS"]
+        categoryId:
+          type: integer
+          format: int64
+          example: 12
+        fixedIncomeFund:
+          type: object
+          $ref: "#/components/schemas/FixedIncomeFund"
+    
+    IncomeResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/Base"
+      properties:
+        name:
+          type: string
+          example: "Salary"
+        amount:
+          type: number
+          example: 2500.33
+        category:
+          type: string
+          example: "Salary"
+        periodicity:
+          type: string
+          example: "MONTHLY"
 
+    IncomeRequest:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/Base"
+      properties:
+        name:
+          type: string
+          example: "Salary"
+        amount:
+          type: number
+          example: 2500.33
+        category:
+          type: string
+          example: "Salary"
+        periodicity:
+          type: string
+          example: "MONTHLY"
+          enum: ["LOOSE", "DAILY", "WEEKLY", "MONTHLY", "YEARLY", "FIXED_MONTHS"]
+
+    IncomeCategoryResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/Base"
+      properties:
+        name:
+          type: string
+          example: "Dividends"
+
+    IncomeCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Overtime"
+        
     SpendingCategory:
       type: object
       allOf:
@@ -129,6 +359,16 @@ components:
         message:
           type: string
           example: ""
+    
+    HTTPUserNotFoundResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/HTTPBaseResponse"
+      properties:
+        code:
+          example: 404
+        message:
+          example: "User not found."
 
   parameters:
     userId:
