@@ -293,6 +293,30 @@ paths:
                 $ref: "#/components/schemas/HTTPBaseResponse"
 
   /v3/spendings/{spendingId}/ledgers:
+    get:
+      summary: List all the ledger for specific spending id informed in path parameter.
+      tags:
+        - "Ledgers"
+      responses:
+        200:
+          description: A pageable list of ledgers
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/LedgerResponse"
+        404:
+          description: When the spending is not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPSpendingNotFoundResponse"
+        500:
+          description: When some problems in the server occurs, such as DB is down.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPBaseResponse"
+        
     post:
       summary: Add new register to the ledger for the spending id inform in path parameter.
       tags:
@@ -316,6 +340,61 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HTTPSpendingNotFoundResponse"
+        500:
+          description: When some problems in the server occurs, such as DB is down.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPBaseResponse"
+
+  /v3/ledgers/{ledgerId}/fund-details:
+    get:
+      summary: List all fund details based on ledger id informed in path parameter.
+      tags:
+        - "Fund Details"
+      responses:
+        200:
+          description: A pageable list of fund details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FundDetailResponse"
+        404:
+          description: When the ledger is not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPLedgerNotFoundResponse"
+        500:
+          description: When some problems in the server occurs, such as DB is down.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPBaseResponse"
+    
+    post:
+      summary: Add a new register of fund detail based on the spending id passed in the path parameter.
+      tags:
+        - "Fund Details"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FundDetailRequest"
+      responses:
+        201:
+          description: Returns a brand new fund detail with its id and insert date time.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FundDetailResponse"
+        404:
+          description: When the ledger is not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPLedgerNotFoundResponse"
         500:
           description: When some problems in the server occurs, such as DB is down.
           content:
@@ -469,6 +548,11 @@ components:
     LedgerRequest:
       type: object
       properties:
+        paymentTypeId:
+          description: Id of the payment type
+          type: integer
+          format: int64
+          example: 1
         billingDate:
           description: Date that the invoice was received by E-mail
           type: string
@@ -499,7 +583,62 @@ components:
       type: object
       allOf:
         - $ref: "#/components/schemas/Base"
-        - $ref: "#/components/schemas/LedgerRequest"
+      properties:
+        paymentTypeId:
+          description: Payment type
+          type: string
+          example: "Bank Transfer"
+        billingDate:
+          description: Date that the invoice was received by E-mail
+          type: string
+          format: "date"
+          example: "2033-10-11"
+        dueDate:
+          description: Limit date bill should be paid
+          type: string
+          format: "date"
+          example: "2033-10-11"
+        amountDue:
+          description: Value that should be paid
+          type: number
+          example: 1234.22
+        barCode:
+          type: string
+          example: 836800000009 672801110004 001010202230 533649207040
+        QRCode:
+          description: Field for Pix QRCodes
+          type: string
+          example: ""
+        paid:
+          description: Switch variable to control if this expense is paid or not.
+          default: false
+          type: boolean
+
+    FundDetailRequest:
+      type: object
+      properties:
+        lastYieldAmount: 
+          type: number
+          example: 1.10
+        dividendYield:
+          type: number
+          example: 0.66
+        stockPrice:
+          type: number
+          example: 169.39
+        quantity:
+          type: integer
+          format: int32
+          example: 1
+        pvp:
+          type: number
+          example: 1.15
+    
+    FundDetailResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/Base"
+        - $ref: "#/components/schemas/FundDetailRequest"
 
     HTTPBaseResponse:
       type: object
@@ -560,7 +699,16 @@ components:
           example: 404
         message:
           example: "Spending not found."
-
+    
+    HTTPLedgerNotFoundResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/HTTPLedgerNotFoundResponse"
+      properties:
+        code:
+          example: 404
+        message:
+          example: "Ledger not found."
 
   parameters:
     
@@ -599,6 +747,16 @@ components:
       name: spendingId
       required: true
       description: Spending id. Integer value.
+      schema:
+        type: integer
+        minimum: 1
+        format: int64
+    
+    ledgerId:
+      in: path
+      name: ledgerId
+      required: true
+      description: Ledger id. Integer value.
       schema:
         type: integer
         minimum: 1
