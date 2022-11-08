@@ -1,0 +1,1 @@
+INSERT INTO spending_categories VALUES (1, 'Investment', 1), (2, 'Expense', 1)

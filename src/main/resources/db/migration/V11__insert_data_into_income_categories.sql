@@ -1,0 +1,1 @@
+INSERT INTO income_categories VALUES (1,'Salary', 1),(2,'Loose', 1);
