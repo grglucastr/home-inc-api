@@ -17,15 +17,10 @@ class SpendingControllerTest {
 
     private MockMvc mockMvc;
 
-    @BeforeEach
     public void setUp(){
-        mockMvc = MockMvcBuilders.standaloneSetup(new SpendingController()).build();
+
     }
 
-    @Test
     void getSpendings() throws Exception {
-        mockMvc.perform(get("/v3/spendings"))
-                .andDo(print())
-                .andExpect(status().isOk());
     }
 }

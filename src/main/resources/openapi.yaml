@@ -2,6 +2,12 @@ openapi: 3.0.3
 info:
   title: Home Inc API
   version: '3.0'
+
+servers:
+  - url: http://localhost:8080/
+    description: Local server for testing
+  - url: http://44.198.99.95
+    description: Production server
 paths:
   
   /v3/users/{userId}/spending-categories:
@@ -293,8 +299,11 @@ paths:
                 $ref: "#/components/schemas/HTTPBaseResponse"
 
   /v3/spendings/{spendingId}/ledgers:
+    parameters:
+      - $ref: "#/components/parameters/spendingId"
     get:
       summary: List all the ledger for specific spending id informed in path parameter.
+      operationId: getLedgers
       tags:
         - "Ledgers"
       responses:
@@ -319,6 +328,7 @@ paths:
         
     post:
       summary: Add new register to the ledger for the spending id inform in path parameter.
+      operationId: postLedger
       tags:
         - "Ledgers"
       requestBody:
@@ -348,8 +358,11 @@ paths:
                 $ref: "#/components/schemas/HTTPBaseResponse"
 
   /v3/ledgers/{ledgerId}/fund-details:
+    parameters:
+      - $ref: "#/components/parameters/ledgerId"
     get:
       summary: List all fund details based on ledger id informed in path parameter.
+      operationId: getFundDetails
       tags:
         - "Fund Details"
       responses:
@@ -374,6 +387,7 @@ paths:
     
     post:
       summary: Add a new register of fund detail based on the spending id passed in the path parameter.
+      operationId: postFundDetail
       tags:
         - "Fund Details"
       requestBody:
@@ -406,7 +420,7 @@ components:
   schemas:
 
     Base:
-      type: object
+      type: object        
       properties:
         id: 
           type: integer
@@ -427,9 +441,23 @@ components:
         
     User:
       type: object
-      allOf:
-        - $ref: "#/components/schemas/Base"
       properties:
+        id: 
+          type: integer
+          format: int64
+          example: 222
+        active:
+          type: boolean
+          default: true
+          description: Field used for logical delete
+        insertDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-10 14:21:34"
+        updateDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-15 21:42:32"
         name:
           type: string
           example: "George Sanches"
@@ -455,19 +483,47 @@ components:
           example: "MONTHLY"
           enum: ["LOOSE", "DAILY", "WEEKLY", "MONTHLY", "YEARLY", "FIXED_MONTHS"]
         fixedIncomeFund:
-          type: object
           $ref: "#/components/schemas/FixedIncomeFund"
 
     SpendingResponse:
       type: object
-      allOf:
-        - $ref: "#/components/schemas/Base"
-        - $ref: "#/components/schemas/SpendingRequest"
+      properties:
+        id: 
+          type: integer
+          format: int64
+          example: 222
+        active:
+          type: boolean
+          default: true
+          description: Field used for logical delete
+        insertDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-10 14:21:34"
+        updateDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-15 21:42:32"
+        name:
+          type: string
+          example: "Copel"
+        installments:
+          type: integer
+          format: int32
+          description: Field used to inform the number of installments of the spending, if applied.
+        description:
+          type: string
+          example: "Electric bill"
+        periodicity:
+          type: string
+          example: "MONTHLY"
+          enum: ["LOOSE", "DAILY", "WEEKLY", "MONTHLY", "YEARLY", "FIXED_MONTHS"]
+        fixedIncomeFund:
+          $ref: "#/components/schemas/FixedIncomeFund"
+
     
     IncomeRequest:
       type: object
-      allOf:
-        - $ref: "#/components/schemas/Base"
       properties:
         name:
           type: string
@@ -485,9 +541,36 @@ components:
       
     IncomeResponse:
       type: object
-      allOf:
-        - $ref: "#/components/schemas/Base"
-        - $ref: "#/components/schemas/IncomeRequest"
+      properties:
+        id: 
+          type: integer
+          format: int64
+          example: 222
+        active:
+          type: boolean
+          default: true
+          description: Field used for logical delete
+        insertDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-10 14:21:34"
+        updateDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-15 21:42:32"
+        name:
+          type: string
+          example: "Salary"
+        amount:
+          type: number
+          example: 2500.33
+        category:
+          type: string
+          example: "Salary"
+        periodicity:
+          type: string
+          example: "MONTHLY"
+          enum: ["LOOSE", "DAILY", "WEEKLY", "MONTHLY", "YEARLY", "FIXED_MONTHS"]
 
     IncomeCategoryRequest:
       type: object
@@ -498,9 +581,26 @@ components:
     
     IncomeCategoryResponse:
       type: object
-      allOf:
-        - $ref: "#/components/schemas/Base"
-        - $ref: "#/components/schemas/IncomeCategoryRequest"
+      properties:
+        id: 
+          type: integer
+          format: int64
+          example: 222
+        active:
+          type: boolean
+          default: true
+          description: Field used for logical delete
+        insertDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-10 14:21:34"
+        updateDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-15 21:42:32"
+        name:
+          type: string
+          example: "Overtime"
     
     SpendingCategoryRequest:
       type: object
@@ -511,9 +611,27 @@ components:
 
     SpendingCategoryResponse:
       type: object
-      allOf:
-        - $ref: "#/components/schemas/Base"
-        - $ref: "#/components/schemas/SpendingCategoryRequest"
+      properties:
+        id: 
+          type: integer
+          format: int64
+          example: 222
+        active:
+          type: boolean
+          default: true
+          description: Field used for logical delete
+        insertDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-10 14:21:34"
+        updateDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-15 21:42:32"
+        name:
+          type: string
+          example: "Electricity"
+
 
     PaymentTypeRequest:
       type: object
@@ -524,9 +642,26 @@ components:
 
     PaymentTypeResponse:
       type: object
-      allOf:
-        - $ref: "#/components/schemas/Base"
-        - $ref: "#/components/schemas/PaymentTypeRequest"
+      properties:
+        id: 
+          type: integer
+          format: int64
+          example: 222
+        active:
+          type: boolean
+          default: true
+          description: Field used for logical delete
+        insertDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-10 14:21:34"
+        updateDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-15 21:42:32"
+        name:
+          type: string
+          example: Bank Transfer
 
     FixedIncomeFund:
       type: object
@@ -581,9 +716,23 @@ components:
         
     LedgerResponse:
       type: object
-      allOf:
-        - $ref: "#/components/schemas/Base"
       properties:
+        id: 
+          type: integer
+          format: int64
+          example: 222
+        active:
+          type: boolean
+          default: true
+          description: Field used for logical delete
+        insertDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-10 14:21:34"
+        updateDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-15 21:42:32"
         paymentTypeId:
           description: Payment type
           type: string
@@ -636,9 +785,40 @@ components:
     
     FundDetailResponse:
       type: object
-      allOf:
-        - $ref: "#/components/schemas/Base"
-        - $ref: "#/components/schemas/FundDetailRequest"
+      properties:
+        id: 
+          type: integer
+          format: int64
+          example: 222
+        active:
+          type: boolean
+          default: true
+          description: Field used for logical delete
+        insertDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-10 14:21:34"
+        updateDateTime:
+          type: string
+          format: "date-time"
+          example: "2035-09-15 21:42:32"
+        lastYieldAmount: 
+          type: number
+          example: 1.10
+        dividendYield:
+          type: number
+          example: 0.66
+        stockPrice:
+          type: number
+          example: 169.39
+        quantity:
+          type: integer
+          format: int32
+          example: 1
+        pvp:
+          type: number
+          example: 1.15
+      
 
     HTTPBaseResponse:
       type: object
@@ -646,68 +826,74 @@ components:
         code:
           type: integer
           format: int32
+          example: 404
         message:
           type: string
           example: ""
     
     HTTPUserNotFoundResponse:
       type: object
-      allOf:
-        - $ref: "#/components/schemas/HTTPBaseResponse"
       properties:
         code:
-          example: 404
+          type: integer
+          format: int32
         message:
+          type: string
           example: "User not found."
     
     HTTPSpendingCategoryNotFoundResponse:
       type: object
-      allOf:
-        - $ref: "#/components/schemas/HTTPBaseResponse"
       properties:
         code:
+          type: integer
+          format: int32
           example: 404
         message:
+          type: string
           example: "Spending Category not found."
 
     HTTPIncomeCategoryNotFoundResponse:
       type: object
-      allOf:
-        - $ref: "#/components/schemas/HTTPBaseResponse"
       properties:
         code:
+          type: integer
+          format: int32
           example: 404
         message:
+          type: string
           example: "Income Category not found."
 
     HTTPPaymentTypeNotFoundResponse:
       type: object
-      allOf:
-        - $ref: "#/components/schemas/HTTPBaseResponse"
       properties:
         code:
+          type: integer
+          format: int32
           example: 404
         message:
+          type: string
           example: "Payment Type not found."
 
     HTTPSpendingNotFoundResponse:
       type: object
-      allOf:
-        - $ref: "#/components/schemas/HTTPBaseResponse"
       properties:
         code:
+          type: integer
+          format: int32
           example: 404
         message:
+          type: string
           example: "Spending not found."
     
     HTTPLedgerNotFoundResponse:
       type: object
-      allOf:
-        - $ref: "#/components/schemas/HTTPLedgerNotFoundResponse"
       properties:
         code:
+          type: integer
+          format: int32
           example: 404
         message:
+          type: string
           example: "Ledger not found."
 
   parameters:
