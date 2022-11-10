@@ -8,8 +8,7 @@ CREATE TABLE fund_details(
     pvp DECIMAL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
     insertDateTime TIMESTAMP NOT NULL DEFAULT NOW(),
-    updateDateTime TIMESTAMP,
-    FOREIGN KEY (ledger_id) REFERENCES ledgers(id)
+    updateDateTime TIMESTAMP
 );
 
 CREATE SEQUENCE se_fund_details

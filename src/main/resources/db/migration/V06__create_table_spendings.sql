@@ -7,8 +7,7 @@ CREATE TABLE spendings(
     periodicity VARCHAR(15) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
     insertDateTime TIMESTAMP NOT NULL DEFAULT NOW(),
-    updateDateTime TIMESTAMP,
-    FOREIGN KEY (spending_category_id) REFERENCES spending_categories(id)    
+    updateDateTime TIMESTAMP
 );
 
 CREATE SEQUENCE se_spendings

@@ -1,11 +1,10 @@
 CREATE TABLE spending_categories(
     id INTEGER NOT NULL PRIMARY KEY,
     name VARCHAR(80) NOT NULL,
-    active BOOLEAN NOT NULL DEFAULT TRUE,
     user_id INTEGER NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT TRUE,
     insertDateTime TIMESTAMP NOT NULL DEFAULT NOW(),
-    updateDateTime TIMESTAMP,
-    FOREIGN KEY user_id REFERENCES users(id)
+    updateDateTime TIMESTAMP
 );
 
 CREATE SEQUENCE se_spending_category

@@ -10,9 +10,7 @@ CREATE TABLE ledgers(
     paid BOOLEAN NOT NULL DEFAULT FALSE,
     active BOOLEAN NOT NULL DEFAULT TRUE,
     insertDateTime TIMESTAMP NOT NULL DEFAULT NOW(),
-    updateDateTime TIMESTAMP,
-    FOREIGN KEY (spending_id) REFERENCES spendings(id),
-    FOREIGN KEY (payment_type_id) REFERENCES payment_types(id)
+    updateDateTime TIMESTAMP
 );
 
 CREATE SEQUENCE se_ledgers
