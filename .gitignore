@@ -35,3 +35,4 @@ src/main/resources/application-dev.properties
 src/main/resources/static/api.html
 api.html
 .env
+.env-local
