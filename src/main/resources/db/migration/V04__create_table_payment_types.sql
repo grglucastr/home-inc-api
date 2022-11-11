@@ -3,8 +3,8 @@ CREATE TABLE payment_types(
     name VARCHAR(80) NOT NULL,
     user_id INTEGER NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
-    insertDateTime TIMESTAMP NOT NULL DEFAULT NOW(),
-    updateDateTime TIMESTAMP
+    insert_date_time TIMESTAMP NOT NULL DEFAULT NOW(),
+    update_date_time TIMESTAMP
 );
 
 CREATE SEQUENCE se_payment_types

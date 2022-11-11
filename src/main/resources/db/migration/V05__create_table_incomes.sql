@@ -5,8 +5,8 @@ CREATE TABLE incomes(
     amount DECIMAL NOT NULL,
     periodicity VARCHAR(15) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
-    insertDateTime TIMESTAMP NOT NULL DEFAULT NOW(),
-    updateDateTime TIMESTAMP
+    insert_date_time TIMESTAMP NOT NULL DEFAULT NOW(),
+    update_date_time TIMESTAMP
 );
 
 CREATE SEQUENCE se_incomes

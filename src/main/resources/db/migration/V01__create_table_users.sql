@@ -3,8 +3,8 @@ CREATE TABLE users(
     name VARCHAR(80) NOT NULL,
     email VARCHAR(90) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
-    insertDateTime TIMESTAMP NOT NULL DEFAULT NOW(),
-    updateDateTime TIMESTAMP
+    insert_date_time TIMESTAMP NOT NULL DEFAULT NOW(),
+    update_date_time TIMESTAMP
 );
 
 CREATE SEQUENCE se_users

@@ -1,9 +1,9 @@
 CREATE TABLE cors(
     id INTEGER NOT NULL PRIMARY KEY,
-    allowedOrigin VARCHAR(144) NOT NULL,
+    allowed_origin VARCHAR(144) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
-    insertDateTime TIMESTAMP NOT NULL DEFAULT NOW(),
-    updateDateTime TIMESTAMP
+    insert_date_time TIMESTAMP NOT NULL DEFAULT NOW(),
+    update_date_time TIMESTAMP
 );
 
 CREATE SEQUENCE se_cors
