@@ -24,7 +24,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SpendingCategoryResponse"
+                type: array
+                items:
+                  $ref: "#/components/schemas/SpendingCategoryResponse"
         404:
           description: When the user is not found
           content:
@@ -311,8 +313,10 @@ paths:
           description: A pageable list of ledgers
           content:
             application/json:
-              schema: 
-                $ref: "#/components/schemas/LedgerResponse"
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LedgerResponse"
         404:
           description: When the spending is not found
           content:
@@ -370,8 +374,10 @@ paths:
           description: A pageable list of fund details
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/FundDetailResponse"
+              schema: 
+                type: array
+                items:
+                  $ref: "#/components/schemas/FundDetailResponse"
         404:
           description: When the ledger is not found
           content:
