@@ -11,7 +11,7 @@ import java.util.Objects;
 public abstract class BaseModel {
 
     private Long id;
-    private Boolean active;
+    private Boolean active = Boolean.TRUE;
     private LocalDateTime insertDateTime;
     private LocalDateTime updateDateTime;
 
