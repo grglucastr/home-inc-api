@@ -32,7 +32,7 @@ class SpendingCategoryServiceTest {
     void listActiveSpendingCategories() {
 
         final List<SpendingCategory> list = SpendingCategoryMocks.createListOfActiveSpendingCategories();
-        Mockito.when(repository.findAllWhereActiveIsTrue()).thenReturn(list);
+        Mockito.when(repository.findAllByActiveTrue()).thenReturn(list);
 
         final List<SpendingCategory> spendingCategories = spendingCategoryService
                 .listActiveSpendingCategories(1L);

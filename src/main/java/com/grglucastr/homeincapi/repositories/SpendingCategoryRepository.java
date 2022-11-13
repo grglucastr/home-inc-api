@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface SpendingCategoryRepository extends JpaRepository<SpendingCategory, Long> {
 
-    List<SpendingCategory> findAllWhereActiveIsTrue();
+    List<SpendingCategory> findAllByActiveTrue();
 }
