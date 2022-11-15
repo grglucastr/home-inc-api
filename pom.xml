@@ -157,6 +157,14 @@
 							<goal>generate</goal>
 						</goals>
 						<configuration>
+							<typeMappings>
+								<typeMapping>OffsetDate=LocalDate</typeMapping>
+								<typeMapping>OffsetDateTime=LocalDateTime</typeMapping>
+							</typeMappings>
+							<importMappings>
+								<importMapping>java.time.OffsetDate=java.time.LocalDate</importMapping>
+								<importMapping>java.time.OffsetDateTime=java.time.LocalDateTime</importMapping>
+							</importMappings>
 							<inputSpec>${project.basedir}/src/main/resources/openapi.yaml</inputSpec>
 							<generatorName>spring</generatorName>
 							<apiPackage>com.grglucastr.homeincapi.api</apiPackage>
