@@ -1,7 +1,12 @@
 package com.grglucastr.homeincapi.controllers;
 
 import com.grglucastr.homeincapi.configurations.ModelMapperConfiguration;
+import com.grglucastr.homeincapi.mocks.SpendingCategoryMocks;
+import com.grglucastr.homeincapi.mocks.UserMocks;
+import com.grglucastr.homeincapi.models.SpendingCategory;
+import com.grglucastr.homeincapi.models.User;
 import com.grglucastr.homeincapi.services.SpendingCategoryService;
+import com.grglucastr.homeincapi.services.impl.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -11,7 +16,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+import java.util.Optional;
+
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
@@ -23,6 +36,9 @@ public class SpendingCategoryControllerTest {
 
     @MockBean
     private SpendingCategoryService service;
+
+    @MockBean
+    private UserService userService;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -37,9 +53,33 @@ public class SpendingCategoryControllerTest {
     @Test
     void getSpendingCategories() throws Exception {
 
+        final List<SpendingCategory> spendingCategories = SpendingCategoryMocks
+                .createListOfActiveSpendingCategories();
+        final User singleUser = UserMocks.getSingleUser();
+
+        when(userService.findById(USER_ID)).thenReturn(Optional.of(singleUser));
+        when(service.listActiveSpendingCategories(USER_ID)).thenReturn(spendingCategories);
+
         mockMvc.perform(
                 get(SPENDING_CATEGORIES_URI, USER_ID))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(2)))
+                .andExpect(jsonPath("$.[0].id", is(1)))
+                .andExpect(jsonPath("$.[0].active", is(true)))
+                .andExpect(jsonPath("$.[0].insertDateTime", notNullValue()))
+                .andExpect(jsonPath("$.[0].updateDateTime", nullValue()))
+                .andExpect(jsonPath("$.[0].name", is("Electricity")))
+                .andExpect(jsonPath("$.[1].id", is(2)))
+                .andExpect(jsonPath("$.[1].active", is(true)))
+                .andExpect(jsonPath("$.[1].insertDateTime", notNullValue()))
+                .andExpect(jsonPath("$.[1].updateDateTime", nullValue()))
+                .andExpect(jsonPath("$.[1].name", is("Fuel")));
 
+    }
+
+    @Test
+    void getSpendingCategoriesButUserNotFound() throws Exception {
+        mockMvc.perform(get(SPENDING_CATEGORIES_URI, USER_ID))
+                .andExpect(status().isNotFound());
     }
 }
