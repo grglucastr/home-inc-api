@@ -1,4 +1,4 @@
-package com.grglucastr.homeincapi.services.impl;
+package com.grglucastr.homeincapi.services;
 
 import com.grglucastr.homeincapi.models.User;
 import org.springframework.stereotype.Service;

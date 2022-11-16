@@ -18,4 +18,9 @@ public class SpendingCategoryServiceImpl implements SpendingCategoryService {
     public List<SpendingCategory> listActiveSpendingCategories(Long userId) {
         return repository.findAllByActiveTrue();
     }
+
+    @Override
+    public SpendingCategory add(SpendingCategory spendingCategory, Long userId) {
+        return null;
+    }
 }

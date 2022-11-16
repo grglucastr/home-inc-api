@@ -1,18 +1,22 @@
 package com.grglucastr.homeincapi.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.grglucastr.homeincapi.configurations.ModelMapperConfiguration;
 import com.grglucastr.homeincapi.mocks.SpendingCategoryMocks;
 import com.grglucastr.homeincapi.mocks.UserMocks;
 import com.grglucastr.homeincapi.models.SpendingCategory;
+import com.grglucastr.homeincapi.models.SpendingCategoryRequest;
 import com.grglucastr.homeincapi.models.User;
 import com.grglucastr.homeincapi.services.SpendingCategoryService;
-import com.grglucastr.homeincapi.services.impl.UserService;
+import com.grglucastr.homeincapi.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -24,6 +28,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -74,12 +79,41 @@ public class SpendingCategoryControllerTest {
                 .andExpect(jsonPath("$.[1].insertDateTime", notNullValue()))
                 .andExpect(jsonPath("$.[1].updateDateTime", nullValue()))
                 .andExpect(jsonPath("$.[1].name", is("Fuel")));
-
     }
 
     @Test
     void getSpendingCategoriesButUserNotFound() throws Exception {
         mockMvc.perform(get(SPENDING_CATEGORIES_URI, USER_ID))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void postSpendingCategory() throws Exception {
+
+        final SpendingCategory spendingCategoryRequest = SpendingCategoryMocks.createSingleSpendingCategory();
+        spendingCategoryRequest.setId(null);
+        spendingCategoryRequest.setInsertDateTime(null);
+        spendingCategoryRequest.setUpdateDateTime(null);
+
+        final SpendingCategory spendingCategoryResponse = SpendingCategoryMocks.createSingleSpendingCategory();
+
+        when(service.add(spendingCategoryRequest, USER_ID)).thenReturn(spendingCategoryResponse);
+        when(userService.findById(USER_ID)).thenReturn(Optional.of(UserMocks.getSingleUser()));
+
+        final SpendingCategoryRequest request = new SpendingCategoryRequest();
+        request.setName("Electricity");
+
+        ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        final String payloadRequest = objectWriter.writeValueAsString(request);
+        mockMvc.perform(post(SPENDING_CATEGORIES_URI, USER_ID)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payloadRequest))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("Electricity")))
+                .andExpect(jsonPath("$.active", is(true)))
+                .andExpect(jsonPath("$.insertDateTime", notNullValue()))
+                .andExpect(jsonPath("$.updateDateTime", nullValue()));
     }
 }

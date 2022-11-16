@@ -2,10 +2,11 @@ package com.grglucastr.homeincapi.controllers;
 
 import com.grglucastr.homeincapi.api.SpendingCategoriesApi;
 import com.grglucastr.homeincapi.models.SpendingCategory;
+import com.grglucastr.homeincapi.models.SpendingCategoryRequest;
 import com.grglucastr.homeincapi.models.SpendingCategoryResponse;
 import com.grglucastr.homeincapi.models.User;
 import com.grglucastr.homeincapi.services.SpendingCategoryService;
-import com.grglucastr.homeincapi.services.impl.UserService;
+import com.grglucastr.homeincapi.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,5 +44,19 @@ public class SpendingCategoryController implements SpendingCategoriesApi {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<SpendingCategoryResponse> postSpendingCategory(Long userId, SpendingCategoryRequest spendingCategoryRequest) {
+
+        final Optional<User> user = userService.findById(userId);
+        if(user.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+
+        final SpendingCategory newSpendingCategory = new SpendingCategory(spendingCategoryRequest.getName());
+        final SpendingCategory spendingCategory = service.add(newSpendingCategory, userId);
+        final SpendingCategoryResponse response = modelMapper.map(spendingCategory, SpendingCategoryResponse.class);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

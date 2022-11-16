@@ -1,6 +1,7 @@
 package com.grglucastr.homeincapi.mocks;
 
 import com.grglucastr.homeincapi.models.SpendingCategory;
+import com.grglucastr.homeincapi.models.SpendingCategoryRequest;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
