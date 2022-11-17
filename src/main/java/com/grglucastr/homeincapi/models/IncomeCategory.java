@@ -10,36 +10,25 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "users")
-public class User extends BaseModel {
+@Table(name = "income_categories")
+public class IncomeCategory extends BaseModel {
 
     private String name;
-    private String email;
 
-    @OneToMany(mappedBy = "user")
-    private List<SpendingCategory> spendingCategories;
-
-    @OneToMany(mappedBy = "user")
-    private List<IncomeCategory> incomeCategories;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_users")
-    @SequenceGenerator(name = "se_users", sequenceName = "se_users")
-    @Override
-    public Long getId() {
-        return super.getId();
-    }
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "active")
     @Override
@@ -57,5 +46,13 @@ public class User extends BaseModel {
     @Override
     public LocalDateTime getUpdateDateTime() {
         return super.getUpdateDateTime();
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_income_category")
+    @SequenceGenerator(name = "se_income_category", sequenceName = "se_income_category")
+    @Override
+    public Long getId() {
+        return super.getId();
     }
 }
