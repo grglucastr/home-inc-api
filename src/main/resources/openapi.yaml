@@ -445,7 +445,7 @@ components:
           format: "date-time"
           example: "2035-09-15 21:42:32"
         
-    User:
+    UserResponse:
       type: object
       properties:
         id: 
