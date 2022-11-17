@@ -60,6 +60,7 @@ public class SpendingCategoryControllerTest {
 
         final List<SpendingCategory> spendingCategories = SpendingCategoryMocks
                 .createListOfActiveSpendingCategories();
+
         final User singleUser = UserMocks.getSingleUser();
 
         when(userService.findById(USER_ID)).thenReturn(Optional.of(singleUser));
@@ -97,7 +98,7 @@ public class SpendingCategoryControllerTest {
 
         final SpendingCategory spendingCategoryResponse = SpendingCategoryMocks.createSingleSpendingCategory();
 
-        when(service.add(spendingCategoryRequest, USER_ID)).thenReturn(spendingCategoryResponse);
+        when(service.save(spendingCategoryRequest, USER_ID)).thenReturn(spendingCategoryResponse);
         when(userService.findById(USER_ID)).thenReturn(Optional.of(UserMocks.getSingleUser()));
 
         final SpendingCategoryRequest request = new SpendingCategoryRequest();

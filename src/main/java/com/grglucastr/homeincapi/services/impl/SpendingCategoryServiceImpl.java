@@ -20,7 +20,9 @@ public class SpendingCategoryServiceImpl implements SpendingCategoryService {
     }
 
     @Override
-    public SpendingCategory add(SpendingCategory spendingCategory, Long userId) {
+    public SpendingCategory save(SpendingCategory spendingCategory, Long userId) {
+
+
         return null;
     }
 }
