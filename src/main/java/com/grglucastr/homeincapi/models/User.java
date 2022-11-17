@@ -10,9 +10,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,6 +26,9 @@ public class User extends BaseModel {
 
     private String name;
     private String email;
+
+    @OneToMany(mappedBy = "user")
+    private List<SpendingCategory> spendingCategories;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_users")
