@@ -20,9 +20,7 @@ public class SpendingCategoryServiceImpl implements SpendingCategoryService {
     }
 
     @Override
-    public SpendingCategory save(SpendingCategory spendingCategory, Long userId) {
-
-
-        return null;
+    public SpendingCategory save(SpendingCategory spendingCategory) {
+        return repository.save(spendingCategory);
     }
 }

@@ -54,8 +54,8 @@ public class SpendingCategoryController implements SpendingCategoriesApi {
             return ResponseEntity.notFound().build();
         }
 
-        final SpendingCategory newSpendingCategory = new SpendingCategory(spendingCategoryRequest.getName());
-        final SpendingCategory spendingCategory = service.save(newSpendingCategory, userId);
+        final SpendingCategory newSpendingCategory = new SpendingCategory(spendingCategoryRequest.getName(), user.get());
+        final SpendingCategory spendingCategory = service.save(newSpendingCategory);
         final SpendingCategoryResponse response = modelMapper.map(spendingCategory, SpendingCategoryResponse.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
