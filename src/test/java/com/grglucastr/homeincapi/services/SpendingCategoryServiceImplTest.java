@@ -1,10 +1,11 @@
-package com.grglucastr.homeincapi.services.impl;
+package com.grglucastr.homeincapi.services;
 
 import com.grglucastr.homeincapi.mocks.SpendingCategoryMocks;
 import com.grglucastr.homeincapi.mocks.UserMocks;
 import com.grglucastr.homeincapi.models.SpendingCategory;
 import com.grglucastr.homeincapi.models.User;
 import com.grglucastr.homeincapi.repositories.SpendingCategoryRepository;
+import com.grglucastr.homeincapi.services.impl.SpendingCategoryServiceImpl;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
