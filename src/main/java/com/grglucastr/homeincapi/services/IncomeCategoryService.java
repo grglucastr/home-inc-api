@@ -8,4 +8,5 @@ public interface IncomeCategoryService {
 
     List<IncomeCategory> findAllActiveIncomeCategories();
 
+    IncomeCategory save(IncomeCategory incomeCategory);
 }
