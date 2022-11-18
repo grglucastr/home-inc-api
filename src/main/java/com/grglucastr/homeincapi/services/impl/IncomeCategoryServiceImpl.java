@@ -15,7 +15,7 @@ public class IncomeCategoryServiceImpl implements IncomeCategoryService {
     private IncomeCategoryRepository repository;
 
     @Override
-    public List<IncomeCategory> findAllActiveIncomeCategories() {
+    public List<IncomeCategory> listActiveIncomeCategories() {
         return repository.findAllByActiveTrue();
     }
 

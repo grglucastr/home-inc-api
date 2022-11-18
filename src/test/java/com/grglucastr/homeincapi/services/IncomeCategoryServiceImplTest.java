@@ -42,7 +42,7 @@ public class IncomeCategoryServiceImplTest {
         final List<IncomeCategory> activeIncomeCategories = IncomeCategoryMocks.createListActiveIncomeCategories();
         when(incomeCategoryRepository.findAllByActiveTrue()).thenReturn(activeIncomeCategories);
 
-        final List<IncomeCategory> incomeCategories = incomeCategoryService.findAllActiveIncomeCategories();
+        final List<IncomeCategory> incomeCategories = incomeCategoryService.listActiveIncomeCategories();
 
         assertThat(incomeCategories.size(), equalTo(3));
         assertThat(incomeCategories.get(0).getActive(), is(true));
