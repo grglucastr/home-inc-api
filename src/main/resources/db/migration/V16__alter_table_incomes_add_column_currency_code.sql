@@ -1,0 +1,1 @@
+ALTER TABLE incomes ADD currency_code VARCHAR(4) NOT NULL;

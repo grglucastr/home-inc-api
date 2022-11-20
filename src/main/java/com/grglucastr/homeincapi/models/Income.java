@@ -1,5 +1,6 @@
 package com.grglucastr.homeincapi.models;
 
+import com.grglucastr.homeincapi.enums.Periodicity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,32 +13,34 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "incomes")
 @Entity
-@Table(name = "income_categories")
-public class IncomeCategory extends BaseModel {
+public class Income extends BaseModel {
 
     private String name;
+    private String currencyCode;
+    private BigDecimal amount;
+    private Periodicity periodicity;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "income_category_id")
+    private IncomeCategory incomeCategory;
 
-    @OneToMany(mappedBy = "incomeCategory")
-    private List<Income> incomes;
-
-    public IncomeCategory(String name, User user) {
-        this.name = name;
-        this.user = user;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_incomes")
+    @SequenceGenerator(name = "se_incomes", sequenceName = "se_incomes")
+    @Override
+    public Long getId() {
+        return super.getId();
     }
 
     @Column(name = "active")
@@ -56,13 +59,5 @@ public class IncomeCategory extends BaseModel {
     @Override
     public LocalDateTime getUpdateDateTime() {
         return super.getUpdateDateTime();
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_income_category")
-    @SequenceGenerator(name = "se_income_category", sequenceName = "se_income_category")
-    @Override
-    public Long getId() {
-        return super.getId();
     }
 }
