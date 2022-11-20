@@ -613,7 +613,7 @@ components:
       properties:
         name:
           type: string
-          example: "Electricity"
+          example: "Electricity|Investments"
 
     SpendingCategoryResponse:
       type: object
