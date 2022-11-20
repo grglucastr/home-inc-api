@@ -12,37 +12,29 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "spending_categories")
-public class SpendingCategory extends BaseModel {
+@Table(name = "spendings")
+public class Spending extends BaseModel{
 
     private String name;
+    private Integer installments;
+    private String description;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @OneToMany(mappedBy = "spendingCategory")
-    private List<Spending> spendings;
-
-    public SpendingCategory(String name, User user) {
-        this.name = name;
-        this.user = user;
-    }
+    @JoinColumn(name = "spending_category_id")
+    private SpendingCategory spendingCategory;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_spending_category")
-    @SequenceGenerator(name = "se_spending_category", sequenceName = "se_spending_category")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_spendings")
+    @SequenceGenerator(name = "se_spendings", sequenceName = "se_spendings")
     @Override
     public Long getId() {
         return super.getId();
