@@ -489,7 +489,7 @@ components:
           example: "MONTHLY"
           enum: ["LOOSE", "DAILY", "WEEKLY", "MONTHLY", "YEARLY", "FIXED_MONTHS"]
         fixedIncomeFund:
-          $ref: "#/components/schemas/FixedIncomeFund"
+          $ref: "#/components/schemas/FixedIncomeFundRequest"
 
     SpendingResponse:
       type: object
@@ -525,7 +525,7 @@ components:
           example: "MONTHLY"
           enum: ["LOOSE", "DAILY", "WEEKLY", "MONTHLY", "YEARLY", "FIXED_MONTHS"]
         fixedIncomeFund:
-          $ref: "#/components/schemas/FixedIncomeFund"
+          $ref: "#/components/schemas/FixedIncomeFundRequest"
 
     
     IncomeRequest:
@@ -669,7 +669,7 @@ components:
           type: string
           example: Bank Transfer
 
-    FixedIncomeFund:
+    FixedIncomeFundRequest:
       type: object
       properties:
         dueDate:
