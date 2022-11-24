@@ -1,4 +1,4 @@
-CREATE TABLE ledgers(
+CREATE TABLE ledger_registries(
     id INTEGER NOT NULL PRIMARY KEY,
     spending_id INTEGER NOT NULL,
     payment_type_id INTEGER NOT NULL,
@@ -13,6 +13,6 @@ CREATE TABLE ledgers(
     update_date_time TIMESTAMP
 );
 
-CREATE SEQUENCE se_ledgers
+CREATE SEQUENCE se_ledger_registries
 START WITH 1
 INCREMENT BY 1;

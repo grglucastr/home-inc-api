@@ -12,37 +12,38 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "payment_types")
-public class PaymentType extends BaseModel {
+@Table(name = "ledger_registries")
+public class LedgerRegistry extends BaseModel {
 
-    private String name;
+    private LocalDate billingDate;
+    private LocalDate dueDate;
+    private BigDecimal amountDue;
+    private String barCode;
+    private String QRCode;
+    private Boolean paid = Boolean.FALSE;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "payment_type_id")
+    private PaymentType paymentType;
 
-    @OneToMany(mappedBy = "paymentType")
-    private List<LedgerRegistry> ledgerRegistries;
-
-    public PaymentType(String name, User user) {
-        this.name = name;
-        this.user = user;
-    }
+    @ManyToOne
+    @JoinColumn(name = "spending_id")
+    private Spending spending;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_income_category")
-    @SequenceGenerator(name = "se_income_category", sequenceName = "se_income_category")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_ledger_registries")
+    @SequenceGenerator(name = "se_ledger_registries", sequenceName = "se_ledger_registries")
     @Override
     public Long getId() {
         return super.getId();
@@ -65,4 +66,5 @@ public class PaymentType extends BaseModel {
     public LocalDateTime getUpdateDateTime() {
         return super.getUpdateDateTime();
     }
+
 }
