@@ -12,9 +12,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -31,6 +33,17 @@ public class Spending extends BaseModel{
     @ManyToOne
     @JoinColumn(name = "spending_category_id")
     private SpendingCategory spendingCategory;
+
+    @OneToMany(mappedBy = "spending")
+    private List<LedgerRegistry> ledgerRegistries;
+
+
+    public Spending(String name, Integer installments, String description, SpendingCategory spendingCategory) {
+        this.name = name;
+        this.installments = installments;
+        this.description = description;
+        this.spendingCategory = spendingCategory;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_spendings")
