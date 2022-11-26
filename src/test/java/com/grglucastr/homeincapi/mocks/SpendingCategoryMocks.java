@@ -12,7 +12,7 @@ public class SpendingCategoryMocks {
     public static SpendingCategory createSingleSpendingCategory(){
         final SpendingCategory spendingCategory = new com.grglucastr.homeincapi.models.SpendingCategory();
         spendingCategory.setId(1L);
-        spendingCategory.setInsertDateTime(LocalDateTime.now());
+        spendingCategory.setInsertDateTime(MockLocalDate.getInsertDateTime());
         spendingCategory.setName("Electricity");
         return spendingCategory;
     }
@@ -27,6 +27,7 @@ public class SpendingCategoryMocks {
         final SpendingCategory sc1 = createSingleSpendingCategory();
         final SpendingCategory sc2 = createSingleSpendingCategory(2L);
         sc2.setName("Fuel");
+        sc2.setUpdateDateTime(MockLocalDate.getUpdateDateTime());
         return Arrays.asList(sc1, sc2);
     }
 }

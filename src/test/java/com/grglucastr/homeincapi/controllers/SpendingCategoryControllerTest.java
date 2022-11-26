@@ -23,9 +23,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -53,6 +55,8 @@ public class SpendingCategoryControllerTest {
 
     @BeforeEach
     void setUp() {
+        final User singleUser = UserMocks.getSingleUser();
+        when(userService.findById(USER_ID)).thenReturn(Optional.of(singleUser));
     }
 
     @Test
@@ -61,9 +65,6 @@ public class SpendingCategoryControllerTest {
         final List<SpendingCategory> spendingCategories = SpendingCategoryMocks
                 .createListOfActiveSpendingCategories();
 
-        final User singleUser = UserMocks.getSingleUser();
-
-        when(userService.findById(USER_ID)).thenReturn(Optional.of(singleUser));
         when(service.listActiveSpendingCategories(USER_ID)).thenReturn(spendingCategories);
 
         mockMvc.perform(
@@ -73,17 +74,21 @@ public class SpendingCategoryControllerTest {
                 .andExpect(jsonPath("$.[0].id", is(1)))
                 .andExpect(jsonPath("$.[0].active", is(true)))
                 .andExpect(jsonPath("$.[0].insertDateTime", notNullValue()))
+                .andExpect(jsonPath("$.[0].insertDateTime", equalTo("2035-09-10T14:21:34")))
                 .andExpect(jsonPath("$.[0].updateDateTime", nullValue()))
                 .andExpect(jsonPath("$.[0].name", is("Electricity")))
                 .andExpect(jsonPath("$.[1].id", is(2)))
                 .andExpect(jsonPath("$.[1].active", is(true)))
-                .andExpect(jsonPath("$.[1].insertDateTime", notNullValue()))
-                .andExpect(jsonPath("$.[1].updateDateTime", nullValue()))
+                .andExpect(jsonPath("$.[1].insertDateTime", equalTo("2035-09-10T14:21:34")))
+                .andExpect(jsonPath("$.[1].updateDateTime", equalTo("2035-09-15T21:42:34")))
                 .andExpect(jsonPath("$.[1].name", is("Fuel")));
     }
 
     @Test
     void getSpendingCategoriesButUserNotFound() throws Exception {
+
+        when(userService.findById(anyLong())).thenReturn(Optional.empty());
+
         mockMvc.perform(get(SPENDING_CATEGORIES_URI, USER_ID))
                 .andExpect(status().isNotFound());
     }
@@ -115,6 +120,7 @@ public class SpendingCategoryControllerTest {
                 .andExpect(jsonPath("$.name", is("Electricity")))
                 .andExpect(jsonPath("$.active", is(true)))
                 .andExpect(jsonPath("$.insertDateTime", notNullValue()))
+                .andExpect(jsonPath("$.insertDateTime", equalTo("2035-09-10T14:21:34")))
                 .andExpect(jsonPath("$.updateDateTime", nullValue()));
     }
 }
