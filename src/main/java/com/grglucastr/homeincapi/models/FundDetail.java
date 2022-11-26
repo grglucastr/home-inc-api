@@ -12,43 +12,32 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "fund_details")
 @Entity
-@Table(name = "ledger_registries")
-public class LedgerRegistry extends BaseModel {
+public class FundDetail extends BaseModel{
 
-    private LocalDate billingDate;
-    private LocalDate dueDate;
-    private BigDecimal amountDue;
-    private String barCode;
-    private String QRCode;
-    private Boolean paid = Boolean.FALSE;
+    private BigDecimal lastYieldAmount;
+    private BigDecimal dividendYield;
+    private BigDecimal stockPrice;
+    private Integer quantity;
+    private BigDecimal pvp;
 
     @ManyToOne
-    @JoinColumn(name = "payment_type_id")
-    private PaymentType paymentType;
-
-    @ManyToOne
-    @JoinColumn(name = "spending_id")
-    private Spending spending;
-
-    @OneToMany(mappedBy = "ledgerRegistry")
-    private List<FundDetail> fundDetails;
+    @JoinColumn(name = "ledger_registry_id")
+    private LedgerRegistry ledgerRegistry;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_ledger_registries")
-    @SequenceGenerator(name = "se_ledger_registries", sequenceName = "se_ledger_registries")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_fund_details")
+    @SequenceGenerator(name = "se_fund_details", sequenceName = "se_fund_details")
     @Override
     public Long getId() {
         return super.getId();
