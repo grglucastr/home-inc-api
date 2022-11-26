@@ -15,8 +15,8 @@ public class PaymentTypeServiceImpl implements PaymentTypeService {
     private PaymentTypeRepository repository;
 
     @Override
-    public List<PaymentType> listActivePaymentTypes() {
-        return repository.findAllByActiveTrue();
+    public List<PaymentType> listActivePaymentTypes(Long userId) {
+        return repository.findAllByUserIdAndActiveTrue(userId);
     }
 
     @Override

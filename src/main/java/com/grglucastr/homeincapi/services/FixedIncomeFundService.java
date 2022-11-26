@@ -5,6 +5,6 @@ import com.grglucastr.homeincapi.models.FixedIncomeFund;
 import java.util.List;
 
 public interface FixedIncomeFundService {
-    List<FixedIncomeFund> listActiveFixedIncomeFund();
+    List<FixedIncomeFund> listActiveFixedIncomeFund(Long userId);
     FixedIncomeFund save(FixedIncomeFund fixedIncomeFund);
 }

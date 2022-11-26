@@ -25,6 +25,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class IncomeCategoryServiceImplTest {
 
+    private  static final long USER_ID = 123L;
+
     @Mock
     private IncomeCategoryRepository incomeCategoryRepository;
 
@@ -40,9 +42,9 @@ public class IncomeCategoryServiceImplTest {
     @Test
     void testFindAllActiveIncomeCategories(){
         final List<IncomeCategory> activeIncomeCategories = IncomeCategoryMocks.createListActiveIncomeCategories();
-        when(incomeCategoryRepository.findAllByActiveTrue()).thenReturn(activeIncomeCategories);
+        when(incomeCategoryRepository.findAllByUserIdAndActiveTrue(USER_ID)).thenReturn(activeIncomeCategories);
 
-        final List<IncomeCategory> incomeCategories = incomeCategoryService.listActiveIncomeCategories();
+        final List<IncomeCategory> incomeCategories = incomeCategoryService.listActiveIncomeCategories(USER_ID);
 
         assertThat(incomeCategories.size(), equalTo(3));
         assertThat(incomeCategories.get(0).getActive(), is(true));
@@ -59,6 +61,7 @@ public class IncomeCategoryServiceImplTest {
         assertThat(incomeCategories.get(2).getId(), equalTo(3L));
         assertThat(incomeCategories.get(2).getName(), equalTo("Overtime"));
         assertThat(incomeCategories.get(2).getInsertDateTime(), notNullValue());
+        assertThat(incomeCategories.get(2).getUpdateDateTime(), notNullValue());
     }
 
     @Test

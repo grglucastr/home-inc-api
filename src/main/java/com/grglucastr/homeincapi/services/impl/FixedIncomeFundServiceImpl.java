@@ -15,8 +15,8 @@ public class FixedIncomeFundServiceImpl implements FixedIncomeFundService {
     private FixedIncomeFundRepository repository;
 
     @Override
-    public List<FixedIncomeFund> listActiveFixedIncomeFund() {
-        return repository.findAllByActiveTrue();
+    public List<FixedIncomeFund> listActiveFixedIncomeFund(Long userId) {
+        return repository.findAllByUserIdAndActiveTrue(userId);
     }
 
     @Override

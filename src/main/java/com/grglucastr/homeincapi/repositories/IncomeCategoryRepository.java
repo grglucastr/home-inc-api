@@ -11,5 +11,5 @@ public interface IncomeCategoryRepository extends JpaRepository<IncomeCategory, 
         BaseRepository<IncomeCategory> {
 
     @Override
-    List<IncomeCategory> findAllByActiveTrue();
+    List<IncomeCategory> findAllByUserIdAndActiveTrue(Long userId);
 }

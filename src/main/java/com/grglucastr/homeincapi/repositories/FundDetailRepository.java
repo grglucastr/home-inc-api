@@ -11,5 +11,5 @@ public interface FundDetailRepository extends JpaRepository<FundDetail, Long>,
         BaseRepository<FundDetail>{
 
     @Override
-    List<FundDetail> findAllByActiveTrue();
+    List<FundDetail> findAllByUserIdAndActiveTrue(Long userId);
 }

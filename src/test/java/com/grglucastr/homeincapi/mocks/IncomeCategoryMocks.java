@@ -21,6 +21,9 @@ public class IncomeCategoryMocks {
         icOverTime.setId(3L);
         icOverTime.setName("Overtime");
 
+        final LocalDateTime updatedDateTime = LocalDateTime.of(2035, 9, 15, 21, 42, 34);
+        icOverTime.setUpdateDateTime(updatedDateTime);
+
         return Arrays.asList(icSalary, icDividends, icOverTime);
     }
 
@@ -28,7 +31,9 @@ public class IncomeCategoryMocks {
         final User singleUser = UserMocks.getSingleUser();
         final IncomeCategory incomeCategory = new IncomeCategory("Salary", singleUser);
         incomeCategory.setId(1L);
-        incomeCategory.setInsertDateTime(LocalDateTime.now());
+
+        final LocalDateTime insertDateTime = LocalDateTime.of(2035, 9, 10, 14, 21, 34);
+        incomeCategory.setInsertDateTime(insertDateTime);
         return incomeCategory;
     }
 

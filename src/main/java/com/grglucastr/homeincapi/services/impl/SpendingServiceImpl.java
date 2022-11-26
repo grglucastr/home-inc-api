@@ -15,8 +15,8 @@ public class SpendingServiceImpl implements SpendingService {
     private SpendingRepository repository;
 
     @Override
-    public List<Spending> listActiveSpendings() {
-        return repository.findAllByActiveTrue();
+    public List<Spending> listActiveSpendings(Long userId) {
+        return repository.findAllByUserIdAndActiveTrue(userId);
     }
 
     @Override

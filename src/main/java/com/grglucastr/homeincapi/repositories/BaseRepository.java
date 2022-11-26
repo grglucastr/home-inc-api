@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface BaseRepository<T> {
 
-    List<T> findAllByActiveTrue();
+    List<T> findAllByUserIdAndActiveTrue(Long userId);
 }

@@ -25,6 +25,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class PaymentTypeServiceImplTest {
 
+    private static final long USER_ID = 1234L;
+
     @Mock
     private PaymentTypeRepository repository;
 
@@ -59,9 +61,9 @@ public class PaymentTypeServiceImplTest {
     void testListActivePaymentTypes(){
         final List<PaymentType> listOfActivePaymentTypes = PaymentTypeMocks.createListOfActivePaymentType();
 
-        when(repository.findAllByActiveTrue()).thenReturn(listOfActivePaymentTypes);
+        when(repository.findAllByUserIdAndActiveTrue(USER_ID)).thenReturn(listOfActivePaymentTypes);
 
-        final List<PaymentType> paymentTypes = service.listActivePaymentTypes();
+        final List<PaymentType> paymentTypes = service.listActivePaymentTypes(USER_ID);
 
         assertThat(paymentTypes, notNullValue());
         assertThat(paymentTypes.size(), is(3));

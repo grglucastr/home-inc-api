@@ -11,5 +11,5 @@ public interface PaymentTypeRepository extends JpaRepository<PaymentType, Long>,
         BaseRepository<PaymentType> {
 
     @Override
-    List<PaymentType> findAllByActiveTrue();
+    List<PaymentType> findAllByUserIdAndActiveTrue(Long userId);
 }

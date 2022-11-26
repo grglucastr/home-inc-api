@@ -105,13 +105,19 @@ paths:
       operationId: postIncomeCategory
       tags:
         - "Income Categories"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IncomeCategoryRequest"
       responses:
         201:
           description: Brings the Income Category with its ID, inserted date time and all the information submitted.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/IncomeCategoryRequest"
+                $ref: "#/components/schemas/IncomeCategoryResponse"
         404:
           description: When the user is not found
           content:
@@ -159,6 +165,12 @@ paths:
       operationId: postPaymentType
       tags:
         - "Payment Types"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentTypeRequest"
       responses:
         201:
           description: A brand new added payment type with its ID and inserted date time.

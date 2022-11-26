@@ -29,6 +29,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class LedgerRegistryServiceImplTest {
 
+    private static final long USER_ID = 1234L;
+
     @Mock
     private LedgerRegistryRepository repository;
 
@@ -45,9 +47,9 @@ public class LedgerRegistryServiceImplTest {
     void testListAllActiveLedgers(){
 
         final List<LedgerRegistry> registries = LedgerRegistryMocks.createListOfLedgerRegistries();
-        when(repository.findAllByActiveTrue()).thenReturn(registries);
+        when(repository.findAllByUserIdAndActiveTrue(USER_ID)).thenReturn(registries);
 
-        final List<LedgerRegistry> ledgerRegistries = service.listActiveFixedIncomeFund();
+        final List<LedgerRegistry> ledgerRegistries = service.listActiveFixedIncomeFund(USER_ID);
 
         assertThat(ledgerRegistries, notNullValue());
         assertThat(ledgerRegistries.size(), is(3));

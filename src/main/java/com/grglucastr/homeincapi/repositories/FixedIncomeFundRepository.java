@@ -9,5 +9,5 @@ public interface FixedIncomeFundRepository extends JpaRepository<FixedIncomeFund
         BaseRepository<FixedIncomeFund>{
 
     @Override
-    List<FixedIncomeFund> findAllByActiveTrue();
+    List<FixedIncomeFund> findAllByUserIdAndActiveTrue(Long userId);
 }

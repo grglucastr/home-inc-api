@@ -5,6 +5,6 @@ import com.grglucastr.homeincapi.models.FundDetail;
 import java.util.List;
 
 public interface FundDetailService {
-    List<FundDetail> listActiveIncomeCategories();
+    List<FundDetail> listActiveIncomeCategories(Long userId);
     FundDetail save(FundDetail fundDetail);
 }

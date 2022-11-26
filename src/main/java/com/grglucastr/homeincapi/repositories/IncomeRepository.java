@@ -11,5 +11,5 @@ public interface IncomeRepository extends JpaRepository<Income, Long>,
         BaseRepository<Income> {
 
     @Override
-    List<Income> findAllByActiveTrue();
+    List<Income> findAllByUserIdAndActiveTrue(Long userId);
 }

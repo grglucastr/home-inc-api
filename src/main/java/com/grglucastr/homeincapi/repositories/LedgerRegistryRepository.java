@@ -11,5 +11,5 @@ public interface LedgerRegistryRepository extends JpaRepository<LedgerRegistry, 
     BaseRepository<LedgerRegistry>{
 
     @Override
-    List<LedgerRegistry> findAllByActiveTrue();
+    List<LedgerRegistry> findAllByUserIdAndActiveTrue(Long userId);
 }

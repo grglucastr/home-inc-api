@@ -11,5 +11,5 @@ public interface SpendingCategoryRepository extends JpaRepository<SpendingCatego
         BaseRepository<SpendingCategory> {
 
     @Override
-    List<SpendingCategory> findAllByActiveTrue();
+    List<SpendingCategory> findAllByUserIdAndActiveTrue(Long userId);
 }

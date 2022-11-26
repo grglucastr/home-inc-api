@@ -27,6 +27,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class FixedIncomeFundServiceImplTest {
 
+    private static final long USER_ID = 1234L;
+
     @Mock
     private FixedIncomeFundRepository repository;
 
@@ -45,9 +47,9 @@ public class FixedIncomeFundServiceImplTest {
         final List<FixedIncomeFund> activeOnes = FixedIncomeFundMocks
                 .createListOfAllActiveFixedIncomeFund();
 
-        when(repository.findAllByActiveTrue()).thenReturn(activeOnes);
+        when(repository.findAllByUserIdAndActiveTrue(USER_ID)).thenReturn(activeOnes);
 
-        final List<FixedIncomeFund> fixedIncomeFunds = service.listActiveFixedIncomeFund();
+        final List<FixedIncomeFund> fixedIncomeFunds = service.listActiveFixedIncomeFund(USER_ID);
 
         assertThat(fixedIncomeFunds, notNullValue());
         assertThat(fixedIncomeFunds.size(), equalTo(3));

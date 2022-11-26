@@ -15,8 +15,8 @@ public class LedgerRegistryServiceImpl implements LedgerRegistryService {
     private LedgerRegistryRepository repository;
 
     @Override
-    public List<LedgerRegistry> listActiveFixedIncomeFund() {
-        return repository.findAllByActiveTrue();
+    public List<LedgerRegistry> listActiveFixedIncomeFund(Long userId) {
+        return repository.findAllByUserIdAndActiveTrue(userId);
     }
 
     @Override

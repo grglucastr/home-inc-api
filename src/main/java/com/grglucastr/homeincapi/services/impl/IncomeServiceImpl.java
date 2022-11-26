@@ -15,8 +15,8 @@ public class IncomeServiceImpl implements IncomeService {
     private IncomeRepository repository;
 
     @Override
-    public List<Income> listActiveIncomes() {
-        return repository.findAllByActiveTrue();
+    public List<Income> listActiveIncomes(Long userId) {
+        return repository.findAllByUserIdAndActiveTrue(userId);
     }
 
     @Override

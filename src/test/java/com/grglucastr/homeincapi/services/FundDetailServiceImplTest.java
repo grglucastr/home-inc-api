@@ -26,6 +26,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class FundDetailServiceImplTest {
 
+    private static final long USER_ID = 1234L;
+
     @Mock
     private FundDetailRepository repository;
 
@@ -42,9 +44,9 @@ public class FundDetailServiceImplTest {
     void testListAllActiveFundDetails(){
 
         final List<FundDetail> activeFundDetails = FundDetailMocks.createListOfActiveFundDetails();
-        when(repository.findAllByActiveTrue()).thenReturn(activeFundDetails);
+        when(repository.findAllByUserIdAndActiveTrue(USER_ID)).thenReturn(activeFundDetails);
 
-        final List<FundDetail> fundDetails = service.listActiveIncomeCategories();
+        final List<FundDetail> fundDetails = service.listActiveIncomeCategories(USER_ID);
 
         assertThat(fundDetails, notNullValue());
         assertThat(fundDetails.size(), is(3));

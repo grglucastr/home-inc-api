@@ -41,7 +41,7 @@ public class SpendingCategoryServiceImplTest {
 
     @Test
     void testListActiveSpendingCategories() {
-        when(repository.findAllByActiveTrue())
+        when(repository.findAllByUserIdAndActiveTrue(USER_ID))
                 .thenReturn(SpendingCategoryMocks.createListOfActiveSpendingCategories());
 
         final List<SpendingCategory> spendingCategories = service.listActiveSpendingCategories(USER_ID);

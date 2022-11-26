@@ -25,6 +25,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class SpendingServiceTest {
 
+    private static final long USER_ID = 1234L;
+
     @Mock
     private SpendingRepository repository;
 
@@ -41,9 +43,9 @@ public class SpendingServiceTest {
     void testListAllActiveSpendings() {
 
         final List<Spending> activeSpendings = SpendingMocks.createListOfActiveSpendings();
-        when(repository.findAllByActiveTrue()).thenReturn(activeSpendings);
+        when(repository.findAllByUserIdAndActiveTrue(USER_ID)).thenReturn(activeSpendings);
 
-        final List<Spending> spendings = service.listActiveSpendings();
+        final List<Spending> spendings = service.listActiveSpendings(USER_ID);
 
         assertThat(spendings, notNullValue());
         assertThat(spendings.size(), equalTo(4));

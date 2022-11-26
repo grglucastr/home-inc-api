@@ -29,6 +29,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class IncomeServiceImplTest {
 
+    private static final long USER_ID = 1234L;
+
     @Mock
     private IncomeRepository repository;
 
@@ -45,9 +47,9 @@ public class IncomeServiceImplTest {
     void testListActiveIncome(){
 
         final List<Income> listOfActiveIncomes = IncomeMocks.createListOfActiveIncomes();
-        when(repository.findAllByActiveTrue()).thenReturn(listOfActiveIncomes);
+        when(repository.findAllByUserIdAndActiveTrue(USER_ID)).thenReturn(listOfActiveIncomes);
 
-        final List<Income> incomes = service.listActiveIncomes();
+        final List<Income> incomes = service.listActiveIncomes(USER_ID);
 
         assertThat(incomes, notNullValue());
         assertThat(incomes, not(empty()));
