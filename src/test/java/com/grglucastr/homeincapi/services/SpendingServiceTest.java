@@ -80,6 +80,8 @@ public class SpendingServiceTest {
         assertThat(spending.getInsertDateTime(), notNullValue());
         assertThat(spending.getUpdateDateTime(), nullValue());
         assertThat(spending.getInstallments(), nullValue());
+        assertThat(spending.getCurrencyCode(), equalTo("BRL"));
+        assertThat(spending.getSpendingCategory(), notNullValue());
     }
 
     @Test
@@ -97,5 +99,7 @@ public class SpendingServiceTest {
         assertThat(spending.getInsertDateTime(), notNullValue());
         assertThat(spending.getUpdateDateTime(), nullValue());
         assertThat(spending.getInstallments(), equalTo(12));
+        assertThat(spending.getCurrencyCode(), equalTo("USD"));
+        assertThat(spending.getSpendingCategory(), notNullValue());
     }
 }

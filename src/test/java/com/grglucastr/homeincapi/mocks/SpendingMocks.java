@@ -13,6 +13,7 @@ public class SpendingMocks {
         spending.setId(1L);
         spending.setName("Copel");
         spending.setDescription("Electricity Bill");
+        spending.setCurrencyCode("BRL");
         spending.setInsertDateTime(LocalDateTime.now());
         spending.setSpendingCategory(SpendingCategoryMocks.createSingleSpendingCategory());
         return spending;
@@ -29,6 +30,7 @@ public class SpendingMocks {
         spending.setId(23123L);
         spending.setName("Travel to Argentina");
         spending.setDescription("Holidays in Argentina");
+        spending.setCurrencyCode("USD");
         spending.setInstallments(12);
         spending.setInsertDateTime(LocalDateTime.now());
         spending.setSpendingCategory(SpendingCategoryMocks.createSingleSpendingCategory());

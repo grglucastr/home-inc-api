@@ -29,6 +29,7 @@ public class Spending extends BaseModel{
     private String name;
     private Integer installments;
     private String description;
+    private String currencyCode;
 
     @ManyToOne
     @JoinColumn(name = "spending_category_id")

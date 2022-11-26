@@ -484,6 +484,9 @@ components:
         description:
           type: string
           example: "Electric bill"
+        currencyCode:
+          type: string
+          example: "BRL"
         periodicity:
           type: string
           example: "MONTHLY"
@@ -520,6 +523,9 @@ components:
         description:
           type: string
           example: "Electric bill"
+        currencyCode:
+          type: string
+          example: "BRL"
         periodicity:
           type: string
           example: "MONTHLY"
@@ -540,6 +546,9 @@ components:
         category:
           type: string
           example: "Salary"
+        currencyCode:
+          type: string
+          example: "BRL"
         periodicity:
           type: string
           example: "MONTHLY"
@@ -573,6 +582,9 @@ components:
         category:
           type: string
           example: "Salary"
+        currencyCode:
+          type: string
+          example: "BRL"
         periodicity:
           type: string
           example: "MONTHLY"
