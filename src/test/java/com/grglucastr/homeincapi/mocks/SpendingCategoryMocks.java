@@ -14,6 +14,7 @@ public class SpendingCategoryMocks {
         spendingCategory.setId(1L);
         spendingCategory.setInsertDateTime(MockLocalDate.getInsertDateTime());
         spendingCategory.setName("Electricity");
+        spendingCategory.setUser(UserMocks.getSingleUser());
         return spendingCategory;
     }
 
