@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -75,6 +76,27 @@ public class IncomeCategoryServiceImplTest {
         requestIncomeCategory.setInsertDateTime(null);
 
         IncomeCategory incomeCategory = incomeCategoryService.save(requestIncomeCategory);
+        assertThat(incomeCategory, notNullValue());
+        assertThat(incomeCategory.getInsertDateTime(), notNullValue());
+        assertThat(incomeCategory.getId(), equalTo(1L));
+        assertThat(incomeCategory.getActive(), is(true));
+        assertThat(incomeCategory.getUpdateDateTime(), nullValue());
+        assertThat(incomeCategory.getName(), equalTo("Salary"));
+        assertThat(incomeCategory.getUser(), notNullValue());
+        assertThat(incomeCategory.getUser().getId(), notNullValue());
+    }
+
+    @Test
+    void testFindById() {
+
+        final IncomeCategory mock = IncomeCategoryMocks.createSingleIncomeCategory();
+        when(incomeCategoryRepository.findById(any())).thenReturn(Optional.of(mock));
+
+        final Optional<IncomeCategory> opIncomeCategory = incomeCategoryService.findById(1L);
+
+        assertThat(opIncomeCategory.isPresent(), is(true));
+
+        final IncomeCategory incomeCategory = opIncomeCategory.get();
         assertThat(incomeCategory, notNullValue());
         assertThat(incomeCategory.getInsertDateTime(), notNullValue());
         assertThat(incomeCategory.getId(), equalTo(1L));

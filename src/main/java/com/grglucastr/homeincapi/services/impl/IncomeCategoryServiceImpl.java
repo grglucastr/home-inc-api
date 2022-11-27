@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class IncomeCategoryServiceImpl implements IncomeCategoryService {
@@ -22,5 +23,10 @@ public class IncomeCategoryServiceImpl implements IncomeCategoryService {
     @Override
     public IncomeCategory save(IncomeCategory incomeCategory) {
         return repository.save(incomeCategory);
+    }
+
+    @Override
+    public Optional<IncomeCategory> findById(Long incomeCategoryId) {
+        return repository.findById(incomeCategoryId);
     }
 }
