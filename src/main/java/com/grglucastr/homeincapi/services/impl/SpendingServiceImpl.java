@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SpendingServiceImpl implements SpendingService {
@@ -22,5 +23,10 @@ public class SpendingServiceImpl implements SpendingService {
     @Override
     public Spending save(Spending spending) {
         return repository.save(spending);
+    }
+
+    @Override
+    public Optional<Spending> findById(Long spendingId) {
+        return repository.findById(spendingId);
     }
 }

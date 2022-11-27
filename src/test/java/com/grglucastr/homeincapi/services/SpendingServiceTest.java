@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -103,5 +104,27 @@ public class SpendingServiceTest {
         assertThat(spending.getInstallments(), equalTo(12));
         assertThat(spending.getCurrencyCode(), equalTo("USD"));
         assertThat(spending.getSpendingCategory(), notNullValue());
+    }
+
+    @Test
+    void testFindById(){
+        final Spending singleSpending = SpendingMocks.createSingleSpending();
+        when(repository.findById(any())).thenReturn(Optional.of(singleSpending));
+
+        final Optional<Spending> byId = service.findById(1L);
+
+        assertThat(byId.isPresent(), is(true));
+
+        final Spending spending = byId.get();
+        assertThat(spending.getId(), is(1L));
+        assertThat(spending.getName(), equalTo("Copel"));
+        assertThat(spending.getDescription(), equalTo("Electricity Bill"));
+        assertThat(spending.getActive(), is(true));
+        assertThat(spending.getInsertDateTime(), notNullValue());
+        assertThat(spending.getUpdateDateTime(), nullValue());
+        assertThat(spending.getInstallments(), nullValue());
+        assertThat(spending.getCurrencyCode(), equalTo("BRL"));
+        assertThat(spending.getSpendingCategory(), notNullValue());
+
     }
 }
