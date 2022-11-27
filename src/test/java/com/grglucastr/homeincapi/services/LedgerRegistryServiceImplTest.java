@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyString;
@@ -88,5 +89,28 @@ public class LedgerRegistryServiceImplTest {
         assertThat(registry.getSpending(), notNullValue());
         assertThat(registry.getPaymentType(), notNullValue());
         assertThat(registry.getPaid(), is(false));
+    }
+
+    @Test
+    void testFindById() {
+        final LedgerRegistry singleLedgerRegistry = LedgerRegistryMocks.createSingleLedgerRegistry();
+        when(repository.findById(any())).thenReturn(Optional.of(singleLedgerRegistry));
+
+        final Optional<LedgerRegistry> byId = service.findById(1L);
+
+        assertThat(byId.isPresent(), is(true));
+        final LedgerRegistry registry = byId.get();
+        assertThat(registry, notNullValue());
+        assertThat(registry.getId(), equalTo(1L));
+        assertThat(registry.getActive(), is(true));
+        assertThat(registry.getInsertDateTime(), notNullValue());
+        assertThat(registry.getUpdateDateTime(), nullValue());
+        assertThat(registry.getAmountDue(), equalTo(new BigDecimal("100.00")));
+        assertThat(registry.getBarCode(), equalTo("82670000000-1 90700109202-8 21015332000-2 13102022419-5"));
+        assertThat(registry.getQRCode(), equalTo("lorem ipsum dolor sit amet"));
+        assertThat(registry.getSpending(), notNullValue());
+        assertThat(registry.getPaymentType(), notNullValue());
+        assertThat(registry.getPaid(), is(false));
+
     }
 }

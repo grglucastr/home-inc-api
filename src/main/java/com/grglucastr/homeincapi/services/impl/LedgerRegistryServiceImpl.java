@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LedgerRegistryServiceImpl implements LedgerRegistryService {
@@ -22,5 +23,10 @@ public class LedgerRegistryServiceImpl implements LedgerRegistryService {
     @Override
     public LedgerRegistry save(LedgerRegistry ledgerRegistry) {
         return repository.save(ledgerRegistry);
+    }
+
+    @Override
+    public Optional<LedgerRegistry> findById(Long ledgerRegistryId) {
+        return repository.findById(ledgerRegistryId);
     }
 }
