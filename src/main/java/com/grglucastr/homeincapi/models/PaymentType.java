@@ -65,4 +65,9 @@ public class PaymentType extends BaseModel {
     public LocalDateTime getUpdateDateTime() {
         return super.getUpdateDateTime();
     }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }

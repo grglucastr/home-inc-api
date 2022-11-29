@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PaymentTypeServiceImpl implements PaymentTypeService {
@@ -22,5 +23,10 @@ public class PaymentTypeServiceImpl implements PaymentTypeService {
     @Override
     public PaymentType save(PaymentType paymentType) {
         return repository.save(paymentType);
+    }
+
+    @Override
+    public Optional<PaymentType> findById(Long paymentTypeId) {
+        return repository.findById(paymentTypeId);
     }
 }

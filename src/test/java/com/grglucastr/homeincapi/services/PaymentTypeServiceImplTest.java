@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -20,12 +21,14 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class PaymentTypeServiceImplTest {
 
     private static final long USER_ID = 1234L;
+    public static final long PAYMENT_TYPE_ID = 111L;
 
     @Mock
     private PaymentTypeRepository repository;
@@ -61,7 +64,7 @@ public class PaymentTypeServiceImplTest {
     void testListActivePaymentTypes(){
         final List<PaymentType> listOfActivePaymentTypes = PaymentTypeMocks.createListOfActivePaymentType();
 
-        when(repository.findAllByUserIdAndActiveTrue(USER_ID)).thenReturn(listOfActivePaymentTypes);
+        when(repository.findAllByUserIdAndActiveTrue(anyLong())).thenReturn(listOfActivePaymentTypes);
 
         final List<PaymentType> paymentTypes = service.listActivePaymentTypes(USER_ID);
 
@@ -79,5 +82,25 @@ public class PaymentTypeServiceImplTest {
         assertThat(paymentTypes.get(2).getId(), is(3L));
         assertThat(paymentTypes.get(2).getName(), equalTo("Credit Card"));
 
+    }
+
+    @Test
+    void testFindById(){
+        final PaymentType singlePaymentType = PaymentTypeMocks.createSinglePaymentType();
+        when(repository.findById(anyLong())).thenReturn(Optional.of(singlePaymentType));
+
+        final Optional<PaymentType> optPaymentType = service.findById(PAYMENT_TYPE_ID);
+        assertThat(optPaymentType.isPresent(), is(true));
+
+        final PaymentType paymentType = optPaymentType.get();
+
+        assertThat(paymentType.getActive(), is(true));
+        assertThat(paymentType.getId(), equalTo(1L));
+        assertThat(paymentType.getName(), equalTo("Cash"));
+        assertThat(paymentType.getInsertDateTime(), notNullValue());
+        assertThat(paymentType.getUpdateDateTime(), nullValue());
+        assertThat(paymentType.getUser(), notNullValue());
+        assertThat(paymentType.getUser().getId(), notNullValue());
+        assertThat(paymentType.getUser().getName(), equalTo("Admin 222"));
     }
 }
