@@ -1,5 +1,6 @@
 package com.grglucastr.homeincapi.models;
 
+import com.grglucastr.homeincapi.enums.Periodicity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,8 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,6 +33,9 @@ public class Spending extends BaseModel{
     private Integer installments;
     private String description;
     private String currencyCode;
+
+    @Enumerated(EnumType.STRING)
+    private Periodicity periodicity;
 
     @ManyToOne
     @JoinColumn(name = "spending_category_id")

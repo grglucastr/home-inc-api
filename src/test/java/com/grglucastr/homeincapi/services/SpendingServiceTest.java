@@ -44,12 +44,12 @@ public class SpendingServiceTest {
     void testListAllActiveSpendings() {
 
         final List<Spending> activeSpendings = SpendingMocks.createListOfActiveSpendings();
-        when(repository.findAllByUserIdAndActiveTrue(USER_ID)).thenReturn(activeSpendings);
+        when(repository.findAllBySpendingCategoryIdAndActiveTrue(USER_ID)).thenReturn(activeSpendings);
 
         final List<Spending> spendings = service.listActiveSpendings(USER_ID);
 
         assertThat(spendings, notNullValue());
-        assertThat(spendings.size(), equalTo(4));
+        assertThat(spendings.size(), equalTo(5));
         assertThat(spendings.get(0).getActive(), is(true));
         assertThat(spendings.get(0).getId(), equalTo(1L));
         assertThat(spendings.get(0).getInsertDateTime(), notNullValue());
@@ -100,7 +100,7 @@ public class SpendingServiceTest {
         assertThat(spending.getDescription(), equalTo("Holidays in Argentina"));
         assertThat(spending.getActive(), is(true));
         assertThat(spending.getInsertDateTime(), notNullValue());
-        assertThat(spending.getUpdateDateTime(), nullValue());
+        assertThat(spending.getUpdateDateTime(), notNullValue());
         assertThat(spending.getInstallments(), equalTo(12));
         assertThat(spending.getCurrencyCode(), equalTo("USD"));
         assertThat(spending.getSpendingCategory(), notNullValue());

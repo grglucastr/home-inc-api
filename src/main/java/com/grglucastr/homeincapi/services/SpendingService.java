@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SpendingService {
-    List<Spending> listActiveSpendings(Long userId);
+    List<Spending> listActiveSpendings(Long spendingCategoryId);
     Spending save(Spending spending);
     Optional<Spending> findById(Long spendingId);
 }

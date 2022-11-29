@@ -700,7 +700,7 @@ components:
           type: string
           format: "date"
           example: "2025-09-30"
-        annualProfitabilityPercentage:
+        annualProfitPercentage:
           type: number
           example: 12.3
         productPrice:

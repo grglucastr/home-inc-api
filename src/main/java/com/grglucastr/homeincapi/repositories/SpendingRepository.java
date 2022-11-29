@@ -7,9 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SpendingRepository extends JpaRepository<Spending, Long>,
-        BaseRepository<Spending> {
+public interface SpendingRepository extends JpaRepository<Spending, Long> {
 
-    @Override
-    List<Spending> findAllByUserIdAndActiveTrue(Long userId);
+    List<Spending> findAllBySpendingCategoryIdAndActiveTrue(Long userId);
+
 }
