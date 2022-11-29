@@ -15,7 +15,7 @@ public class LedgerRegistryMocks {
     public static LedgerRegistry createSingleLedgerRegistry(){
         final LedgerRegistry ledgerRegistry = new LedgerRegistry();
         ledgerRegistry.setId(1L);
-        ledgerRegistry.setInsertDateTime(LocalDateTime.now());
+        ledgerRegistry.setInsertDateTime(MockLocalDate.getInsertDateTime());
 
         ledgerRegistry.setBillingDate(LocalDate.of(2025, 1, 1));
         ledgerRegistry.setDueDate(LocalDate.of(2025, 1,15));
@@ -43,9 +43,17 @@ public class LedgerRegistryMocks {
 
         final LedgerRegistry registry2 = createSingleLedgerRegistry(2L);
         registry2.setAmountDue(new BigDecimal("50.00"));
+        final PaymentType p2 = PaymentTypeMocks.createSinglePaymentType(2L);
+        p2.setName("Debit");
+        registry2.setPaymentType(p2);
 
         final LedgerRegistry registry3 = createSingleLedgerRegistry(3L);
         registry3.setAmountDue(new BigDecimal("250.22"));
+        final PaymentType p3 = PaymentTypeMocks.createSinglePaymentType(3L);
+        p3.setName("Credit Card");
+        registry3.setPaymentType(p3);
+        registry3.setPaid(true);
+        registry3.setUpdateDateTime(MockLocalDate.getUpdateDateTime());
 
         return Arrays.asList(registry1, registry2, registry3);
     }

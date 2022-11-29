@@ -50,7 +50,7 @@ public class LedgerRegistryServiceImplTest {
         final List<LedgerRegistry> registries = LedgerRegistryMocks.createListOfLedgerRegistries();
         when(repository.findAllByUserIdAndActiveTrue(USER_ID)).thenReturn(registries);
 
-        final List<LedgerRegistry> ledgerRegistries = service.listActiveFixedIncomeFund(USER_ID);
+        final List<LedgerRegistry> ledgerRegistries = service.listActiveLedgerRegistriesBySpendingId(USER_ID);
 
         assertThat(ledgerRegistries, notNullValue());
         assertThat(ledgerRegistries.size(), is(3));

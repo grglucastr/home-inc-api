@@ -312,23 +312,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/HTTPBaseResponse"
 
-  /v3/spendings/{spendingId}/ledgers:
+  /v3/spendings/{spendingId}/ledger-registries:
     parameters:
       - $ref: "#/components/parameters/spendingId"
     get:
-      summary: List all the ledger for specific spending id informed in path parameter.
-      operationId: getLedgers
+      summary: List all the registries for specific spending id informed in path parameter.
+      operationId: getLedgerRegistriesBySpendingId
       tags:
-        - "Ledgers"
+        - "Ledger Registries"
       responses:
         200:
-          description: A pageable list of ledgers
+          description: A pageable list of registries in the legder
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/LedgerResponse"
+                  $ref: "#/components/schemas/LedgerRegistryResponse"
         404:
           description: When the spending is not found
           content:
@@ -344,22 +344,22 @@ paths:
         
     post:
       summary: Add new register to the ledger for the spending id inform in path parameter.
-      operationId: postLedger
+      operationId: postNewRegistryToLedger
       tags:
-        - "Ledgers"
+        - "Ledger Registries"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/LedgerRequest"
+              $ref: "#/components/schemas/LedgerRegistryRequest"
       responses:
         201:
           description: Returns a brand new added register to the ledger with its Id and inserted date time
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Base"
+                $ref: "#/components/schemas/LedgerRegistryResponse"
         404:
           description: When the spending is not found
           content:
@@ -373,11 +373,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/HTTPBaseResponse"
 
-  /v3/ledgers/{ledgerId}/fund-details:
+  /v3/ledger-registries/{ledgerRegistryId}/fund-details:
     parameters:
-      - $ref: "#/components/parameters/ledgerId"
+      - $ref: "#/components/parameters/ledgerRegistryId"
     get:
-      summary: List all fund details based on ledger id informed in path parameter.
+      summary: List all fund details based on ledger registry id informed in path parameter.
       operationId: getFundDetails
       tags:
         - "Fund Details"
@@ -710,7 +710,7 @@ components:
           type: number
           example: 33.54
     
-    LedgerRequest:
+    LedgerRegistryRequest:
       type: object
       properties:
         paymentTypeId:
@@ -744,7 +744,7 @@ components:
           default: false
           type: boolean
         
-    LedgerResponse:
+    LedgerRegistryResponse:
       type: object
       properties:
         id: 
@@ -763,7 +763,7 @@ components:
           type: string
           format: "date-time"
           example: "2035-09-15 21:42:32"
-        paymentTypeId:
+        paymentType:
           description: Payment type
           type: string
           example: "Bank Transfer"
@@ -968,11 +968,11 @@ components:
         minimum: 1
         format: int64
     
-    ledgerId:
+    ledgerRegistryId:
       in: path
-      name: ledgerId
+      name: ledgerRegistryId
       required: true
-      description: Ledger id. Integer value.
+      description: Ledger registry id. Integer value.
       schema:
         type: integer
         minimum: 1

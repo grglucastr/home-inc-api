@@ -1,0 +1,9 @@
+{
+  "paymentTypeId": 1,
+  "billingDate": "2033-10-11",
+  "dueDate": "2033-10-15",
+  "amountDue": 1234.22,
+  "barCode": "836800000009 672801110004 001010202230 533649207040",
+  "QRCode": "",
+  "paid": false
+}
