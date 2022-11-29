@@ -47,7 +47,7 @@ public class IncomeServiceImplTest {
     void testListActiveIncome(){
 
         final List<Income> listOfActiveIncomes = IncomeMocks.createListOfActiveIncomes();
-        when(repository.findAllByUserIdAndActiveTrue(USER_ID)).thenReturn(listOfActiveIncomes);
+        when(repository.findAllByIncomeCategoryIdAndActiveTrue(USER_ID)).thenReturn(listOfActiveIncomes);
 
         final List<Income> incomes = service.listActiveIncomes(USER_ID);
 

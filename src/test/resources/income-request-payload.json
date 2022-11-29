@@ -1,0 +1,7 @@
+{
+  "name": "Salary",
+  "amount": 2500.33,
+  "category": "Salary",
+  "currencyCode": "BRL",
+  "periodicity": "MONTHLY"
+}

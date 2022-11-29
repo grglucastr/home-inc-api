@@ -65,4 +65,9 @@ public class IncomeCategory extends BaseModel {
     public Long getId() {
         return super.getId();
     }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }

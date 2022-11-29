@@ -7,9 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface IncomeRepository extends JpaRepository<Income, Long>,
-        BaseRepository<Income> {
+public interface IncomeRepository extends JpaRepository<Income, Long> {
 
-    @Override
-    List<Income> findAllByUserIdAndActiveTrue(Long userId);
+    List<Income> findAllByIncomeCategoryIdAndActiveTrue(Long incomeCategoryId);
 }

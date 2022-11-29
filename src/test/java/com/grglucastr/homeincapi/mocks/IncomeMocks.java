@@ -22,7 +22,7 @@ public class IncomeMocks {
         income.setCurrencyCode("BRL");
         income.setPeriodicity(Periodicity.MONTHLY);
         income.setId(1L);
-        income.setInsertDateTime(LocalDateTime.now());
+        income.setInsertDateTime(MockLocalDate.getInsertDateTime());
         return income;
     }
 
@@ -47,6 +47,7 @@ public class IncomeMocks {
         final Income inc3 = createSingleIncome(3L, "API Freelas", "USD");
         inc3.setAmount(new BigDecimal("500.33"));
         inc3.setPeriodicity(Periodicity.LOOSE);
+        inc3.setUpdateDateTime(MockLocalDate.getUpdateDateTime());
 
         return Arrays.asList(inc1, inc2, inc3);
     }
