@@ -13,7 +13,7 @@ public class FundDetailMocks {
     public static FundDetail createSingleFundDetail(){
         final FundDetail fundDetail = new FundDetail();
         fundDetail.setId(1L);
-        fundDetail.setInsertDateTime(LocalDateTime.now());
+        fundDetail.setInsertDateTime(MockLocalDate.getInsertDateTime());
         fundDetail.setLastYieldAmount(new BigDecimal("1.35"));
         fundDetail.setDividendYield(new BigDecimal("0.65"));
         fundDetail.setStockPrice(new BigDecimal("189.57"));
@@ -38,6 +38,7 @@ public class FundDetailMocks {
         final FundDetail fund1 = createSingleFundDetail();
         final FundDetail fund2 = createSingleFundDetail(2L);
         final FundDetail fund3 = createSingleFundDetail(3L);
+        fund3.setUpdateDateTime(MockLocalDate.getUpdateDateTime());
 
         return Arrays.asList(fund1, fund2, fund3);
     }

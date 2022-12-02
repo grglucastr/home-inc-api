@@ -7,9 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface FundDetailRepository extends JpaRepository<FundDetail, Long>,
-        BaseRepository<FundDetail>{
+public interface FundDetailRepository extends JpaRepository<FundDetail, Long> {
 
-    @Override
-    List<FundDetail> findAllByUserIdAndActiveTrue(Long userId);
+    List<FundDetail> findAllByLedgerRegistryIdAndActiveTrue(Long ledgerRegistryId);
 }

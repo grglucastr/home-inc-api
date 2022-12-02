@@ -13,8 +13,8 @@ public class FundDetailServiceImpl implements FundDetailService {
     private FundDetailRepository repository;
 
     @Override
-    public List<FundDetail> listActiveIncomeCategories(Long userId) {
-        return repository.findAllByUserIdAndActiveTrue(userId);
+    public List<FundDetail> listActiveFundDetailByLedgerRegistryId(Long ledgerRegistryId) {
+        return repository.findAllByLedgerRegistryIdAndActiveTrue(ledgerRegistryId);
     }
 
     @Override

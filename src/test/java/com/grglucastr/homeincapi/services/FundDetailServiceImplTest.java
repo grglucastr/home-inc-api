@@ -44,9 +44,9 @@ public class FundDetailServiceImplTest {
     void testListAllActiveFundDetails(){
 
         final List<FundDetail> activeFundDetails = FundDetailMocks.createListOfActiveFundDetails();
-        when(repository.findAllByUserIdAndActiveTrue(USER_ID)).thenReturn(activeFundDetails);
+        when(repository.findAllByLedgerRegistryIdAndActiveTrue(USER_ID)).thenReturn(activeFundDetails);
 
-        final List<FundDetail> fundDetails = service.listActiveIncomeCategories(USER_ID);
+        final List<FundDetail> fundDetails = service.listActiveFundDetailByLedgerRegistryId(USER_ID);
 
         assertThat(fundDetails, notNullValue());
         assertThat(fundDetails.size(), is(3));

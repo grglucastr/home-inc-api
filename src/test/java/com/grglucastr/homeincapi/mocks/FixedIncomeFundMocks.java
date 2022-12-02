@@ -21,7 +21,7 @@ public class FixedIncomeFundMocks {
         fixedIncomeFund.setId(1L);
         fixedIncomeFund.setName("Tesouro Prefixado 2025");
         fixedIncomeFund.setDescription("Investimento em renda fixa, tesouro prefixado.");
-        fixedIncomeFund.setInsertDateTime(LocalDateTime.now());
+        fixedIncomeFund.setInsertDateTime(MockLocalDate.getInsertDateTime());
 
         final SpendingCategory spendingCategory = SpendingCategoryMocks.createSingleSpendingCategory();
         fixedIncomeFund.setSpendingCategory(spendingCategory);
@@ -40,6 +40,7 @@ public class FixedIncomeFundMocks {
         ff3.setId(3L);
         ff3.setDueDate(LocalDate.of(2024, 1,1));
         ff3.setName("CDB C6 Bank");
+        ff3.setUpdateDateTime(MockLocalDate.getUpdateDateTime());
 
         return Arrays.asList(ff1, ff2, ff3);
     }

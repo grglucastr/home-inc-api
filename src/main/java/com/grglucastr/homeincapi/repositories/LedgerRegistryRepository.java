@@ -7,9 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface LedgerRegistryRepository extends JpaRepository<LedgerRegistry, Long>,
-    BaseRepository<LedgerRegistry>{
+public interface LedgerRegistryRepository extends JpaRepository<LedgerRegistry, Long>{
 
-    @Override
     List<LedgerRegistry> findAllByUserIdAndActiveTrue(Long userId);
 }
