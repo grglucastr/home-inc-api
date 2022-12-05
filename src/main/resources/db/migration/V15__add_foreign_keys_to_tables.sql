@@ -16,11 +16,11 @@ ALTER TABLE spendings
 ALTER TABLE fixed_income_funds
     ADD CONSTRAINT fk_spendings_fixed_income_funds FOREIGN KEY (spending_id) REFERENCES spendings(id);
 
-ALTER TABLE ledgers
+ALTER TABLE ledger_registries
     ADD CONSTRAINT fk_spendings_ledgers FOREIGN KEY (spending_id) REFERENCES spendings(id);
 
-ALTER TABLE ledgers
+ALTER TABLE ledger_registries
     ADD CONSTRAINT fk_payment_type_ledgers FOREIGN KEY (payment_type_id) REFERENCES payment_types(id);
 
 ALTER TABLE fund_details
-    ADD CONSTRAINT fk_ledger_fund_details FOREIGN KEY (ledger_id) REFERENCES ledgers(id);
+    ADD CONSTRAINT fk_ledger_fund_details FOREIGN KEY (ledger_id) REFERENCES ledger_registries(id);
