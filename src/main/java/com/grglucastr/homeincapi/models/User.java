@@ -35,7 +35,7 @@ public class User extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_users")
-    @SequenceGenerator(name = "se_users", sequenceName = "se_users")
+    @SequenceGenerator(name = "se_users", sequenceName = "se_users", allocationSize = 1)
     @Override
     public Long getId() {
         return super.getId();

@@ -41,7 +41,7 @@ public class Income extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_incomes")
-    @SequenceGenerator(name = "se_incomes", sequenceName = "se_incomes")
+    @SequenceGenerator(name = "se_incomes", sequenceName = "se_incomes", allocationSize = 1)
     @Override
     public Long getId() {
         return super.getId();

@@ -37,7 +37,7 @@ public class FundDetail extends BaseModel{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_fund_details")
-    @SequenceGenerator(name = "se_fund_details", sequenceName = "se_fund_details")
+    @SequenceGenerator(name = "se_fund_details", sequenceName = "se_fund_details", allocationSize = 1)
     @Override
     public Long getId() {
         return super.getId();

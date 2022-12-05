@@ -13,6 +13,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -27,6 +29,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "spendings")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Spending extends BaseModel{
 
     private String name;
@@ -54,7 +57,7 @@ public class Spending extends BaseModel{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_spendings")
-    @SequenceGenerator(name = "se_spendings", sequenceName = "se_spendings")
+    @SequenceGenerator(name = "se_spendings", sequenceName = "se_spendings", allocationSize = 1)
     @Override
     public Long getId() {
         return super.getId();

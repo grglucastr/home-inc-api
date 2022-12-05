@@ -42,7 +42,7 @@ public class SpendingCategory extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_spending_category")
-    @SequenceGenerator(name = "se_spending_category", sequenceName = "se_spending_category")
+    @SequenceGenerator(name = "se_spending_category", sequenceName = "se_spending_category", allocationSize = 1)
     @Override
     public Long getId() {
         return super.getId();

@@ -31,7 +31,7 @@ public class FixedIncomeFund extends Spending{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_fixed_income_funds")
-    @SequenceGenerator(name = "se_fixed_income_funds", sequenceName = "se_fixed_income_funds")
+    @SequenceGenerator(name = "se_fixed_income_funds", sequenceName = "se_fixed_income_funds", allocationSize = 1)
     @Override
     public Long getId() {
         return super.getId();

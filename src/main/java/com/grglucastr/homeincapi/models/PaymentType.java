@@ -42,7 +42,7 @@ public class PaymentType extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_income_category")
-    @SequenceGenerator(name = "se_income_category", sequenceName = "se_income_category")
+    @SequenceGenerator(name = "se_income_category", sequenceName = "se_income_category", allocationSize = 1)
     @Override
     public Long getId() {
         return super.getId();

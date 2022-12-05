@@ -48,7 +48,7 @@ public class LedgerRegistry extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "se_ledger_registries")
-    @SequenceGenerator(name = "se_ledger_registries", sequenceName = "se_ledger_registries")
+    @SequenceGenerator(name = "se_ledger_registries", sequenceName = "se_ledger_registries", allocationSize = 1)
     @Override
     public Long getId() {
         return super.getId();
